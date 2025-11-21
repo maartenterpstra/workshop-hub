@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Clock, MapPin, User } from "lucide-react";
 import { useState } from "react";
 import { educationalSchedule } from "@/data/scheduleEducational";
@@ -64,6 +64,9 @@ const Program = () => {
                                   onClick={() => toggleSpeaker(item.speakerId!)}
                                 >
                                   <Avatar className="h-8 w-8 border-2 border-primary/20 group-hover:border-primary/40 transition-colors">
+                                    {speakers[item.speakerId].avatarUrl && (
+                                      <AvatarImage src={speakers[item.speakerId].avatarUrl} alt={speakers[item.speakerId].name} />
+                                    )}
                                     <AvatarFallback className="text-xs bg-primary/10 text-primary">
                                       {speakers[item.speakerId].initials}
                                     </AvatarFallback>

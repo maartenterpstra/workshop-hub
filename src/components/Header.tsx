@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink } from "./NavLink";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
+import logoImage from "@/assets/logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,9 +19,7 @@ const Header = () => {
       <nav className="container flex h-16 items-center justify-between">
         <NavLink to="/" className="flex items-center space-x-2">
           <div className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-lg bg-gradient-hero flex items-center justify-center">
-              <span className="text-2xl font-bold text-primary-foreground">DL</span>
-            </div>
+            <img src={logoImage} alt="DLinRT 2025 Logo" className="h-10 w-10 object-contain" />
             <div className="hidden sm:block">
               <div className="text-lg font-bold text-foreground">DLinRT 2026</div>
               <div className="text-xs text-muted-foreground">Deep Learning in Radiotherapy</div>
