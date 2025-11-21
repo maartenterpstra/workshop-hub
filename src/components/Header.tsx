@@ -19,7 +19,7 @@ const Header = () => {
       <nav className="container flex h-16 items-center justify-between">
         <NavLink to="/" className="flex items-center space-x-2">
           <div className="flex items-center gap-2">
-            <img src={logoImage} alt="DLinRT 2025 Logo" className="h-10 w-10 object-contain" />
+            <img src={logoImage} alt="DLinRT 2025 Logo" className="h-12" />
             <div className="hidden sm:block">
               <div className="text-lg font-bold text-foreground">DLinRT 2026</div>
               <div className="text-xs text-muted-foreground">Deep Learning in Radiotherapy</div>

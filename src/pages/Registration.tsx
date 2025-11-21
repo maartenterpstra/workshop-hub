@@ -53,6 +53,9 @@ const Registration = () => {
                   <strong className="text-foreground">Target Audience:</strong> Medical physicists in radiotherapy, 
                   researchers, clinical physicists, and professionals interested in deep learning applications in healthcare.
                 </p>
+                <p className="text-sm">
+                  <strong className="text-foreground">Practical information:</strong> The workshop is free of charge, including lunch and refreshments. It is only possible to attend the workshop in-person and will not be streamed.
+                </p>
               </div>
             </div>
           </CardContent>
@@ -84,7 +87,11 @@ const Registration = () => {
                   If the form doesn't load, please refresh the page or contact{" "}
                   <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">
                     {siteConfig.contact.email}
+                  </a> or{" "}
+                  <a href={`mailto:${siteConfig.contact.email2}`} className="text-primary hover:underline">
+                    {siteConfig.contact.email2}
                   </a>
+
                 </p>
               </div>
             </div>

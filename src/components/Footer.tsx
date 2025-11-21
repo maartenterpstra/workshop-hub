@@ -23,6 +23,14 @@ const Footer = () => {
                 <Mail className="h-4 w-4" />
                 {siteConfig.contact.email}
               </a>
+              <a
+                href={`mailto:${siteConfig.contact.email2}`}
+                className="flex items-center gap-2 text-sm text-primary hover:underline"
+              >
+                <Mail className="h-4 w-4" />
+                {siteConfig.contact.email2}
+              </a>
+
             </div>
           </div>
 
@@ -36,12 +44,6 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-        </div>
-        
-        <div className="mt-8 pt-8 border-t border-border/40">
-          <p className="text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} DLinRT Workshop Series. All rights reserved.
-          </p>
         </div>
       </div>
     </footer>

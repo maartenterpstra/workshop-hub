@@ -2,7 +2,7 @@
 export const aboutContent = {
   educational: {
     title: "Educational Workshop",
-    date: "Monday, March 17, 2025",
+    date: "Thursday, March 5, 2026",
     description: "A comprehensive 1-day educational workshop aimed at medical physicists in radiotherapy. Learn the principles of machine and deep learning, with applications in:",
     topics: [
       "Image synthesis",
@@ -16,8 +16,8 @@ export const aboutContent = {
   
   scientific: {
     title: "Scientific Symposium",
-    date: "Tuesday, March 18, 2025",
-    description: "The third scientific symposium of the Radiotherapy Expert group initiative, featuring four strategic research themes:",
+    date: "Friday, March 6, 2026",
+    description: "The scientific symposium of the Radiotherapy Expert group initiative, featuring four strategic research themes:",
     themes: [
       "Image Synthesis and Reconstruction",
       "Contouring & Registration",

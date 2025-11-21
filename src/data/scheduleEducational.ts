@@ -10,98 +10,106 @@ export interface ScheduleItem {
 
 export const educationalSchedule: ScheduleItem[] = [
   {
-    time: "09:00 - 09:30",
+    time: "09:00 - 09:20",
     title: "Registration and Coffee",
     type: "break"
   },
   {
-    time: "09:30 - 09:40",
+    time: "09:20 - 09:30",
     title: "Welcome and Introduction",
     speaker: "Matteo Maspero",
     speakerId: "matteo-maspero",
     type: "session"
   },
   {
-    time: "09:40 - 10:25",
+    time: "09:30 - 10:30",
     title: "Introduction to Machine Learning and Deep Learning",
-    speaker: "Matteo Maspero",
-    speakerId: "matteo-maspero",
+    speaker: "Alberto de Luca",
+    speakerId: "alberto-de-luca",
     description: "Fundamentals of ML/DL, neural networks, and training processes",
     type: "session"
   },
   {
-    time: "10:25 - 11:10",
-    title: "Image Synthesis in Radiotherapy",
-    speaker: "Maarten Terpstra",
-    speakerId: "maarten-terpstra",
-    description: "Synthetic CT generation, MR-to-CT synthesis, and applications",
-    type: "session"
-  },
-  {
-    time: "11:10 - 11:30",
-    title: "Coffee Break",
-    type: "break"
-  },
-  {
-    time: "11:30 - 12:15",
-    title: "Auto-contouring with Deep Learning",
-    speaker: "Charlotte Brouwer",
-    speakerId: "charlotte-brouwer",
+    time: "10:30 - 11:00",
+    title: "Deep learning for autocontouring",
+    speaker: "Ana Maria Barragán Montero",
+    speakerId: "ana-maria-barragan-montero",
     description: "Automated organ and tumor segmentation techniques",
     type: "session"
   },
   {
-    time: "12:15 - 13:00",
-    title: "Deep Learning for Treatment Planning",
-    speaker: "Alex Treacher",
-    speakerId: "alex-treacher",
-    description: "Automated planning, dose prediction, and optimization",
-    type: "session"
-  },
-  {
-    time: "13:00 - 14:00",
-    title: "Lunch Break",
-    type: "break"
-  },
-  {
-    time: "14:00 - 14:45",
-    title: "Image Registration and Contour Propagation",
-    speaker: "Oscar Acosta",
-    speakerId: "oscar-acosta",
-    description: "Deformable registration and adaptive radiotherapy applications",
-    type: "session"
-  },
-  {
-    time: "14:45 - 15:30",
-    title: "Radiomics and Outcome Prediction",
-    speaker: "Wouter van Elmpt",
-    speakerId: "wouter-van-elmpt",
-    description: "Feature extraction, predictive modeling, and clinical applications",
-    type: "session"
-  },
-  {
-    time: "15:30 - 15:50",
+    time: "11:00 - 11:20",
     title: "Coffee Break",
     type: "break"
   },
   {
-    time: "15:50 - 16:35",
-    title: "Quality Assurance and Validation of DL Models",
-    speaker: "Alex Zwanenburg",
-    speakerId: "alex-zwanenburg",
-    description: "Testing, validation strategies, and performance metrics",
+    time: "11:20 - 11:55",
+    title: "Deep learning methods for image reconstruction",
+    speaker: "Stefan Fransen",
+    speakerId: "stefan-fransen",
+    description: "Techniques for image reconstruction using deep learning",
     type: "session"
   },
   {
-    time: "16:35 - 17:20",
-    title: "Clinical Implementation: Challenges and Solutions",
-    speaker: "Tomas Janssen",
-    speakerId: "tomas-janssen",
+    time: "11:55 - 12:30",
+    title: "Deep learning methods for image registration and contour propagation",
+    speaker: "Maarten Terpstra",
+    speakerId: "maarten-terpstra",
+    description: "Deformable registration and adaptive radiotherapy applications",
+    type: "session"
+  },
+  {
+    time: "12:30 - 13:30",
+    title: "Lunch Break",
+    type: "break"
+  },
+  {
+    time: "13:30 - 14:15",
+    title: "Deep learning for image synthesis",
+    speaker: "Adrian Thummerer",
+    speakerId: "adrian-thummerer",
+    description: "Synthetic CT generation for MR-only radiotherapy workflows",
+    type: "session"
+  },
+  {
+    time: "14:15 - 14:55",
+    title: "Deep learning for treatment planning",
+    speaker: "Sebastiaan Breedveld",
+    speakerId: "sebastiaan-breedveld",
+    description: "Fast and automated treatment plan generation using DL",
+    type: "session"
+  },
+  {
+    time: "14:55 - 15:35",
+    title: "Explainable AI & Uncertainty Quantification in Radiotherapy",
+    speaker: "TBA",
+    speakerId: "TBA",
+    description: "Ensuring transparency and reliability of DL models in clinical practice",
+    type: "session"
+  },
+  {
+    time: "15:35 - 15:50",
+    title: "Coffee Break",
+    type: "break"
+  },
+  {
+    time: "15:50 - 16:30",
+    title: "Large language models (LLMs) in Radiotherapy",
+    speaker: "Nico van den Berg",
+    speakerId: "nico-van-den-berg",
+    description: "Applications of LLMs for clinical documentation and decision support",
+    type: "session"
+  },
+  {
+    time: "16:30 - 17:00",
+    title: "Regulatory issues & implementation of deep learning in the clinic",
+    speaker: "Pim Borman",
+    speakerId: "pim-borman",
     description: "Regulatory aspects, workflow integration, and practical considerations",
     type: "session"
   },
   {
-    time: "17:20 - 17:30",
+    time: "17:00 - 17:10",
     title: "Closing Remarks and Q&A",
     speaker: "Matteo Maspero",
     speakerId: "matteo-maspero",

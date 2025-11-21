@@ -63,7 +63,7 @@ const Program = () => {
                                   className="flex items-center gap-2 mb-2 cursor-pointer group"
                                   onClick={() => toggleSpeaker(item.speakerId!)}
                                 >
-                                  <Avatar className="h-8 w-8 border-2 border-primary/20 group-hover:border-primary/40 transition-colors">
+                                  <Avatar className="h-12 w-12 border-2 border-primary/20 group-hover:border-primary/40 transition-colors">
                                     {speakers[item.speakerId].avatarUrl && (
                                       <AvatarImage src={speakers[item.speakerId].avatarUrl} alt={speakers[item.speakerId].name} />
                                     )}
@@ -72,10 +72,10 @@ const Program = () => {
                                     </AvatarFallback>
                                   </Avatar>
                                   <div>
-                                    <p className="text-sm font-medium text-primary group-hover:underline">
+                                    <p className="text-l font-medium text-primary group-hover:underline">
                                       {speakers[item.speakerId].name}
                                     </p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-sm text-muted-foreground">
                                       {speakers[item.speakerId].affiliation}
                                     </p>
                                   </div>

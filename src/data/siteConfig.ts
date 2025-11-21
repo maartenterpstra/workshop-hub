@@ -1,14 +1,15 @@
 // Site-wide configuration and content
 export const siteConfig = {
   title: "Deep Learning in Radiotherapy",
-  subtitle: "Workshop Series 2025",
-  dates: "March 17-18, 2025",
-  location: "UMC Utrecht, Netherlands",
-  registrationDeadline: "Sunday, March 2, 2025",
+  subtitle: "2026 Workshop",
+  dates: "March 5-6, 2026",
+  location: "UMC Utrecht",
+  registrationDeadline: "Sunday, March 1, 2026",
   
   contact: {
-    name: "Matteo Maspero",
+    name: "Matteo Maspero & Maarten Terpstra",
     email: "M.Maspero@umcutrecht.nl",
+    email2: "M.L.Terpstra-5@umcutrecht.nl",
     department: "Department of Radiotherapy",
     institution: "UMC Utrecht"
   },
@@ -16,8 +17,7 @@ export const siteConfig = {
   organizers: [
     { name: "Matteo Maspero", institution: "UMC Utrecht" },
     { name: "Maarten Terpstra", institution: "UMC Utrecht" },
-    { name: "Charlotte Brouwer", institution: "UMCG" }
   ],
 
-  registrationFormUrl: "https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true"
+  registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSffCsW-s85Q4A3b44OD_KzniSrOyZ3O3HWM3bOqzf7q3UdXuw/viewform?embedded=true"
 };

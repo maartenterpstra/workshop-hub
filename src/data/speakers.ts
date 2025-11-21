@@ -9,13 +9,16 @@ export interface Speaker {
 }
 
 import matteoMasperoImg from "@/assets/speakers/matteo-maspero.jpg";
+
 import maartenTerpstraImg from "@/assets/speakers/maarten-terpstra.jpg";
 import charlotteBrouwerImg from "@/assets/speakers/charlotte-brouwer.jpg";
-import alexTeacherImg from "@/assets/speakers/alex-treacher.jpg";
-import oscarAcostaImg from "@/assets/speakers/oscar-acosta.jpg";
-import wouterVanElmptImg from "@/assets/speakers/wouter-van-elmpt.jpg";
-import alexZwanenburgImg from "@/assets/speakers/alex-zwanenburg.jpg";
-import tomasJanssenImg from "@/assets/speakers/tomas-janssen.jpg";
+import albertoDeLucaImg from "@/assets/speakers/alberto-de-luca.jpg";
+import stefanFransenImg from "@/assets/speakers/stefan-fransen.jpg";
+import sebastiaanBreedveldImg from "@/assets/speakers/sebastiaan-breedveld.jpg";
+import adrianThummererImg from "@/assets/speakers/adrian-thummerer.jpg";
+import anaMariaBarraganMonteroImg from "@/assets/speakers/ana-maria-barragan-montero.png";
+import nicoVanDenBergImg from "@/assets/speakers/nico-van-den-berg.png";
+import pimBormanImg from "@/assets/speakers/pim-borman.jpg";
 
 export const speakers: Record<string, Speaker> = {
   "matteo-maspero": {
@@ -24,7 +27,7 @@ export const speakers: Record<string, Speaker> = {
     affiliation: "UMC Utrecht",
     avatarUrl: matteoMasperoImg,
     initials: "MM",
-    bio: "Medical physicist and researcher at UMC Utrecht, specializing in deep learning applications for radiotherapy. Focus on MR-only radiotherapy and synthetic CT generation."
+    bio: "Assistant professor at UMC Utrecht and medical physicist in training, specializing in deep learning applications for radiotherapy. Focus on MR-only radiotherapy and synthetic CT generation."
   },
   "maarten-terpstra": {
     id: "maarten-terpstra",
@@ -32,7 +35,7 @@ export const speakers: Record<string, Speaker> = {
     affiliation: "UMC Utrecht",
     avatarUrl: maartenTerpstraImg,
     initials: "MT",
-    bio: "Researcher at UMC Utrecht working on deep learning for medical image analysis and radiotherapy applications."
+    bio: "Researcher at UMC Utrecht working on deep learning for real-time motion-robust MRI imaging."
   },
   "charlotte-brouwer": {
     id: "charlotte-brouwer",
@@ -42,44 +45,68 @@ export const speakers: Record<string, Speaker> = {
     initials: "CB",
     bio: "Medical physicist at University Medical Center Groningen, expert in radiotherapy treatment planning and clinical implementation of AI solutions."
   },
-  "alex-treacher": {
-    id: "alex-treacher",
-    name: "Alex Treacher",
-    affiliation: "Cambridge University Hospitals",
-    avatarUrl: alexTeacherImg,
+  "alberto-de-luca": {
+    id: "alberto-de-luca",
+    name: "Alberto de Luca",
+    affiliation: "UMC Utrecht",
+    avatarUrl: albertoDeLucaImg,
+    initials: "AL",
+    bio: "Assistant professor at the Image Sciences Institute (ISI) at UMC Utrecht. Focuses on diffusion MRI and treatment response."
+  },
+  "ana-maria-barragan-montero": {
+    id: "ana-maria-barragan-montero",
+    name: "Ana Maria Barragán Montero",
+    affiliation: "KU Leuven",
+    avatarUrl: anaMariaBarraganMonteroImg,
+    initials: "AB",
+    bio: "Postdoctoral lecturer at KU Leuven, specializing in MR-guided treatment of esophageal cancer."
+  },
+  "stefan-fransen": {
+    id: "stefan-fransen",
+    name: "Stefan Fransen",
+    affiliation: "UMCG",
+    avatarUrl: stefanFransenImg,
+    initials: "SF",
+    bio: "Medical physicist at UMCG, focusing on treatment outcome prediction in prostate cancer."
+  },
+  "adrian-thummerer": {
+    id: "adrian-thummerer",
+    name: "Adrian Thummerer",
+    affiliation: "LMU Munich",
+    avatarUrl: adrianThummererImg,
     initials: "AT",
-    bio: "Medical physicist at Cambridge University Hospitals with expertise in machine learning applications for radiotherapy."
+    bio: "Postdoctoral researcher at LMU Munich who develops deep learning models for synthetic CT generation."
   },
-  "oscar-acosta": {
-    id: "oscar-acosta",
-    name: "Oscar Acosta",
-    affiliation: "CLCC Eugene Marquis",
-    avatarUrl: oscarAcostaImg,
-    initials: "OA",
-    bio: "Researcher at Centre de Lutte Contre le Cancer Eugene Marquis, specializing in medical image analysis and radiomics."
+  "sebastiaan-breedveld": {
+    id: "sebastiaan-breedveld",
+    name: "Sebastiaan Breedveld",
+    affiliation: "Erasmus MC",
+    avatarUrl: sebastiaanBreedveldImg,
+    initials: "SB",
+    bio: "Associate professor at Erasmus MC, specializing in deep learning for radiotherapy treatment planning."
   },
-  "wouter-van-elmpt": {
-    id: "wouter-van-elmpt",
-    name: "Wouter van Elmpt",
-    affiliation: "MAASTRO Clinic",
-    avatarUrl: wouterVanElmptImg,
-    initials: "WE",
-    bio: "Medical physicist at MAASTRO Clinic, leading research in adaptive radiotherapy and deep learning for treatment optimization."
+  "nico-van-den-berg": {
+    id: "nico-van-den-berg",
+    name: "Nico van den Berg",
+    affiliation: "UMC Utrecht",
+    avatarUrl: nicoVanDenBergImg,
+    initials: "NvdB",
+    bio: "Professor at the UMC Utrecht, head of the Computational Imaging Group."
   },
-  "alex-zwanenburg": {
-    id: "alex-zwanenburg",
-    name: "Alex Zwanenburg",
-    affiliation: "OncoRay Dresden",
-    avatarUrl: alexZwanenburgImg,
-    initials: "AZ",
-    bio: "Researcher at OncoRay Dresden focusing on radiomics and quantitative image analysis for personalized radiotherapy."
+  "pim-borman": {
+    id: "pim-borman",
+    name: "Pim Borman",
+    affiliation: "UMC Utrecht",
+    avatarUrl: pimBormanImg,
+    initials: "PB",
+    bio: "Computer scientist at UMC Utrecht, working on novel dose delivery techniques."
   },
-  "tomas-janssen": {
-    id: "tomas-janssen",
-    name: "Tomas Janssen",
-    affiliation: "NKI Amsterdam",
-    avatarUrl: tomasJanssenImg,
-    initials: "TJ",
-    bio: "Medical physicist at Netherlands Cancer Institute, expert in image-guided radiotherapy and clinical AI implementation."
+  "TBA": {
+    id: "TBA",
+    name: "To Be Announced",
+    affiliation: "TBA",
+    avatarUrl: "",
+    initials: "TBA",
+    bio: "TBA"
   }
 };
