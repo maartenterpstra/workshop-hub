@@ -39,7 +39,7 @@ const Program = () => {
             <Card className="shadow-card border-0">
               <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b">
                 <CardTitle>Educational Workshop</CardTitle>
-                <CardDescription className="text-base">Monday, March 17, 2025</CardDescription>
+                <CardDescription className="text-base">Thursday, March 5, 2026</CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="space-y-6">
@@ -105,7 +105,7 @@ const Program = () => {
             <Card className="shadow-card border-0">
               <CardHeader className="bg-gradient-to-r from-secondary/5 to-secondary/10 border-b">
                 <CardTitle>Scientific Symposium</CardTitle>
-                <CardDescription className="text-base">Tuesday, March 18, 2025</CardDescription>
+                <CardDescription className="text-base">Friday, March 6, 2026</CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="space-y-8">

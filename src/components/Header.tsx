@@ -22,7 +22,7 @@ const Header = () => {
               <span className="text-2xl font-bold text-primary-foreground">DL</span>
             </div>
             <div className="hidden sm:block">
-              <div className="text-lg font-bold text-foreground">DLinRT 2025</div>
+              <div className="text-lg font-bold text-foreground">DLinRT 2026</div>
               <div className="text-xs text-muted-foreground">Deep Learning in Radiotherapy</div>
             </div>
           </div>
