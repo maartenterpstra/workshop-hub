@@ -2,6 +2,8 @@ import { Calendar, Users, MapPin, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { siteConfig } from "@/data/siteConfig";
+import { aboutContent } from "@/data/aboutContent";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -14,19 +16,19 @@ const Home = () => {
         <div className="container relative">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-              Deep Learning in Radiotherapy
+              {siteConfig.title}
             </h1>
             <p className="text-xl md:text-2xl text-primary-foreground/90 mb-8">
-              Workshop Series 2025
+              {siteConfig.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-primary-foreground/90 mb-8">
               <div className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                <span>March 17-18, 2025</span>
+                <span>{siteConfig.dates}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
-                <span>UMC Utrecht, Netherlands</span>
+                <span>{siteConfig.location}</span>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -66,24 +68,21 @@ const Home = () => {
                     <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                       <BookOpen className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle>Educational Workshop</CardTitle>
+                    <CardTitle>{aboutContent.educational.title}</CardTitle>
                   </div>
-                  <CardDescription className="text-base">Monday, March 17, 2025</CardDescription>
+                  <CardDescription className="text-base">{aboutContent.educational.date}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    A comprehensive 1-day educational workshop aimed at medical physicists in radiotherapy. 
-                    Learn the principles of machine and deep learning, with applications in:
+                    {aboutContent.educational.description}
                   </p>
                   <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>Image synthesis</li>
-                    <li>Auto contouring</li>
-                    <li>Treatment planning</li>
-                    <li>Image registration & contour propagation</li>
-                    <li>Clinical implementation challenges</li>
+                    {aboutContent.educational.topics.map((topic, index) => (
+                      <li key={index}>{topic}</li>
+                    ))}
                   </ul>
                   <p className="text-sm text-muted-foreground mt-4">
-                    All presentations in English. NVKF accreditation arranged.
+                    {aboutContent.educational.note}
                   </p>
                 </CardContent>
               </Card>
@@ -94,23 +93,21 @@ const Home = () => {
                     <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center">
                       <Users className="h-5 w-5 text-secondary" />
                     </div>
-                    <CardTitle>Scientific Symposium</CardTitle>
+                    <CardTitle>{aboutContent.scientific.title}</CardTitle>
                   </div>
-                  <CardDescription className="text-base">Tuesday, March 18, 2025</CardDescription>
+                  <CardDescription className="text-base">{aboutContent.scientific.date}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    The third scientific symposium of the Radiotherapy Expert group initiative, 
-                    featuring four strategic research themes:
+                    {aboutContent.scientific.description}
                   </p>
                   <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>Image Synthesis and Reconstruction</li>
-                    <li>Contouring & Registration</li>
-                    <li>Radiomics</li>
-                    <li>Clinical Implementation</li>
+                    {aboutContent.scientific.themes.map((theme, index) => (
+                      <li key={index}>{theme}</li>
+                    ))}
                   </ul>
                   <p className="text-sm text-muted-foreground mt-4">
-                    Open to researchers, clinical physicists, industry professionals, and policymakers.
+                    {aboutContent.scientific.note}
                   </p>
                 </CardContent>
               </Card>
@@ -122,7 +119,7 @@ const Home = () => {
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold mb-2 text-foreground">Registration Deadline</h3>
                     <p className="text-muted-foreground">
-                      Register by <span className="font-semibold text-foreground">Sunday, March 2, 2025</span> to 
+                      Register by <span className="font-semibold text-foreground">{siteConfig.registrationDeadline}</span> to 
                       secure your spot at this premier educational event.
                     </p>
                   </div>

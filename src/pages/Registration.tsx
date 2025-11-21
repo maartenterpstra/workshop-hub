@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Calendar, AlertCircle } from "lucide-react";
+import { siteConfig } from "@/data/siteConfig";
+import { aboutContent } from "@/data/aboutContent";
 
 const Registration = () => {
   return (
@@ -9,14 +11,14 @@ const Registration = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Registration</h1>
           <p className="text-xl text-muted-foreground">
-            Register for the Deep Learning in Radiotherapy Workshop 2025
+            Register for the {siteConfig.title} {siteConfig.subtitle}
           </p>
         </div>
 
         <Alert className="mb-8 border-primary/50 bg-primary/5">
           <AlertCircle className="h-4 w-4 text-primary" />
           <AlertDescription className="text-base">
-            <strong className="text-foreground">Registration Deadline:</strong> Sunday, March 2, 2025
+            <strong className="text-foreground">Registration Deadline:</strong> {siteConfig.registrationDeadline}
           </AlertDescription>
         </Alert>
 
@@ -33,16 +35,16 @@ const Registration = () => {
             <div className="space-y-4 text-muted-foreground">
               <div className="flex flex-col sm:flex-row sm:gap-12">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-foreground mb-2">Educational Workshop</h3>
-                  <p className="text-sm">Monday, March 17, 2025</p>
-                  <p className="text-sm">Department of Radiotherapy</p>
-                  <p className="text-sm">UMC Utrecht, The Netherlands</p>
+                  <h3 className="font-semibold text-foreground mb-2">{aboutContent.educational.title}</h3>
+                  <p className="text-sm">{aboutContent.educational.date}</p>
+                  <p className="text-sm">{siteConfig.contact.department}</p>
+                  <p className="text-sm">{siteConfig.contact.institution}, {siteConfig.location.split(', ')[1]}</p>
                 </div>
                 <div className="flex-1 mt-4 sm:mt-0">
-                  <h3 className="font-semibold text-foreground mb-2">Scientific Symposium</h3>
-                  <p className="text-sm">Tuesday, March 18, 2025</p>
-                  <p className="text-sm">Department of Radiotherapy</p>
-                  <p className="text-sm">UMC Utrecht, The Netherlands</p>
+                  <h3 className="font-semibold text-foreground mb-2">{aboutContent.scientific.title}</h3>
+                  <p className="text-sm">{aboutContent.scientific.date}</p>
+                  <p className="text-sm">{siteConfig.contact.department}</p>
+                  <p className="text-sm">{siteConfig.contact.institution}, {siteConfig.location.split(', ')[1]}</p>
                 </div>
               </div>
               
@@ -67,7 +69,7 @@ const Registration = () => {
             <div className="w-full bg-muted/30 rounded-lg p-8 flex items-center justify-center min-h-[600px]">
               <div className="text-center">
                 <iframe
-                  src="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true"
+                  src={siteConfig.registrationFormUrl}
                   width="100%"
                   height="800"
                   frameBorder="0"
@@ -80,8 +82,8 @@ const Registration = () => {
                 </iframe>
                 <p className="text-sm text-muted-foreground mt-4">
                   If the form doesn't load, please refresh the page or contact{" "}
-                  <a href="mailto:M.Maspero@umcutrecht.nl" className="text-primary hover:underline">
-                    M.Maspero@umcutrecht.nl
+                  <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">
+                    {siteConfig.contact.email}
                   </a>
                 </p>
               </div>
@@ -93,9 +95,9 @@ const Registration = () => {
           <AlertDescription>
             <strong>Important:</strong> After registering, you will receive a confirmation email. 
             Please check your spam folder if you don't receive it within 24 hours. For any questions, 
-            contact Matteo Maspero at{" "}
-            <a href="mailto:M.Maspero@umcutrecht.nl" className="text-primary hover:underline">
-              M.Maspero@umcutrecht.nl
+            contact {siteConfig.contact.name} at{" "}
+            <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">
+              {siteConfig.contact.email}
             </a>
           </AlertDescription>
         </Alert>
