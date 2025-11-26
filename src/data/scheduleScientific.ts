@@ -16,7 +16,7 @@ export interface ScientificSession {
 export const scientificSchedule: ScientificSession[] = [
   {
     time: "",
-    title: "To be announced - check back soon!",
+    title: "To be announced: express your intention to provide a talk in the registration form - check back in February!",
     type: "session"
   }
   // {
