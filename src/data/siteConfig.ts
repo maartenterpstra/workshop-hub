@@ -4,7 +4,7 @@ export const siteConfig = {
   subtitle: "2026 Workshop",
   dates: "March 5-6, 2026",
   location: "UMC Utrecht",
-  registrationDeadline: "Sunday, March 1, 2026",
+  registrationDeadline: "Sunday, February 15, 2026",
   
   contact: {
     name: "Matteo Maspero & Maarten Terpstra",
