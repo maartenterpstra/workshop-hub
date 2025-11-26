@@ -50,8 +50,8 @@ const Registration = () => {
               
               <div className="pt-4 border-t">
                 <p className="text-sm">
-                  <strong className="text-foreground">Target Audience:</strong> Medical physicists in radiotherapy, 
-                  researchers, clinical physicists, and professionals interested in deep learning applications in healthcare.
+                  <strong className="text-foreground">Target Audience:</strong> Clinicians involved in radiotherapy, medical physicists, researchers,
+                  computer scientists working on medical imaging or AI, and industry representatives developing or integrating deep learning in radiotherapy. 
                 </p>
                 <p className="text-sm">
                   <strong className="text-foreground">Practical information:</strong> The workshop is free of charge, including lunch and refreshments. It is only possible to attend the workshop in-person and will not be streamed.
@@ -65,7 +65,7 @@ const Registration = () => {
           <CardHeader>
             <CardTitle>Registration Form</CardTitle>
             <CardDescription>
-              Please complete the form below to register for the workshop
+              Please complete the form below to register for the workshop by February 14.
             </CardDescription>
           </CardHeader>
           <CardContent>
