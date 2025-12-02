@@ -39,6 +39,10 @@ const Header = () => {
               {link.label}
             </NavLink>
           ))}
+          <a href="/history.html" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2">
+            Previous editions
+          </a>
+
         </div>
 
         {/* Mobile Menu Button */}
@@ -66,6 +70,9 @@ const Header = () => {
                   {link.label}
                 </NavLink>
               ))}
+              <a href="/history.html" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2">
+                Previous editions
+              </a>
             </div>
           </div>
         )}
