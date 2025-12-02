@@ -9,6 +9,7 @@ export const aboutContent = {
       "Auto contouring",
       "Treatment planning",
       "Image registration & contour propagation",
+      "Large language models",
       "Clinical implementation challenges"
     ],
     note: "All presentations in English. NVKF accreditation arranged."
