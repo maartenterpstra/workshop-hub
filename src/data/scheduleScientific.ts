@@ -10,7 +10,7 @@ export interface ScientificSession {
     affiliation: string;
   }>;
   type?: "break" | "session" | "keynote" | "panel";
-  theme?: "synthesis" | "contouring" | "radiomics" | "implementation";
+  theme?: "synthesis" | "contouring" | "clinical prediction" | "implementation";
 }
 
 export const scientificSchedule: ScientificSession[] = [
