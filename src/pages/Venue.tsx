@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MapPin, Train, Car, Plane, Phone, Mail } from "lucide-react";
 import { venueContent } from "@/data/venueContent";
 import { siteConfig } from "@/data/siteConfig";
+import mapImg from "@/assets/plattegrond-umc-utrecht.png";
+
 
 const Venue = () => {
   return (
@@ -54,7 +56,7 @@ const Venue = () => {
                   </div>
                   <div className="relative">
                     <img 
-                      src="src/assets/plattegrond-umc-utrecht.png" 
+                      src={mapImg} 
                       alt="Route Map UMC Utrecht" 
                       className="rounded-lg border w-full object-cover" 
                     />
