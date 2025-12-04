@@ -22,7 +22,7 @@ export const aboutContent = {
     themes: [
       "Image Synthesis and Reconstruction",
       "Contouring & Registration",
-      "Radiomics",
+      "Clinical predictions",
       "Clinical Implementation"
     ],
     note: "Open to researchers, clinical physicists, industry professionals, and policymakers."

@@ -28,17 +28,7 @@ const Venue = () => {
           </CardHeader>
           <CardContent className="pt-6">
             <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-3 text-foreground">Address</h3>
-                <p className="text-muted-foreground">
-                  {venueContent.venue.address.department}<br />
-                  {venueContent.venue.address.institution}<br />
-                  {venueContent.venue.address.street}<br />
-                  {venueContent.venue.address.postalCode} {venueContent.venue.address.city}<br />
-                  {venueContent.venue.address.country}
-                </p>
-              </div>
-
+              {/* Map Iframe */}
               <div className="aspect-video w-full rounded-lg overflow-hidden border">
                 <iframe
                   src={venueContent.venue.mapEmbedUrl}
@@ -50,6 +40,27 @@ const Venue = () => {
                   referrerPolicy="no-referrer-when-downgrade"
                   title="UMC Utrecht Location"
                 ></iframe>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-3 text-foreground">Route description to the Auditorium (Q-building)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 items-start">
+                    <div className="text-muted-foreground space-y-2">
+                    {venueContent.venue.routesteps.map((step, index) => (
+                      <p key={index} className="leading-relaxed">
+                        <span className="font-medium text-foreground">{index + 1}.</span> {step}
+                      </p>
+                    ))}
+                  </div>
+                  <div className="relative">
+                    <img 
+                      src="src/assets/plattegrond-umc-utrecht.png" 
+                      alt="Route Map UMC Utrecht" 
+                      className="rounded-lg border w-full object-cover" 
+                    />
+                  </div>
+
+                </div>
               </div>
             </div>
           </CardContent>

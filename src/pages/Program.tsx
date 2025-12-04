@@ -138,7 +138,7 @@ const Program = () => {
                                 className={`pl-4 border-l-2 py-2 ${
                                   session.theme === "synthesis" ? "border-blue-500/50" :
                                   session.theme === "contouring" ? "border-green-500/50" :
-                                  session.theme === "radiomics" ? "border-purple-500/50" :
+                                  session.theme === "clinical prediction" ? "border-purple-500/50" :
                                   session.theme === "implementation" ? "border-orange-500/50" :
                                   "border-border"
                                 }`}

@@ -56,10 +56,10 @@ export const speakers: Record<string, Speaker> = {
   "ana-maria-barragan-montero": {
     id: "ana-maria-barragan-montero",
     name: "Ana Maria Barragán Montero",
-    affiliation: "KU Leuven",
+    affiliation: "UC Louvain",
     avatarUrl: anaMariaBarraganMonteroImg,
     initials: "AB",
-    bio: "Postdoctoral lecturer at KU Leuven, specializing in MR-guided treatment of esophageal cancer."
+    bio: "Associate professor at UC Louvain & research associate at Fonds National de la Recherche Scientifique, specializing in MR-guided treatment of esophageal cancer."
   },
   "stefan-fransen": {
     id: "stefan-fransen",

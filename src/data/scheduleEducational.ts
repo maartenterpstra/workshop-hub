@@ -32,8 +32,8 @@ export const educationalSchedule: ScheduleItem[] = [
   {
     time: "10:30 - 11:00",
     title: "Deep learning for autocontouring",
-    speaker: "Ana Maria Barragán Montero",
-    speakerId: "ana-maria-barragan-montero",
+    speaker: "Matteo Maspero",
+    speakerId: "matteo-maspero",
     description: "Automated organ and tumor segmentation techniques",
     type: "session"
   },
@@ -68,7 +68,7 @@ export const educationalSchedule: ScheduleItem[] = [
     title: "Deep learning for image synthesis",
     speaker: "Adrian Thummerer",
     speakerId: "adrian-thummerer",
-    description: "Synthetic CT generation for MR-only radiotherapy workflows",
+    description: "Synthetic CT generation for MR-only radiotherapy and adaptive CBCT workflows",
     type: "session"
   },
   {
@@ -82,8 +82,8 @@ export const educationalSchedule: ScheduleItem[] = [
   {
     time: "14:55 - 15:35",
     title: "Explainable AI & Uncertainty Quantification in Radiotherapy",
-    speaker: "TBA",
-    speakerId: "TBA",
+    speaker: "Ana Maria Barragán Montero",
+    speakerId: "ana-maria-barragan-montero",
     description: "Ensuring transparency and reliability of DL models in clinical practice",
     type: "session"
   },

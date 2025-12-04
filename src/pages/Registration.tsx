@@ -65,7 +65,7 @@ const Registration = () => {
           <CardHeader>
             <CardTitle>Registration Form</CardTitle>
             <CardDescription>
-              Please complete the form below to register for the workshop by February 14.
+              Please complete the form below to register for the workshop by February 15.
             </CardDescription>
           </CardHeader>
           <CardContent>
