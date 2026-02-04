@@ -10,6 +10,7 @@ import Program from "./pages/Program";
 import Registration from "./pages/Registration";
 import Venue from "./pages/Venue";
 import NotFound from "./pages/NotFound";
+import SpeakerUpload from "./pages/Upload";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,8 @@ const App = () => (
               <Route path="/program" element={<Program />} />
               <Route path="/registration" element={<Registration />} />
               <Route path="/venue" element={<Venue />} />
+              <Route path="/upload" element={<SpeakerUpload />} />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
