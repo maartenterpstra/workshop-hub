@@ -19,5 +19,6 @@ export const siteConfig = {
     { name: "Maarten Terpstra", institution: "UMC Utrecht" },
   ],
 
-  registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSffCsW-s85Q4A3b44OD_KzniSrOyZ3O3HWM3bOqzf7q3UdXuw/viewform?embedded=true"
+  registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSffCsW-s85Q4A3b44OD_KzniSrOyZ3O3HWM3bOqzf7q3UdXuw/viewform?embedded=true",
+  registrationFormUrlNotify: "https://docs.google.com/forms/d/e/1FAIpQLSeHFcNHGGAJG9aXW6aR7TZiuxBdWJdxeb4pbwL9xpJF9b28HA/viewform?embedded=true"
 };

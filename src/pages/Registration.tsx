@@ -1,24 +1,47 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Calendar, AlertCircle } from "lucide-react";
+import { Calendar, AlertCircle, Bell } from "lucide-react"; // Added Bell icon
 import { siteConfig } from "@/data/siteConfig";
 import { aboutContent } from "@/data/aboutContent";
 
 const Registration = () => {
+  // LOGIC: Automatically switch to notification mode on Feb 6, 2026
+  const currentDate = new Date();
+  const cutoffDate = new Date('2026-02-06T00:00:00'); 
+  const isRegistrationClosed = currentDate >= cutoffDate;
+
   return (
     <div className="py-16 px-4">
       <div className="container max-w-4xl">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Registration</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+            {isRegistrationClosed ? "Join the Waitlist" : "Registration"}
+          </h1>
           <p className="text-xl text-muted-foreground">
-            Register for the {siteConfig.title} {siteConfig.subtitle}
+            {isRegistrationClosed 
+              ? `Get notified about future ${siteConfig.title} events`
+              : `Register for the ${siteConfig.title} ${siteConfig.subtitle}`
+            }
           </p>
         </div>
 
-        <Alert className="mb-8 border-primary/50 bg-primary/5">
-          <AlertCircle className="h-4 w-4 text-primary" />
+        {/* Dynamic Alert Section */}
+        <Alert className={`mb-8 border-primary/50 ${isRegistrationClosed ? "bg-amber-500/10" : "bg-primary/5"}`}>
+          {isRegistrationClosed ? (
+             <Bell className="h-4 w-4 text-amber-600" />
+          ) : (
+             <AlertCircle className="h-4 w-4 text-primary" />
+          )}
           <AlertDescription className="text-base">
-            <strong className="text-foreground">Registration Deadline:</strong> {siteConfig.registrationDeadline}
+            {isRegistrationClosed ? (
+              <span className="text-foreground">
+                Due to the high number of registrations and people in the waiting list, we are obliged to close registrations. You can still notify your interest in upcoming events by leaving your details below.
+              </span>
+            ) : (
+              <>
+                <strong className="text-foreground">Registration Deadline:</strong> {siteConfig.registrationDeadline}
+              </>
+            )}
           </AlertDescription>
         </Alert>
 
@@ -63,16 +86,21 @@ const Registration = () => {
 
         <Card className="shadow-card border-0">
           <CardHeader>
-            <CardTitle>Registration Form</CardTitle>
+            <CardTitle>
+                {isRegistrationClosed ? "Notification Sign-up" : "Registration Form"}
+            </CardTitle>
             <CardDescription>
-              Please complete the form below to register for the workshop by February 15.
+              {isRegistrationClosed 
+                ? "Please leave your details below to be contacted for future iterations."
+                : "Please complete the form below to register for the workshop by February 15."
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="w-full bg-muted/30 rounded-lg p-8 flex items-center justify-center min-h-[600px]">
               <div className="text-center">
                 <iframe
-                  src={siteConfig.registrationFormUrl}
+                  src={isRegistrationClosed ? siteConfig.registrationFormUrlNotify : siteConfig.registrationFormUrl} // You must update the Form URL in siteConfig or Google Forms manually
                   width="100%"
                   height="800"
                   frameBorder="0"
@@ -98,16 +126,19 @@ const Registration = () => {
           </CardContent>
         </Card>
 
-        <Alert className="mt-8">
-          <AlertDescription>
-            <strong>Important:</strong> After registering, you will receive a confirmation email. 
-            Please check your spam folder if you don't receive it within 24 hours. For any questions, 
-            contact {siteConfig.contact.name} at{" "}
-            <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">
-              {siteConfig.contact.email}
-            </a>
-          </AlertDescription>
-        </Alert>
+        {/* Only show confirmation warning if registration is actually open */}
+        {!isRegistrationClosed && (
+            <Alert className="mt-8">
+            <AlertDescription>
+                <strong>Important:</strong> After registering, you will receive a confirmation email. 
+                Please check your spam folder if you don't receive it within 24 hours. For any questions, 
+                contact {siteConfig.contact.name} at{" "}
+                <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">
+                {siteConfig.contact.email}
+                </a>
+            </AlertDescription>
+            </Alert>
+        )}
       </div>
     </div>
   );
