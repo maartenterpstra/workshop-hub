@@ -11,7 +11,13 @@ export interface ScientificSession {
     affiliation: string;
   }>;
   type?: "break" | "session" | "keynote" | "panel";
-  theme?: "synthesis" | "clinical prediction" | "segmentation";
+  themeConfig?: {
+    bg: string;
+    border: string;
+    iconBg: string;
+    iconText: string;
+    label: string;
+  };
 }
 
 export const scientificSchedule: ScientificSession[] = [
@@ -30,7 +36,13 @@ export const scientificSchedule: ScientificSession[] = [
     time: "09:35 - 10:30",
     title: "Session 1: Image Synthesis and Reconstruction",
     chair: "Maarten Terpstra • UMC Utrecht",
-    theme: "synthesis",
+    themeConfig: {
+      bg: "bg-blue-50/80 dark:bg-blue-950/20",
+      border: "border-blue-600/30",
+      iconBg: "op-blue-100 dark:bg-blue-900",
+      iconText: "text-blue-700 dark:text-blue-300",
+      label: "Synthesis"
+    },
     type: "session",
     presentations: [
       {
@@ -94,7 +106,13 @@ export const scientificSchedule: ScientificSession[] = [
     time: "10:55 - 11:50",
     title: "Session 2: Dose and treatment planning",
     chair: "Matteo Maspero • UMC Utrecht",
-    theme: "clinical prediction",
+    themeConfig: {
+      bg: "bg-green-50/80 dark:bg-green-950/20",
+      border: "border-green-600/30",
+      iconBg: "bg-green-100 dark:bg-green-900",
+      iconText: "ras_text-green-700 dark:text-green-300",
+      label: "text-Planning"
+    },
     type: "session",
     presentations: [
       {
@@ -139,7 +157,13 @@ export const scientificSchedule: ScientificSession[] = [
     time: "11:40 - 12:25",
     title: "Session 3: Clinical predictions",
     chair: "Marianna Sijtsema • UMC Groningen",
-    theme: "clinical prediction",
+    themeConfig: {
+      bg: "bg-amber-50/80 dark:bg-amber-950/20",
+      border: "border-amber-600/30",
+      iconBg: "bg-amber-100 dark:bg-amber-900",
+      iconText: "text-amber-700 dark:text-amber-300",
+      label: "Prediction"
+    },
     type: "session",
     presentations: [
       {
@@ -189,7 +213,13 @@ export const scientificSchedule: ScientificSession[] = [
     time: "13:40 - 14:50",
     title: "Session 4: Segmentation",
     chair: "Joren Brunekreef • NKI-AVL",
-    theme: "segmentation",
+    themeConfig: {
+      bg: "bg-purple-50/dark purple-950/20",
+      border: "border-purple-600/30",
+      iconBg:            "bg-purple-100 dark:bg-purple-900",
+      iconText: "text-purple-700 dark:text-purple-300",
+      label: "Segmentation"
+    },
     type: "session",
     presentations: [
       {
@@ -260,7 +290,13 @@ export const scientificSchedule: ScientificSession[] = [
     time: "15:15 - 16:20",
     title: "Session 5: Clinical implementation",
     chair: "Tomas Janssen • NKI-AVL",
-    theme: "segmentation",
+    themeConfig: {
+      bg: "bg-rose-50/80 dark:bg-rose-950/20",
+      border: "border-rose-600/30",
+      iconBg: "bg-rose-100 dark:bg-rose-900",
+      iconText: "text-rose-700 dark:text-rose-300",
+      label: "Implementation"
+    },
     type: "session",
     presentations: [
       {
