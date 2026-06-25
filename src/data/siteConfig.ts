@@ -1,24 +1,37 @@
 // Site-wide configuration and content
 export const siteConfig = {
   title: "Deep Learning in Radiotherapy",
-  subtitle: "2026 Workshop",
-  dates: "March 5-6, 2026",
-  location: "UMC Utrecht",
-  registrationDeadline: "Sunday, February 15, 2026",
-  
+  subtitle: "2027 Workshop",
+  dates: "March 2027 (TBC)",
+  location: "UMC Utrecht & Princess Máxima Center",
+  registrationDeadline: "TBC",
+
+  // Phase / status flags for 2027 — keep these in sync with the timeline
+  callForAbstractsOpens: "September 1, 2026",
+  abstractSubmissionDeadline: "TBC",
+  registrationOpensOn: "TBC",
+
+  // Registration is handled on a separate site for 2027; leave empty until live.
+  externalRegistrationUrl: "",
+
   contact: {
     name: "Matteo Maspero & Maarten Terpstra",
     email: "M.Maspero@umcutrecht.nl",
     email2: "M.L.Terpstra-5@umcutrecht.nl",
     department: "Department of Radiotherapy",
-    institution: "UMC Utrecht"
+    institution: "UMC Utrecht",
   },
-  
+
   organizers: [
     { name: "Matteo Maspero", institution: "UMC Utrecht" },
     { name: "Maarten Terpstra", institution: "UMC Utrecht" },
+    // PMC organizer(s) to be added
   ],
 
-  registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSffCsW-s85Q4A3b44OD_KzniSrOyZ3O3HWM3bOqzf7q3UdXuw/viewform?embedded=true",
-  registrationFormUrlNotify: "https://docs.google.com/forms/d/e/1FAIpQLSeHFcNHGGAJG9aXW6aR7TZiuxBdWJdxeb4pbwL9xpJF9b28HA/viewform?embedded=true"
+  // Previous-edition archive
+  previousEditionUrl: "/2026/index.html",
+
+  // Legacy fields (kept so old Registration.tsx logic keeps compiling until rewritten this turn)
+  registrationFormUrl: "",
+  registrationFormUrlNotify: "",
 };

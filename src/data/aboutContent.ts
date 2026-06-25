@@ -1,30 +1,34 @@
-// Content for the About section on the home page
+// Content for the About section on the home page (2027 edition)
 export const aboutContent = {
   educational: {
     title: "Educational Workshop",
-    date: "Thursday, March 5, 2026",
-    description: "A comprehensive 1-day educational workshop aimed at medical physicists in radiotherapy. Learn the principles of machine and deep learning, with applications in:",
+    date: "March 2027 (TBC)",
+    description:
+      "A 1-day educational workshop introducing the principles and clinical applications of deep learning in radiotherapy. Detailed topics for the 2027 edition will be confirmed closer to the event.",
     topics: [
-      "Image synthesis",
-      "Auto contouring",
+      "Image synthesis & reconstruction",
+      "Auto-contouring & segmentation",
       "Treatment planning",
       "Image registration & contour propagation",
-      "Large language models",
-      "Clinical implementation challenges"
+      "Foundation models & language models",
+      "Clinical implementation",
     ],
-    note: "All presentations in English. NVKF accreditation arranged."
+    note: "All presentations in English. Accreditation status: TBC.",
   },
-  
+
   scientific: {
     title: "Scientific Symposium",
-    date: "Friday, March 6, 2026",
-    description: "The scientific symposium of the Radiotherapy Expert group initiative, featuring four strategic research themes:",
+    date: "March 2027 (TBC)",
+    description:
+      "Scientific symposium organised in collaboration with Princess Máxima Center. The 2027 programme will be built from peer-reviewed abstract submissions.",
     themes: [
-      "Image Synthesis and Reconstruction",
+      "Image Synthesis & Reconstruction",
       "Contouring & Registration",
-      "Clinical predictions",
-      "Clinical Implementation"
+      "Clinical Predictions",
+      "Foundation Models & Text",
+      "Treatment Planning",
+      "Clinical Implementation",
     ],
-    note: "Open to researchers, clinical physicists, industry professionals, and policymakers."
-  }
+    note: "Open to researchers, clinical physicists, industry, and policymakers.",
+  },
 };

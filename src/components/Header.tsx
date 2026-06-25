@@ -19,9 +19,9 @@ const Header = () => {
       <nav className="container flex h-16 items-center justify-between">
         <NavLink to="/" className="flex items-center space-x-2">
           <div className="flex items-center gap-2">
-            <img src={logoImage} alt="DLinRT 2025 Logo" className="h-12" />
+            <img src={logoImage} alt="DLinRT 2027 Logo" className="h-12" />
             <div className="hidden sm:block">
-              <div className="text-lg font-bold text-foreground">DLinRT 2026</div>
+              <div className="text-lg font-bold text-foreground">DLinRT 2027</div>
               <div className="text-xs text-muted-foreground">Deep Learning in Radiotherapy</div>
             </div>
           </div>
@@ -39,7 +39,7 @@ const Header = () => {
               {link.label}
             </NavLink>
           ))}
-          <a href="/history.html" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2">
+          <a href="/2026/index.html" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2">
             Previous editions
           </a>
 
@@ -70,7 +70,7 @@ const Header = () => {
                   {link.label}
                 </NavLink>
               ))}
-              <a href="/history.html" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2">
+              <a href="/2026/index.html" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2">
                 Previous editions
               </a>
             </div>
