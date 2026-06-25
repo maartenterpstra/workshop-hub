@@ -161,9 +161,6 @@ const Venue = () => {
             <p className="text-muted-foreground mb-4">
               {venueContent.accommodation.description}
             </p>
-            <p className="text-sm text-muted-foreground">
-              {venueContent.accommodation.note}
-            </p>
           </CardContent>
         </Card>
       </div>
