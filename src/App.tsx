@@ -11,6 +11,13 @@ import Registration from "./pages/Registration";
 import Venue from "./pages/Venue";
 import NotFound from "./pages/NotFound";
 import SpeakerUpload from "./pages/Upload";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Submit from "./pages/Submit";
+import Review from "./pages/Review";
+import Soc from "./pages/Soc";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -20,21 +27,48 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/program" element={<Program />} />
-              <Route path="/registration" element={<Registration />} />
-              <Route path="/venue" element={<Venue />} />
-              <Route path="/upload" element={<SpeakerUpload />} />
-
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <AuthProvider>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/program" element={<Program />} />
+                <Route path="/registration" element={<Registration />} />
+                <Route path="/venue" element={<Venue />} />
+                <Route path="/upload" element={<SpeakerUpload />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route
+                  path="/submit"
+                  element={
+                    <ProtectedRoute>
+                      <Submit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/review"
+                  element={
+                    <ProtectedRoute roles={["reviewer", "soc", "admin"]}>
+                      <Review />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/soc"
+                  element={
+                    <ProtectedRoute roles={["soc", "admin"]}>
+                      <Soc />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
