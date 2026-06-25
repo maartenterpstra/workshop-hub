@@ -1,18 +1,37 @@
 import { useState } from "react";
 import { NavLink } from "./NavLink";
 import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import logoImage from "@/assets/logo.png";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, roles, signOut } = useAuth();
+  const navigate = useNavigate();
 
-  const navLinks = [
+  const baseLinks = [
     { to: "/", label: "Home" },
     { to: "/program", label: "Program" },
     { to: "/registration", label: "Registration" },
     { to: "/venue", label: "Venue" },
   ];
+
+  const authLinks: { to: string; label: string }[] = [];
+  if (user) authLinks.push({ to: "/submit", label: "Submit Abstract" });
+  if (roles.includes("reviewer") || roles.includes("soc") || roles.includes("admin"))
+    authLinks.push({ to: "/review", label: "Review" });
+  if (roles.includes("soc") || roles.includes("admin"))
+    authLinks.push({ to: "/soc", label: "SOC" });
+
+  const navLinks = [...baseLinks, ...authLinks];
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsMenuOpen(false);
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -39,10 +58,21 @@ const Header = () => {
               {link.label}
             </NavLink>
           ))}
-          <a href="/2026/index.html" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2">
+          <a
+            href="/2026/index.html"
+            className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2"
+          >
             Previous editions
           </a>
-
+          {user ? (
+            <Button variant="ghost" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-1" /> Sign out
+            </Button>
+          ) : (
+            <Button size="sm" onClick={() => navigate("/login")}>
+              Sign in
+            </Button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -70,9 +100,27 @@ const Header = () => {
                   {link.label}
                 </NavLink>
               ))}
-              <a href="/2026/index.html" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2">
+              <a
+                href="/2026/index.html"
+                className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary py-2"
+              >
                 Previous editions
               </a>
+              {user ? (
+                <Button variant="ghost" size="sm" onClick={handleSignOut} className="justify-start px-0">
+                  <LogOut className="h-4 w-4 mr-1" /> Sign out
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate("/login");
+                  }}
+                >
+                  Sign in
+                </Button>
+              )}
             </div>
           </div>
         )}
