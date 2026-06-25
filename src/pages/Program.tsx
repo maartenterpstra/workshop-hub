@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock, MapPin, User } from "lucide-react";
+import { Clock, MapPin, User, Coffee, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { educationalSchedule } from "@/data/scheduleEducational";
 import { scientificSchedule } from "@/data/scheduleScientific";
@@ -14,39 +14,7 @@ const Program = () => {
   const toggleSpeaker = (speakerId: string) => {
     setExpandedSpeaker(expandedSpeaker === speakerId ? null : speakerId);
   };
-
-  // // Helper to determine border color for sessions based on theme
-  // const getSessionBorderColor = (theme?: string) => {
-  //   switch (theme) {
-  //     case "synthesis": return "border-blue-600/30 bg-blue-50/80 dark:bg-blue-950/20";
-  //     case "contouring": return "border-emerald-600/30 bg-emerald-50/80 dark:bg-emerald-950/20";
-  //     case "clinical prediction": return "border-violet-600/30 bg-violet-50/80 dark:bg-violet-950/20";
-  //     case "segmentation": return "border-amber-600/30 bg-amber-50/80 dark:bg-amber-950/20";
-  //     default: return "border-border/50 bg-transparent";
-  //   }
-  // };
-
-  // // Helper to determine icon background color for sessions based on theme
-  // const getSessionThemeIconBg = (theme?: string) => {
-  //   switch (theme) {
-  //     case "synthesis": return "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300";
-  //     case "contouring": return "bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300";
-  //     case "clinical prediction": return "bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300";
-  //     case "segmentation": return "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300";
-  //     default: return "bg-primary/10 text-primary";
-  //   }
-  // };
-
-  // const getThemeLabel = (theme?: string) => {
-  //   switch (theme) {
-  //     case "synthesis": return "Synthesis";
-  //     case "contouring": return "Contouring";
-  //     case "clinical prediction": return "Clinical Prediction";
-  //     case "segmentation": return "Segmentation";
-  //     default: return "General";
-  //   }
-  // };
-
+  
   return (
     <div className="py-16 px-4">
       <div className="container max-w-5xl">
@@ -147,20 +115,11 @@ const Program = () => {
                   <div className="flex items-center gap-4 justify-center">
                     <div className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/30" />
                     <div className="flex items-center gap-3 px-6 py-3 bg-primary/5 border border-primary/20 rounded-full shadow-sm">
-                      {session.title.toLowerCase().includes("opening") && (
-                        <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      )}
                       {session.title.toLowerCase().includes("coffee") && (
-                        <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" />
-                        </svg>
+                        <Coffee className="w-5 h-5 text-primary" />
                       )}
                       {session.title.toLowerCase().includes("lunch") && (
-                        <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
+                        <UtensilsCrossed className="w-5 h-5 text-primary" />
                       )}
                       <span className="text-base font-semibold text-primary">{session.title}</span>
                     </div>
@@ -183,11 +142,6 @@ const Program = () => {
 
                   {/* Session Title and Chair */}
                   <div className="mb-4 pb-4 border-b border-border/50">
-                    {/* {session.themeConfig && (
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2 ${session.themeConfig.iconBg} ${session.themeConfig.iconText}`}>
-                        {session.themeConfig.label}
-                      </span>
-                    )} */}
                     <h3 className="text-xl font-bold text-foreground mb-1">{session.title.split(':')[1] || session.title}</h3>
                     {session.chair && (
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
@@ -223,14 +177,6 @@ const Program = () => {
                       ))
                     ) : (
                       <div />
-                      // <div className="flex gap-4">
-                      //   {/* <div className="flex-shrink-0 w-24 text-sm font-medium text-muted-foreground pt-1">
-                      //     {session.time}
-                      //   </div> */}
-                      //   {/* <div className="flex-1 text-muted-foreground italic">
-                      //     No presentations listed.
-                      //   </div> */}
-                      // </div>
                     )}
                   </div>
                 </div>
