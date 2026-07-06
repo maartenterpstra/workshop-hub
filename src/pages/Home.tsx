@@ -1,9 +1,11 @@
-import { Calendar, MapPin, FileText, Archive, BookOpen, Users } from "lucide-react";
+import { Calendar, MapPin, FileText, Archive, BookOpen, Users, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
 import { aboutContent } from "@/data/aboutContent";
+import PartnerLogos from "@/components/PartnerLogos";
+import utrechtHero from "@/assets/utrecht-hero.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -11,43 +13,72 @@ const Home = () => {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative py-20 px-4 bg-gradient-hero overflow-hidden">
-        <div className="container relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-sm uppercase tracking-widest text-primary-foreground/80 mb-3">
-              Pre-announcement
-            </p>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
-              {siteConfig.title}
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img
+            src={utrechtHero}
+            alt="The Dom Tower rising above the historic canals of Utrecht at golden hour"
+            className="h-full w-full object-cover"
+            width={1920}
+            height={1088}
+          />
+          {/* Blue → orange dual-brand overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/60 to-secondary/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+        </div>
+
+        <div className="container relative py-24 md:py-28">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 mb-6">
+              <Sparkles className="h-3.5 w-3.5 text-white" />
+              <span className="text-xs uppercase tracking-[0.2em] text-white font-medium">
+                Utrecht · Pre-announcement
+              </span>
+            </div>
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+              Deep Learning
+              <br />
+              <span className="bg-gradient-to-r from-white via-orange-100 to-orange-300 bg-clip-text text-transparent">
+                in Radiotherapy
+              </span>
             </h1>
-            <p className="text-xl md:text-2xl text-primary-foreground/90 mb-8">
-              {siteConfig.subtitle}
+
+            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl leading-relaxed">
+              The 2027 workshop &amp; scientific symposium — hosted in the heart
+              of Utrecht by <strong className="font-semibold">UMC Utrecht</strong>{" "}
+              in collaboration with the{" "}
+              <strong className="font-semibold">Princess Máxima Center</strong>{" "}
+              for pediatric oncology.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-primary-foreground/90 mb-8">
+
+            <div className="flex flex-wrap gap-x-6 gap-y-3 text-white/95 mb-10">
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                <span>{siteConfig.dates}</span>
+                <Calendar className="h-5 w-5 text-orange-200" />
+                <span className="font-medium">{siteConfig.dates}</span>
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                <span>{siteConfig.location}</span>
+                <MapPin className="h-5 w-5 text-orange-200" />
+                <span className="font-medium">{siteConfig.location}</span>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 size="lg"
-                variant="secondary"
                 onClick={() => navigate("/registration")}
-                className="bg-white text-primary hover:bg-white/80"
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-warm font-semibold"
               >
                 <FileText className="h-4 w-4" />
                 Call for Abstracts
+                <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 asChild
-                className="bg-transparent text-primary-foreground border-primary-foreground/60 hover:bg-white/10 hover:text-primary-foreground"
+                className="bg-white/10 backdrop-blur-sm text-white border-white/40 hover:bg-white/20 hover:text-white"
               >
                 <a href={siteConfig.previousEditionUrl}>
                   <Archive className="h-4 w-4" />
@@ -57,99 +88,138 @@ const Home = () => {
             </div>
           </div>
         </div>
+
+        {/* Bottom partner strip */}
+        <div className="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-border py-4">
+          <div className="container">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-semibold">
+                Organised by · In collaboration with
+              </span>
+              <PartnerLogos />
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Call for Abstracts highlight */}
-      <section className="py-12 px-4 bg-gradient-section">
-        <div className="container max-w-4xl">
-          <Card className="bg-primary/5 border-primary/20 shadow-card">
-            <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                <div className="flex-1">
-                  <h2 className="text-2xl font-semibold mb-2 text-foreground">
-                    Call for Abstracts
-                  </h2>
-                  <p className="text-muted-foreground">
-                    The scientific programme will be built from peer-reviewed abstracts.
-                    Submission opens{" "}
-                    <span className="font-semibold text-foreground">
-                      {siteConfig.callForAbstractsOpens}
-                    </span>
-                    . Authors, reviewers, and the scientific organising committee will use
-                    this site throughout the submission and review process.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-3">
-                    Registration for attendees will be handled on a separate site —
-                    details to follow.
-                  </p>
+      <section className="py-16 px-4 bg-gradient-section">
+        <div className="container max-w-5xl">
+          <Card className="border-0 shadow-card overflow-hidden">
+            <div className="grid md:grid-cols-[1fr_auto]">
+              <CardContent className="pt-8 pb-8 md:pl-10">
+                <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-secondary font-bold mb-3">
+                  <span className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
+                  Opens {siteConfig.callForAbstractsOpens}
                 </div>
-                <Button size="lg" onClick={() => navigate("/registration")}>
+                <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
+                  Call for Abstracts
+                </h2>
+                <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
+                  The scientific programme will be built entirely from
+                  peer-reviewed abstract submissions. Authors, reviewers, and
+                  the scientific organising committee use this site throughout
+                  the submission and review process.
+                </p>
+                <p className="text-sm text-muted-foreground mt-4">
+                  Attendee registration will be handled on a separate site — details to follow.
+                </p>
+              </CardContent>
+              <div className="hidden md:flex items-center justify-center bg-gradient-warm p-10">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  onClick={() => navigate("/registration")}
+                  className="bg-white text-secondary hover:bg-white/90 font-semibold shadow-lg"
+                >
                   Learn more
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
       </section>
 
       {/* About */}
-      <section className="py-16 px-4">
+      <section className="py-20 px-4">
         <div className="container">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-              About the Workshop
-            </h2>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-14">
+              <div className="text-xs uppercase tracking-[0.2em] text-secondary font-bold mb-3">
+                About
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground">
+                Two days. One community.
+              </h2>
+              <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-lg">
+                An educational workshop for practitioners, followed by a
+                scientific symposium showcasing the state of the art.
+              </p>
+            </div>
 
-            <div className="grid md:grid-cols-2 gap-8 mb-12">
-              <Card className="shadow-card border-0">
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="shadow-card border-0 group overflow-hidden">
+                <div className="h-1.5 bg-primary" />
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <div className="h-11 w-11 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                       <BookOpen className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle>{aboutContent.educational.title}</CardTitle>
+                    <div>
+                      <CardTitle className="text-xl">{aboutContent.educational.title}</CardTitle>
+                      <CardDescription className="text-sm mt-0.5">
+                        {aboutContent.educational.date}
+                      </CardDescription>
+                    </div>
                   </div>
-                  <CardDescription className="text-base">
-                    {aboutContent.educational.date}
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
                     {aboutContent.educational.description}
                   </p>
-                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                  <ul className="space-y-2 text-sm text-muted-foreground">
                     {aboutContent.educational.topics.map((topic, index) => (
-                      <li key={index}>{topic}</li>
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                        {topic}
+                      </li>
                     ))}
                   </ul>
-                  <p className="text-sm text-muted-foreground mt-4">
+                  <p className="text-xs text-muted-foreground mt-5 italic">
                     {aboutContent.educational.note}
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-card border-0">
+              <Card className="shadow-card border-0 group overflow-hidden">
+                <div className="h-1.5 bg-secondary" />
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                    <div className="h-11 w-11 rounded-lg bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
                       <Users className="h-5 w-5 text-secondary" />
                     </div>
-                    <CardTitle>{aboutContent.scientific.title}</CardTitle>
+                    <div>
+                      <CardTitle className="text-xl">{aboutContent.scientific.title}</CardTitle>
+                      <CardDescription className="text-sm mt-0.5">
+                        {aboutContent.scientific.date}
+                      </CardDescription>
+                    </div>
                   </div>
-                  <CardDescription className="text-base">
-                    {aboutContent.scientific.date}
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
                     {aboutContent.scientific.description}
                   </p>
-                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                  <ul className="space-y-2 text-sm text-muted-foreground">
                     {aboutContent.scientific.themes.map((theme, index) => (
-                      <li key={index}>{theme}</li>
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-secondary mt-2 shrink-0" />
+                        {theme}
+                      </li>
                     ))}
                   </ul>
-                  <p className="text-sm text-muted-foreground mt-4">
+                  <p className="text-xs text-muted-foreground mt-5 italic">
                     {aboutContent.scientific.note}
                   </p>
                 </CardContent>
@@ -159,21 +229,73 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Why Utrecht */}
+      <section className="py-20 px-4 bg-gradient-section">
+        <div className="container max-w-5xl">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="text-xs uppercase tracking-[0.2em] text-secondary font-bold mb-3">
+                The Venue
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Meet us in Utrecht
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                A compact, walkable Dutch city with a 900-year-old cathedral
+                tower at its centre, canals lined with cafés, and a 25-minute
+                train ride from Schiphol Airport. UMC Utrecht and the Princess
+                Máxima Center sit side-by-side on the Utrecht Science Park.
+              </p>
+              <Button variant="outline" size="lg" onClick={() => navigate("/venue")}>
+                <MapPin className="h-4 w-4" />
+                Venue & travel
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-xl bg-primary text-primary-foreground p-6 shadow-card">
+                <div className="text-4xl font-black">25′</div>
+                <div className="text-sm text-primary-foreground/80 mt-1">
+                  from Schiphol by train
+                </div>
+              </div>
+              <div className="rounded-xl bg-secondary text-secondary-foreground p-6 shadow-warm mt-8">
+                <div className="text-4xl font-black">2</div>
+                <div className="text-sm text-secondary-foreground/90 mt-1">
+                  world-class hosts
+                </div>
+              </div>
+              <div className="rounded-xl bg-white border p-6 shadow-soft">
+                <div className="text-4xl font-black text-primary">1254</div>
+                <div className="text-sm text-muted-foreground mt-1">
+                  Dom Tower construction begins
+                </div>
+              </div>
+              <div className="rounded-xl bg-white border p-6 shadow-soft mt-8">
+                <div className="text-4xl font-black text-secondary">6</div>
+                <div className="text-sm text-muted-foreground mt-1">
+                  scientific themes
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Quick links */}
-      <section className="py-16 px-4 bg-gradient-section">
+      <section className="py-20 px-4">
         <div className="container">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
-              Event Information
+              Event information
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card
-                className="group hover:shadow-card transition-all cursor-pointer"
+                className="group hover:shadow-card transition-all cursor-pointer border-0 shadow-soft"
                 onClick={() => navigate("/program")}
               >
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                    <Calendar className="h-6 w-6 text-primary" />
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Calendar className="h-6 w-6 text-primary group-hover:text-primary-foreground transition-colors" />
                   </div>
                   <CardTitle>Program</CardTitle>
                   <CardDescription>To be built from accepted abstracts</CardDescription>
@@ -181,12 +303,12 @@ const Home = () => {
               </Card>
 
               <Card
-                className="group hover:shadow-card transition-all cursor-pointer"
+                className="group hover:shadow-card transition-all cursor-pointer border-0 shadow-soft"
                 onClick={() => navigate("/registration")}
               >
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                    <FileText className="h-6 w-6 text-accent" />
+                  <div className="h-12 w-12 rounded-lg bg-secondary/10 flex items-center justify-center mb-4 group-hover:bg-secondary transition-colors">
+                    <FileText className="h-6 w-6 text-secondary group-hover:text-secondary-foreground transition-colors" />
                   </div>
                   <CardTitle>Submission & Registration</CardTitle>
                   <CardDescription>Abstracts here, registration externally</CardDescription>
@@ -194,12 +316,12 @@ const Home = () => {
               </Card>
 
               <Card
-                className="group hover:shadow-card transition-all cursor-pointer"
+                className="group hover:shadow-card transition-all cursor-pointer border-0 shadow-soft"
                 onClick={() => navigate("/venue")}
               >
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-secondary/10 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors">
-                    <MapPin className="h-6 w-6 text-secondary" />
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary transition-colors">
+                    <MapPin className="h-6 w-6 text-primary group-hover:text-primary-foreground transition-colors" />
                   </div>
                   <CardTitle>Venue</CardTitle>
                   <CardDescription>Location and travel information</CardDescription>
