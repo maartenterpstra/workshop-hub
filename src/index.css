@@ -9,43 +9,49 @@ All colors MUST be HSL.
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 210 20% 15%;
+    --foreground: 215 40% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 20% 15%;
+    --card-foreground: 215 40% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 15%;
+    --popover-foreground: 215 40% 12%;
 
-    --primary: 195 75% 35%;
+    /* UMC Utrecht blue */
+    --primary: 210 100% 24%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 205 85% 45%;
 
-    --secondary: 210 50% 45%;
+    /* Princess Máxima orange */
+    --secondary: 22 92% 48%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 200 20% 96%;
-    --muted-foreground: 210 15% 45%;
+    --muted-foreground: 210 15% 40%;
 
-    --accent: 190 85% 50%;
+    --accent: 22 92% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 200 15% 88%;
-    --input: 200 15% 88%;
-    --ring: 195 75% 35%;
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 210 100% 24%;
 
     --radius: 0.5rem;
 
-    /* Medical/professional gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(195 75% 35%) 0%, hsl(210 65% 45%) 100%);
-    --gradient-section: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(200 30% 98%) 100%);
-    
+    /* Dual-brand gradients: UMC Utrecht blue → Princess Máxima orange */
+    --gradient-hero: linear-gradient(135deg, hsl(210 100% 18%) 0%, hsl(210 85% 30%) 55%, hsl(22 92% 48%) 100%);
+    --gradient-brand: linear-gradient(90deg, hsl(210 100% 24%) 0%, hsl(22 92% 48%) 100%);
+    --gradient-section: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(30 40% 98%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(22 92% 48%) 0%, hsl(35 95% 55%) 100%);
+
     /* Shadows */
-    --shadow-soft: 0 4px 20px -2px hsl(195 75% 35% / 0.08);
-    --shadow-card: 0 8px 30px -4px hsl(195 75% 35% / 0.12);
-    
+    --shadow-soft: 0 4px 20px -2px hsl(210 100% 24% / 0.10);
+    --shadow-card: 0 12px 40px -8px hsl(210 100% 24% / 0.18);
+    --shadow-warm: 0 12px 40px -8px hsl(22 92% 48% / 0.30);
+
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
