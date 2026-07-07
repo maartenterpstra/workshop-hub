@@ -33,7 +33,7 @@ interface ReviewRow {
   score_novelty: number | null;
   score_reproducibility: number | null;
   score_fit_session: number | null;
-  recommendation: "accept_oral" | "accept_poster" | "reject" | null;
+  recommendation: "accept_oral" | "accept_poster" | "reject" | "revise" | null;
   comments_for_authors: string | null;
   comments_for_soc: string | null;
 }
