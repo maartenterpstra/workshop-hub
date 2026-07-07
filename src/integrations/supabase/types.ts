@@ -115,6 +115,30 @@ export type Database = {
           },
         ]
       }
+      app_config: {
+        Row: {
+          debug_mode: boolean
+          id: boolean
+          submission_closes_at: string | null
+          submission_opens_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          debug_mode?: boolean
+          id?: boolean
+          submission_closes_at?: string | null
+          submission_opens_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          debug_mode?: boolean
+          id?: boolean
+          submission_closes_at?: string | null
+          submission_opens_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           affiliation: string | null
@@ -181,6 +205,35 @@ export type Database = {
           },
         ]
       }
+      reviewer_expertise: {
+        Row: {
+          created_at: string
+          id: string
+          reviewer_id: string
+          topic_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reviewer_id: string
+          topic_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reviewer_id?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviewer_expertise_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           assignment_id: string
@@ -190,9 +243,12 @@ export type Database = {
           recommendation:
             | Database["public"]["Enums"]["review_recommendation"]
             | null
+          score_fit_session: number | null
           score_methods: number | null
           score_novelty: number | null
           score_relevance: number | null
+          score_reproducibility: number | null
+          score_technical: number | null
           submitted_at: string
         }
         Insert: {
@@ -203,9 +259,12 @@ export type Database = {
           recommendation?:
             | Database["public"]["Enums"]["review_recommendation"]
             | null
+          score_fit_session?: number | null
           score_methods?: number | null
           score_novelty?: number | null
           score_relevance?: number | null
+          score_reproducibility?: number | null
+          score_technical?: number | null
           submitted_at?: string
         }
         Update: {
@@ -216,9 +275,12 @@ export type Database = {
           recommendation?:
             | Database["public"]["Enums"]["review_recommendation"]
             | null
+          score_fit_session?: number | null
           score_methods?: number | null
           score_novelty?: number | null
           score_relevance?: number | null
+          score_reproducibility?: number | null
+          score_technical?: number | null
           submitted_at?: string
         }
         Relationships: [
@@ -302,7 +364,10 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      assign_reviewers_for_abstract: {
+        Args: { _abstract_id: string }
+        Returns: number
+      }
     }
     Enums: {
       abstract_status:
