@@ -364,10 +364,7 @@ export type Database = {
       }
     }
     Functions: {
-      assign_reviewers_for_abstract: {
-        Args: { _abstract_id: string }
-        Returns: number
-      }
+      [_ in never]: never
     }
     Enums: {
       abstract_status:
