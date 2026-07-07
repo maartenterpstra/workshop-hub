@@ -1,14 +1,19 @@
-import { Calendar, MapPin, FileText, Archive, BookOpen, Users, ArrowRight, Sparkles } from "lucide-react";
+import { Calendar, MapPin, FileText, Archive, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
-import { aboutContent } from "@/data/aboutContent";
 import PartnerLogos from "@/components/PartnerLogos";
 import utrechtHero from "@/assets/utrecht-hero.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
+  const timelineItems = [
+    { label: "Call for abstracts", date: "1 September 2026" },
+    { label: "Registration opening", date: "1 October 2026" },
+    { label: "Abstract submission deadline", date: "1 December 2026" },
+    { label: "AIinRT Symposium", date: "25–26 March 2027" },
+  ];
 
   return (
     <div className="flex flex-col">
@@ -38,7 +43,7 @@ const Home = () => {
             </div>
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.05] tracking-tight">
-              Deep Learning
+              Artificial Intelligence
               <br />
               <span className="bg-gradient-to-r from-white via-orange-100 to-orange-300 bg-clip-text text-transparent">
                 in Radiotherapy
@@ -46,9 +51,9 @@ const Home = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl leading-relaxed">
-              The 2027 workshop &amp; scientific symposium — hosted in the heart
-              of Utrecht by <strong className="font-semibold">UMC Utrecht</strong>{" "}
-              in collaboration with the{" "}
+              AIinRT 2027 — a scientific symposium hosted in the heart
+              of Utrecht hosted by <strong className="font-semibold">UMC Utrecht</strong>{" "}
+              and the{" "}
               <strong className="font-semibold">Princess Máxima Center</strong>{" "}
               for pediatric oncology.
             </p>
@@ -153,78 +158,83 @@ const Home = () => {
                 Two days. One community.
               </h2>
               <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-lg">
-                An educational workshop for practitioners, followed by a
-                scientific symposium showcasing the state of the art.
+                A two-day scientific symposium showcasing the state of the art in artificial intelligence for radiotherapy.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="shadow-card border-0 group overflow-hidden">
-                <div className="h-1.5 bg-primary" />
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="h-11 w-11 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <BookOpen className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl">{aboutContent.educational.title}</CardTitle>
-                      <CardDescription className="text-sm mt-0.5">
-                        {aboutContent.educational.date}
-                      </CardDescription>
-                    </div>
+            <Card className="shadow-soft border-0 overflow-hidden">
+              <CardContent className="p-8 md:p-10">
+                <div className="mb-8">
+                  <div className="text-xs uppercase tracking-[0.2em] text-secondary font-bold mb-3">
+                    Timeline
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">
-                    {aboutContent.educational.description}
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                    Tentative timeline
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Important dates for the workshop and symposium
                   </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    {aboutContent.educational.topics.map((topic, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                        {topic}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-xs text-muted-foreground mt-5 italic">
-                    {aboutContent.educational.note}
-                  </p>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="grid gap-4 md:grid-cols-4">
+                  {timelineItems.map((item, index) => (
+                    <div
+                      key={item.label}
+                      className="rounded-2xl border border-border/60 bg-background/70 p-4 text-center"
+                    >
+                      <div className="mx-auto mb-3 flex h-10 w-42 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                        {item.date}
+                      </div>
+                      <p className="font-semibold text-foreground">{item.label}</p>
+                      {/* <p className="text-sm text-muted-foreground mt-1">{item.date}</p> */}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
-              <Card className="shadow-card border-0 group overflow-hidden">
-                <div className="h-1.5 bg-secondary" />
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="h-11 w-11 rounded-lg bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
-                      <Users className="h-5 w-5 text-secondary" />
+            <Card className="mt-8 shadow-soft border-0 overflow-hidden">
+              <CardContent className="p-8 md:p-10">
+                <div className="flex flex-col gap-6">
+                  <div className="max-w-2xl">
+                    <div className="text-xs uppercase tracking-[0.2em] text-secondary font-bold mb-3">
+                      What to expect
                     </div>
-                    <div>
-                      <CardTitle className="text-xl">{aboutContent.scientific.title}</CardTitle>
-                      <CardDescription className="text-sm mt-0.5">
-                        {aboutContent.scientific.date}
-                      </CardDescription>
-                    </div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+                      A two-day symposium with talks, discussion and networking
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      The final agenda is still being shaped, but visitors can expect a programme
+                      built around scientific sessions, keynote talks, and plenty of time for
+                      conversation and exchange.
+                    </p>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">
-                    {aboutContent.scientific.description}
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    {aboutContent.scientific.themes.map((theme, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-secondary mt-2 shrink-0" />
-                        {theme}
-                      </li>
+                  <div className="grid gap-3 md:grid-cols-4">
+                    {[
+                      {
+                        text: "Sessions on segmentation, reconstruction, foundation models and adaptive workflows",
+                        className: "border-primary/20 bg-primary/5 text-foreground",
+                      },
+                      {
+                        text: "Keynote talks connecting AI advances to radiotherapy practice",
+                        className: "border-secondary/20 bg-secondary/5 text-foreground",
+                      },
+                      {
+                        text: "Dedicated breaks, lunch and networking moments throughout both days",
+                        className: "border-slate-300 bg-slate-50 text-foreground",
+                      },
+                      {
+                        text: "A social programme that may include an informal dinner",
+                        className: "border-primary/20 bg-background/80 text-foreground",
+                      },
+                    ].map((item) => (
+                      <div key={item.text} className={`rounded-2xl border p-4 text-sm font-medium shadow-sm ${item.className}`}>
+                        {item.text}
+                      </div>
                     ))}
-                  </ul>
-                  <p className="text-xs text-muted-foreground mt-5 italic">
-                    {aboutContent.scientific.note}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -298,7 +308,7 @@ const Home = () => {
                     <Calendar className="h-6 w-6 text-primary group-hover:text-primary-foreground transition-colors" />
                   </div>
                   <CardTitle>Program</CardTitle>
-                  <CardDescription>To be built from accepted abstracts</CardDescription>
+                  <CardDescription>State of the art scientific presentations</CardDescription>
                 </CardHeader>
               </Card>
 

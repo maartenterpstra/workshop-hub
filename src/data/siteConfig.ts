@@ -1,8 +1,8 @@
 // Site-wide configuration and content
 export const siteConfig = {
-  title: "Deep Learning in Radiotherapy",
+  title: "Artificial Intelligence in Radiotherapy",
   subtitle: "2027 Workshop",
-  dates: "March 2027 (TBC)",
+  dates: "25-26 March 2027",
   location: "UMC Utrecht & Princess Máxima Center",
   registrationDeadline: "TBC",
 

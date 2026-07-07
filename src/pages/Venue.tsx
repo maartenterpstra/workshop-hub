@@ -44,7 +44,7 @@ const Venue = () => {
                 ></iframe>
               </div>
 
-              <div>
+              {/* <div>
                 <h3 className="text-lg font-semibold mb-3 text-foreground">Route description to the Auditorium (Q-building)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 items-start">
                     <div className="text-muted-foreground space-y-2">
@@ -63,7 +63,7 @@ const Venue = () => {
                   </div>
 
                 </div>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>

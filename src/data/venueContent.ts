@@ -1,8 +1,8 @@
 // Venue information and travel details
 export const venueContent = {
   venue: {
-    name: "University Medical Center Utrecht",
-    institution: "Auditorium, Department of Radiotherapy, Heidelberglaan 100, 3584 CX Utrecht, The Netherlands",
+    name: "Princess Máxima Center",
+    institution: "Auditorium, Department of Radiotherapy, Heidelberglaan 25, 3584 CS Utrecht, The Netherlands",
     routesteps: [
       "At the main entrance of the UMC (that is on floor 1, you don't need any changes w.r.t. floor)",
       "Walk straight ahead following route Q, past the waiting area and shops",
@@ -10,7 +10,7 @@ export const venueContent = {
       "Walk straight ahead to the end of the corridor (within the Q building the Auditorium is signposted)",
       "Turn right, and you will find the Auditorium at the end at your left-hand side"
     ],
-    mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d630.8613712219577!2d5.181968467927869!3d52.086872692653095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c669465cfaf8f5%3A0xe8d60ff13d5c9fcc!2sUMC%20Utrecht%20-%20Radiotherapie!5e0!3m2!1sen!2snl!4v1763731753705!5m2!1sen!2snl"
+    mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2866.854073746152!2d5.180305967590564!3d52.089750054035584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c6688f81428091%3A0xfc9989a840c80643!2sPrincess%20M%C3%A1xima%20Center%20for%20Pediatric%20Oncology!5e0!3m2!1sen!2snl!4v1783422701607!5m2!1sen!2snl"
   },
 
   travel: {

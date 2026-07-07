@@ -38,15 +38,15 @@ const Program = () => {
               What to expect
             </CardTitle>
             <CardDescription className="text-base">
-              Two days, in collaboration with Princess Máxima Center
+              A two-day scientific symposium 
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-muted-foreground">
             <p>
-              The 2027 edition will follow the established two-day format: an educational
-              workshop introducing deep learning in radiotherapy, and a scientific symposium
-              with peer-reviewed oral and poster contributions across the strategic themes
-              of the Radiotherapy Expert group initiative.
+              The 2027 edition entails a two-day scientific symposium
+              with peer-reviewed oral and poster contributions, presenting the state of the art in artificial intelligence for radiotherapy. 
+              Expect scientific presentations from leading experts in the field on image synthesis, segmentation, or foundational models among other topics.
+              The symposium is open to researchers, clinical physicists, industry, and policymakers.
             </p>
             <p>
               Detailed sessions, speakers, and timings will appear here once abstracts have

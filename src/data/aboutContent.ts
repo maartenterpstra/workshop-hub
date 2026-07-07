@@ -2,7 +2,7 @@
 export const aboutContent = {
   educational: {
     title: "Educational Workshop",
-    date: "March 2027 (TBC)",
+    date: "25-26 March 2027",
     description:
       "A 1-day educational workshop introducing the principles and clinical applications of deep learning in radiotherapy. Detailed topics for the 2027 edition will be confirmed closer to the event.",
     topics: [
@@ -18,7 +18,7 @@ export const aboutContent = {
 
   scientific: {
     title: "Scientific Symposium",
-    date: "March 2027 (TBC)",
+    date: "25-26 March 2027",
     description:
       "Scientific symposium organised in collaboration with Princess Máxima Center. The 2027 programme will be built from peer-reviewed abstract submissions.",
     themes: [
