@@ -1,27 +1,18 @@
-// Text-based partner "logo" badges. These are typographic representations
-// styled in each partner's brand colours; swap for official logo files when
-// permission and assets are available.
+import umcuLogo from "@/assets/umcu_logo.png";
+import pmcLogo from "@/assets/pmc_logo.png";
+import dlinrtLogo from "@/assets/dlinrteu_logo.png";
 
 const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => {
   const isDark = variant === "dark";
+  const wrapper = `flex items-center gap-3 px-4 py-2 rounded-md ${
+    isDark ? "bg-white/95" : "bg-background"
+  } shadow-soft`;
+
   return (
-    <div
-      className={`flex flex-wrap items-center justify-center gap-6 md:gap-10 ${
-        isDark ? "" : ""
-      }`}
-    >
+    <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
       {/* UMC Utrecht */}
-      <div
-        className={`flex items-center gap-3 px-4 py-2 rounded-md ${
-          isDark ? "bg-white/95" : "bg-background"
-        } shadow-soft`}
-        aria-label="UMC Utrecht"
-      >
-        <div className="h-9 w-9 rounded-sm bg-white flex items-center justify-center">
-          <span className="text-primary-foreground font-black text-sm tracking-tighter">
-            <img src="/src/assets/umcu_logo.png" alt="UMC Utrecht Logo" />
-          </span>
-        </div>
+      <div className={wrapper} aria-label="UMC Utrecht">
+        <img src={umcuLogo} alt="UMC Utrecht" className="h-10 w-auto object-contain" />
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
             University Medical Center
@@ -31,22 +22,13 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
       </div>
 
       {/* Princess Máxima Center */}
-      <div
-        className={`flex items-center gap-3 px-4 py-2 rounded-md ${
-          isDark ? "bg-white/95" : "bg-background"
-        } shadow-soft`}
-        aria-label="Princess Máxima Center"
-      >
-        <div className="h-9 w-9 rounded-sm flex items-center justify-center">
-          <img src="/src/assets/pmc_logo.png" alt="Princess Máxima Center Logo" className="h-10 w-auto" />
-        </div>
+      <div className={wrapper} aria-label="Princess Máxima Center">
+        <img src={pmcLogo} alt="Princess Máxima Center" className="h-10 w-auto object-contain" />
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
             Prinses Máxima Centrum
           </div>
-          <div className="text-sm font-bold text-secondary">
-            voor kinderoncologie
-          </div>
+          <div className="text-sm font-bold text-secondary">voor kinderoncologie</div>
         </div>
       </div>
 
@@ -55,14 +37,10 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
         href="https://dlinrt.eu"
         target="_blank"
         rel="noopener noreferrer"
-        className={`flex items-center gap-3 px-4 py-2 rounded-md ${
-          isDark ? "bg-white/95" : "bg-background"
-        } shadow-soft hover:shadow-card transition-shadow`}
+        className={`${wrapper} hover:shadow-card transition-shadow`}
         aria-label="DLinRT.eu"
       >
-        <div className="h-9 w-9 rounded-sm bg-gradient-brand flex items-center justify-center">
-          <img src="/src/assets/dlinrteu_logo.png" alt="Princess Máxima Center Logo" className="h-10 w-auto" />
-        </div>
+        <img src={dlinrtLogo} alt="DLinRT.eu" className="h-10 w-auto object-contain" />
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
             Product catalog
