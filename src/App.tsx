@@ -7,7 +7,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Program from "./pages/Program";
+import Submission from "./pages/Submission";
 import Registration from "./pages/Registration";
+import Organizers from "./pages/Organizers";
 import Venue from "./pages/Venue";
 import NotFound from "./pages/NotFound";
 import SpeakerUpload from "./pages/Upload";
@@ -34,7 +36,9 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/program" element={<Program />} />
+                <Route path="/submission" element={<Submission />} />
                 <Route path="/registration" element={<Registration />} />
+                <Route path="/organizers" element={<Organizers />} />
                 <Route path="/venue" element={<Venue />} />
                 <Route path="/upload" element={<SpeakerUpload />} />
                 <Route path="/login" element={<Login />} />
