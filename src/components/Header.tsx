@@ -14,8 +14,10 @@ const Header = () => {
   const baseLinks = [
     { to: "/", label: "Home" },
     { to: "/program", label: "Program" },
+    { to: "/submission", label: "Submission" },
     { to: "/registration", label: "Registration" },
     { to: "/venue", label: "Venue" },
+    { to: "/organizers", label: "Organizers" },
   ];
 
   const authLinks: { to: string; label: string }[] = [];
