@@ -1,6 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Compass, BookOpen, ClipboardCheck } from "lucide-react";
+import { useState } from "react";
+
+// Bundle all organizer photos so Vite resolves them for production.
+const photoModules = import.meta.glob("@/assets/organizers/*.{jpg,jpeg,png}", {
+  eager: true,
+  query: "?url",
+  import: "default",
+}) as Record<string, string>;
+
+const photoMap: Record<string, string> = Object.fromEntries(
+  Object.entries(photoModules).map(([path, url]) => {
+    const file = path.split("/").pop()!;
+    const slug = file.replace(/\.(jpg|jpeg|png)$/i, "");
+    return [slug, url];
+  })
+);
+
+const getInitials = (name: string) =>
+  name
+    .split(" ")
+    .filter((w) => !w.endsWith(".") && w.length > 1)
+    .slice(-2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
 
 interface Person {
   name: string;
