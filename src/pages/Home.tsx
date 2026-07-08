@@ -176,7 +176,7 @@ const Home = () => {
                     Important dates for the workshop and symposium
                   </p>
                 </div>
-                <div className="grid gap-4 md:grid-cols-4">
+                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5">
                   {timelineItems.map((item, index) => (
                     <div
                       key={item.label}
