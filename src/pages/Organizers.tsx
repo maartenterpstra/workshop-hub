@@ -67,13 +67,32 @@ const advisoryBoard: Person[] = [
 // SOC = all regional organizers + advisory board (per brief)
 const soc: Person[] = [...regionalOrganizers];
 
+const PersonAvatar = ({ p }: { p: Person }) => {
+  const slug = p.photoUrl?.split("/").pop()?.replace(/\.(jpg|jpeg|png)$/i, "") ?? "";
+  const resolved = slug ? photoMap[slug] : undefined;
+  const [errored, setErrored] = useState(false);
+  const showImage = resolved && !errored;
+
+  return (
+    <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-base font-bold text-primary overflow-hidden">
+      {showImage ? (
+        <img
+          src={resolved}
+          alt={p.name}
+          onError={() => setErrored(true)}
+          className="h-16 w-16 rounded-full object-cover object-top"
+        />
+      ) : (
+        <span aria-hidden="true">{getInitials(p.name)}</span>
+      )}
+    </div>
+  );
+};
+
 const PersonCard = ({ p }: { p: Person }) => (
   <Card className="h-full">
     <CardContent className="pt-6 flex gap-4">
-      <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-lg font-bold text-primary">
-        <img src={p.photoUrl} alt={p.name} className="h-16 w-16 rounded-full object-cover" />
-        {/* {p.name.split(" ").filter(w => !w.endsWith(".")).slice(-2).map(w => w[0]).join("")} */}
-      </div>
+      <PersonAvatar p={p} />
       <div className="min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <div className="font-semibold text-foreground">{p.name}</div>
