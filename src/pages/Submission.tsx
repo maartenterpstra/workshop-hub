@@ -84,7 +84,7 @@ const Submission = () => {
               <ul className="list-disc list-inside space-y-1 text-sm">
                 <li>List all authors with affiliation and email.</li>
                 <li>Mark the <strong className="text-foreground">presenting author</strong>.</li>
-                <li>Author names must not appear inside the PDF — reviews are single-blind.</li>
+                <li><strong className="text-foreground">Author names must not appear inside the PDF.</strong></li>
               </ul>
             </section>
 

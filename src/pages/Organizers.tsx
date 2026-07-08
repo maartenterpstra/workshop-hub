@@ -12,40 +12,41 @@ interface Person {
 }
 
 const localOrganizers: Person[] = [
-  { name: "Asst. Prof. Matteo Maspero", title: "Lead Organizer", affiliation: "UMC Utrecht" },
-  { name: "Maarten Terpstra", affiliation: "UMC Utrecht" },
-  { name: "Prof. Nico van den Berg", affiliation: "UMC Utrecht" },
-  { name: "Prof. Marry van den Heuvel-Eibrink", affiliation: "Princess Máxima Center, Utrecht" },
-  { name: "Geert Janssens", affiliation: "UMC Utrecht / Princess Máxima Center, Utrecht" },
+  { name: "Asst. Prof. Matteo Maspero", title: "Lead Organizer", affiliation: "UMC Utrecht", photoUrl: "/src/assets/organizers/matteo-maspero.jpg"  },
+  { name: "Maarten Terpstra", affiliation: "UMC Utrecht", photoUrl: "/src/assets/organizers/maarten-terpstra.jpg"  },
+  { name: "Prof. Nico van den Berg", affiliation: "UMC Utrecht", photoUrl: "/src/assets/organizers/nico-van-den-berg.png"  },
+  { name: "Prof. Marry van den Heuvel-Eibrink", affiliation: "Princess Máxima Center, Utrecht", photoUrl: "/src/assets/organizers/marry-van-den-heuvel-eibrink.jpg"  },
+  { name: "Geert Janssens", affiliation: "UMC Utrecht / Princess Máxima Center, Utrecht", photoUrl: "/src/assets/organizers/geert-janssens.jpg"  },
 ];
 
 const regionalOrganizers: Person[] = [
-  { name: "Assoc. Prof. Ana Barragán-Montero", affiliation: "UCLouvain", region: "BE" },
-  { name: "Assoc. Prof. Mauricio Reyes", affiliation: "ARTORG / University of Bern", region: "CH" },
-  { name: "Prof. Peter van Ooijen", affiliation: "UMC Groningen", region: "NL" },
-  { name: "Prof. Stine Korreman", affiliation: "Aarhus University / DCPT", region: "DK" },
-  { name: "Prof. Claudio Fiorino", affiliation: "San Raffaele, Milano", region: "IT" },
-  { name: "Prof. Javier Pascau", affiliation: "U. Carlos III, Madrid", region: "ES" },
-  { name: "Dr. Eliana Vasquez Osorio", affiliation: "University of Manchester", region: "UK" },
-  { name: "Barbara Knäusl", affiliation: "Medical University of Vienna", region: "AT" },
-  { name: "Assoc. Prof. Christian Gustafsson", affiliation: "Lund University", region: "SE" },
-  { name: "Prof. Guillaume Landry", affiliation: "LMU Munich", region: "DE" },
-  { name: "Prof. Steve Jiang", affiliation: "UT Southwestern", region: "USA" },
+  { name: "Assoc. Prof. Ana Barragán-Montero", affiliation: "UCLouvain", region: "BE", photoUrl: "/src/assets/organizers/ana-maria-barragan-montero.jpg"  },
+  { name: "Assoc. Prof. Mauricio Reyes", affiliation: "ARTORG / University of Bern", region: "CH", photoUrl: "/src/assets/organizers/mauricio-reyes.jpg"  },
+  { name: "Prof. Peter van Ooijen", affiliation: "UMC Groningen", region: "NL", photoUrl: "/src/assets/organizers/peter-van-ooijen.jpg" },
+  { name: "Prof. Stine Korreman", affiliation: "Aarhus University / DCPT", region: "DK", photoUrl: "/src/assets/organizers/stine-korreman.jpg" },
+  { name: "Prof. Claudio Fiorino", affiliation: "San Raffaele, Milano", region: "IT", photoUrl: "/src/assets/organizers/claudio-fiorino.jpg" },
+  { name: "Prof. Javier Pascau", affiliation: "U. Carlos III, Madrid", region: "ES", photoUrl: "/src/assets/organizers/javier-pascau.jpg" },
+  { name: "Dr. Eliana Vasquez Osorio", affiliation: "University of Manchester", region: "UK", photoUrl: "/src/assets/organizers/eliana-vasquez-osorio.jpg" },
+  { name: "Barbara Knäusl", affiliation: "Medical University of Vienna", region: "AT", photoUrl: "/src/assets/organizers/barbara-knausl.jpg" },
+  { name: "Assoc. Prof. Christian Gustafsson", affiliation: "Lund University", region: "SE", photoUrl: "/src/assets/organizers/christian-gustafsson.jpg" },
+  { name: "Prof. Guillaume Landry", affiliation: "LMU Munich", region: "DE", photoUrl: "/src/assets/organizers/guillaume-landry.jpg" },
+  { name: "Prof. Steve Jiang", affiliation: "UT Southwestern", region: "USA", photoUrl: "/src/assets/organizers/steve-jiang.jpg" },
 ];
 
 const advisoryBoard: Person[] = [
-  { name: "Prof. Jan-Jakob Sonke", affiliation: "Netherlands Cancer Institute" },
-  { name: "Prof. Wouter van Elmpt", affiliation: "Maastro / Maastricht University" },
+  { name: "Prof. Jan-Jakob Sonke", affiliation: "Netherlands Cancer Institute", photoUrl: "/src/assets/organizers/jan-jakob-sonke.jpg" },
+  { name: "Prof. Wouter van Elmpt", affiliation: "Maastro / Maastricht University", photoUrl: "/src/assets/organizers/wouter-van-elmpt.jpg" },
 ];
 
 // SOC = all regional organizers + advisory board (per brief)
-const soc: Person[] = [...regionalOrganizers, ...advisoryBoard];
+const soc: Person[] = [...regionalOrganizers];
 
 const PersonCard = ({ p }: { p: Person }) => (
   <Card className="h-full">
     <CardContent className="pt-6 flex gap-4">
       <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-lg font-bold text-primary">
-        {p.name.split(" ").filter(w => !w.endsWith(".")).slice(-2).map(w => w[0]).join("")}
+        <img src={p.photoUrl} alt={p.name} className="h-16 w-16 rounded-full object-cover" />
+        {/* {p.name.split(" ").filter(w => !w.endsWith(".")).slice(-2).map(w => w[0]).join("")} */}
       </div>
       <div className="min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
@@ -100,22 +101,21 @@ const Organizers = () => {
             Organizers & Committees
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            The people behind AIinRT 2027 — from the local team in Utrecht to the
-            international Scientific Organizing Committee and Advisory Board.
+            The people behind AIinRT 2027.
           </p>
         </div>
 
         <Section
           icon={Users}
           title="Local Organizing Committee"
-          description="Runs day-to-day organization of the workshop in Utrecht. All local organizers are also members of the Scientific Organizing Committee."
+          description="Runs day-to-day organization of the workshop in Utrecht."
           people={localOrganizers}
         />
 
         <Section
           icon={Compass}
           title="Scientific Organizing Committee (SOC)"
-          description="Shapes the scientific programme, oversees the peer-review process, and selects the accepted abstracts. Includes regional representatives and the Advisory Board."
+          description="Shapes the scientific programme, oversees the peer-review process, and selects the accepted abstracts."
           people={soc}
         />
 

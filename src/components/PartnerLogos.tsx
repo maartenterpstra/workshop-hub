@@ -17,9 +17,9 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
         } shadow-soft`}
         aria-label="UMC Utrecht"
       >
-        <div className="h-9 w-9 rounded-sm bg-primary flex items-center justify-center">
+        <div className="h-9 w-9 rounded-sm bg-white flex items-center justify-center">
           <span className="text-primary-foreground font-black text-sm tracking-tighter">
-            UMC
+            <img src="/src/assets/umcu_logo.png" alt="UMC Utrecht Logo" />
           </span>
         </div>
         <div className="leading-tight">
@@ -37,11 +37,8 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
         } shadow-soft`}
         aria-label="Princess Máxima Center"
       >
-        <div className="h-9 w-9 rounded-sm bg-secondary flex items-center justify-center">
-          {/* Simple crown mark */}
-          <svg viewBox="0 0 24 24" className="h-5 w-5 fill-secondary-foreground" aria-hidden="true">
-            <path d="M3 8l3 4 3-6 3 6 3-6 3 6 3-4v9H3z" />
-          </svg>
+        <div className="h-9 w-9 rounded-sm flex items-center justify-center">
+          <img src="/src/assets/pmc_logo.png" alt="Princess Máxima Center Logo" className="h-10 w-auto" />
         </div>
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -64,7 +61,7 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
         aria-label="DLinRT.eu"
       >
         <div className="h-9 w-9 rounded-sm bg-gradient-brand flex items-center justify-center">
-          <span className="text-white font-black text-xs tracking-tight">DL</span>
+          <img src="/src/assets/dlinrteu_logo.png" alt="Princess Máxima Center Logo" className="h-10 w-auto" />
         </div>
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
