@@ -128,6 +128,9 @@ const Venue = () => {
               </ul>
             </CardContent>
           </Card>
+        </div>
+
+
 
 
         <Card className="bg-muted/30 border-0">
