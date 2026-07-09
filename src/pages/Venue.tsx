@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Train, Car, Plane, Phone, Mail } from "lucide-react";
+import { MapPin, Train, Car, Plane } from "lucide-react";
 import { venueContent } from "@/data/venueContent";
 import { siteConfig } from "@/data/siteConfig";
 import mapImg from "@/assets/plattegrond-umc-utrecht.png";
@@ -68,7 +68,7 @@ const Venue = () => {
           </CardContent>
         </Card>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card className="shadow-card border-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
@@ -128,32 +128,10 @@ const Venue = () => {
               </ul>
             </CardContent>
           </Card>
-
-          <Card className="shadow-card border-0">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-primary" />
-                Contact Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
-              <p>For directions or venue-related questions:</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-primary" />
-                  <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">
-                    {siteConfig.contact.email}
-                  </a>
-                </div>
-                <p className="text-xs">
-                  Contact: {siteConfig.contact.name}<br />
-                  {siteConfig.contact.department}<br />
-                  {siteConfig.contact.institution}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
+
+
+
 
         <Card className="bg-muted/30 border-0">
           <CardContent className="pt-6">

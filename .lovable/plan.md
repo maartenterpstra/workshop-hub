@@ -1,51 +1,42 @@
-## Goals
-
-1. Fix broken images (partner logos on home, organizer photos on Organizers page) — they currently use `/src/assets/...` paths which Vite does not serve in production.
-2. Provide a graceful placeholder for any missing committee headshot.
-3. Update all event dates to **18–19 March 2027**.
-4. Add an **Abstract decisions / communications: 16 December 2026** milestone.
-
 ## Changes
 
-### 1. Image rendering fixes
+### 1. Venue page (`src/pages/Venue.tsx` + `src/data/venueContent.ts`)
 
-**`src/components/PartnerLogos.tsx`**
-- Replace inline `/src/assets/...` `<img src>` with proper ES6 imports:
-  - `import umcuLogo from "@/assets/umcu_logo.png"`
-  - `import pmcLogo from "@/assets/pmc_logo.png"`
-  - `import dlinrtLogo from "@/assets/dlinrteu_logo.png"`
-- Tidy sizing so logos render at a consistent height and don't overflow the small square wrapper.
-- Fix the alt text on the DLinRT logo (currently says "Princess Máxima Center Logo").
+- **Tram/bus stop**: change `byTrain.instructions` from "Get off at UMC Utrecht" to "Get off at **Prinses Máxima Centrum (P+R Science Park)**" stop. Line 12 (tram Uithoflijn) — verify wording so it clearly says PMC, not UMC.
+- **Auditorium location**: update `venueContent.venue.institution` from
+  `"Auditorium, Department of Radiotherapy, Heidelberglaan 25, ..."`
+  to
+  `"Auditorium (2nd floor), Heidelberglaan 25, 3584 CS Utrecht, The Netherlands"`.
+- **Contact info**: remove the "Contact Information" `<Card>` from the 2×2 travel grid, and rebalance the grid (three cards: train / car / air on a `md:grid-cols-3`). Keep contact info only in the site-wide `Footer.tsx` at the bottom of every page — nothing extra added.
 
-**`src/pages/Organizers.tsx`**
-- Build a static `import.meta.glob` map of `/src/assets/organizers/*.{jpg,png}` → resolved URLs.
-- Reference each person by filename slug (`matteoMasperoImg`, etc.) via the map, so bundling works.
-- Add a `<PersonAvatar>` sub-component:
-  - If a resolved photo URL exists, render `<img>` with `object-cover`, `object-top`, rounded, fallback `onError` swaps to initials placeholder.
-  - Otherwise render initials on a subtle brand-tinted circle (current gradient look) — this is the "placeholder for committee photos" the user asked for.
-- Remove the current overlap where both an `<img>` and initials render inside the same circle.
+### 2. Abstract submission page (`src/pages/Submission.tsx`)
 
-### 2. Date + timeline updates
+Add a friendly notice inside the "Ethics & originality" section (and mirror one line in the intro Alert) stating:
 
-Set the workshop dates to **18–19 March 2027** everywhere they appear:
+> We welcome submissions of work that has been submitted or is under review elsewhere, provided it has **not yet been presented** at another conference. Please disclose any such prior submission when uploading — this **will not affect scoring**. Our goal is a high-quality, science-focused meeting with a low threshold to participate.
 
-- **`src/data/siteConfig.ts`** — `dates: "18-19 March 2027"`, `abstractSubmissionDeadline: "1 December 2026"` (keep as-is), no other structural changes.
-- **`src/data/aboutContent.ts`** — both `educational.date` and `scientific.date` → `"18-19 March 2027"`.
-- **`src/pages/Home.tsx`** — timeline items:
-  - Call for abstracts — 1 September 2026
-  - Registration opening — 1 October 2026
-  - Abstract submission deadline — 1 December 2026
-  - **Abstract decisions communicated — 16 December 2026** (new)
-  - AIinRT Symposium — **18–19 March 2027**
-  - Adjust the grid to `md:grid-cols-5` to fit five items cleanly.
-- Any other hard-coded "25–26 March 2027" strings found in Home hero / other pages → update to the new dates. (Header/Program/Venue will be spot-checked in the same pass.)
+Tweak the existing "Work must be original and not previously published in full" bullet to align (replace "originality" wording with the encouragement + disclosure request).
 
-### 3. Non-goals
+### 3. New Reviewers page
 
-- No design overhaul, no schema changes, no new pages. Purely presentation and content fixes.
-- Registration and Submission page copy already reads dates from `siteConfig`; no direct edits needed there beyond the config change.
+Parse the uploaded spreadsheet (37 reviewers, filtered to those who ticked "May we list you publicly … Yes"). Create:
+
+- **`src/data/reviewers.ts`** — typed array `{ name, surname, affiliation, website?: string }[]`. Names normalized (trim, fix capitalization like "Bol / Gijs" → "Gijs Bol"). Bare-domain URLs (e.g. `konsta.com.pl`, `sebastiaanbreedveld.nl`) get `https://` prefixed. No emails displayed.
+- **`src/pages/Reviewers.tsx`** — simple responsive list (single-column readable layout, alphabetical by surname). Each entry:
+  - `**Name Surname**` — Affiliation
+  - Optional "Website ↗" link (opens in new tab, `rel="noopener noreferrer"`).
+  - No photos, no bios beyond affiliation (the spreadsheet has no bio text — only affiliation + optional URL, which matches "bio with link if provided").
+- Route + nav:
+  - Add `/reviewers` route in `src/App.tsx`.
+  - Add "Reviewers" link to `src/components/Header.tsx` (placed near Organizers).
+
+### 4. Non-goals
+
+- No schema changes, no auth changes, no scoring logic changes.
+- No photos for reviewers.
+- No copy changes outside the three items above.
 
 ## Technical notes
 
-- Vite requires assets to be imported (or placed in `public/`) — direct `/src/...` URLs 404 in dev preview and production. `import.meta.glob("...", { eager: true, as: "url" })` is the idiomatic way to map a folder of images.
-- The placeholder avatar keeps the existing `bg-gradient-to-br from-primary/20 to-secondary/20` styling with the person's initials so the committee grid still looks intentional when a photo is missing or fails to load.
+- Reviewer list is derived at build time from the xlsx and hardcoded in `reviewers.ts` — no runtime spreadsheet parsing. Anyone who answered "No" to public listing is excluded.
+- Sorting: alphabetical by surname on render (`localeCompare`), no user-facing controls needed.

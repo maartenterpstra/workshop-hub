@@ -2,7 +2,7 @@
 export const venueContent = {
   venue: {
     name: "Princess Máxima Center",
-    institution: "Auditorium, Department of Radiotherapy, Heidelberglaan 25, 3584 CS Utrecht, The Netherlands",
+    institution: "Auditorium (2nd floor), Heidelberglaan 25, 3584 CS Utrecht, The Netherlands",
     routesteps: [
       "At the main entrance of the UMC (that is on floor 1, you don't need any changes w.r.t. floor)",
       "Walk straight ahead following route Q, past the waiting area and shops",
@@ -18,8 +18,8 @@ export const venueContent = {
       title: "By Train",
       description: "Utrecht is well-connected by train to major Dutch cities. From Utrecht Central Station:",
       instructions: [
-        "Take the tram or bus line 12 towards \"Utrecht Science Park\"",
-        "Get off at \"UMC Utrecht\" stop (approximately 15 minutes)"
+        "Take tram line 22 (Uithoflijn) or bus line 28 towards \"Utrecht Science Park\"",
+        "Get off at the \"Prinses Máxima Centrum\" (PMC) stop — approximately 15 minutes from Utrecht Centraal"
       ]
     },
     byCar: {
