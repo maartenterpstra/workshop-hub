@@ -68,7 +68,7 @@ const Venue = () => {
           </CardContent>
         </Card>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card className="shadow-card border-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">

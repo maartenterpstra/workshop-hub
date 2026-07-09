@@ -31,7 +31,12 @@ const Submission = () => {
           <AlertCircle className="h-4 w-4 text-primary" />
           <AlertDescription className="text-base">
             <strong className="text-foreground">Submission opens {siteConfig.callForAbstractsOpens}.</strong>{" "}
-            Deadline: {siteConfig.abstractSubmissionDeadline}. Decisions follow peer review.
+            Deadline: {siteConfig.abstractSubmissionDeadline}. Decisions follow peer review.{" "}
+            <span className="block mt-2 text-foreground/90">
+              Work that has been submitted to (or is under review at) another venue is welcome,
+              provided it has <strong>not yet been presented</strong>. Please disclose it on
+              submission — this does not affect scoring.
+            </span>
           </AlertDescription>
         </Alert>
 
@@ -101,9 +106,15 @@ const Submission = () => {
             </section>
 
             <section>
-              <h3 className="font-semibold text-foreground mb-2">Ethics & originality</h3>
+              <h3 className="font-semibold text-foreground mb-2">Originality & disclosure</h3>
+              <p className="text-sm mb-2">
+                Our goal is a high-quality, science-focused meeting with a low threshold to
+                participate. We <strong className="text-foreground">encourage submissions of work
+                that is already submitted or under review elsewhere</strong>, as long as it has
+                not yet been presented at another conference.
+              </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>Work must be original and not previously published in full.</li>
+                <li>Please disclose any prior or concurrent submission on the form — this <strong className="text-foreground">will not impact scoring</strong>.</li>
                 <li>Studies involving patient data must state ethical approval and data governance.</li>
                 <li>Disclose funding and conflicts of interest.</li>
               </ul>
