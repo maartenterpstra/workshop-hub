@@ -18,6 +18,7 @@ const Header = () => {
     { to: "/registration", label: "Registration" },
     { to: "/venue", label: "Venue" },
     { to: "/organizers", label: "Organizers" },
+    { to: "/reviewers", label: "Reviewers" },
   ];
 
   const authLinks: { to: string; label: string }[] = [];
