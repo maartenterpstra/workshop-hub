@@ -11,6 +11,7 @@ import Submission from "./pages/Submission";
 import Registration from "./pages/Registration";
 import Organizers from "./pages/Organizers";
 import Venue from "./pages/Venue";
+import Reviewers from "./pages/Reviewers";
 import NotFound from "./pages/NotFound";
 import SpeakerUpload from "./pages/Upload";
 import Login from "./pages/Login";
@@ -40,6 +41,7 @@ const App = () => (
                 <Route path="/registration" element={<Registration />} />
                 <Route path="/organizers" element={<Organizers />} />
                 <Route path="/venue" element={<Venue />} />
+                <Route path="/reviewers" element={<Reviewers />} />
                 <Route path="/upload" element={<SpeakerUpload />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
