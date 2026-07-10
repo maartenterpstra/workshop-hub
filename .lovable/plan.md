@@ -1,33 +1,62 @@
-## Changes
+## 1. Downloadable abstract templates
 
-### 1. Remove specific dates (TBA)
-`src/data/siteConfig.ts`: change `dates: "18-19 March 2027"` → `dates: "Dates TBA"` (still labeled "2027 Workshop" via `subtitle`). All pages that render `siteConfig.dates` will automatically show "Dates TBA".
+- Register both uploaded files as Lovable assets so they can be downloaded from the site:
+  - `AIinRT2027_Abstract_Template_20260710.docx`
+  - `AIinRT2027_Abstract_Template_20260710.tex`
+- On `src/pages/Submission.tsx`, add a new "Download templates" card (above "Submission rules & format") with two download buttons (Word + LaTeX) pointing to the asset URLs, plus a short line that the templates define the required layout (1 A4 page, 500 words, up to 2 display items, double-blind).
+- Update the "What you will upload" section copy to match the actual submission flow:
+  - Paste the abstract text (Introduction / Methods / Results / Conclusion) into the platform's text fields.
+  - Upload figures/tables separately as images (PNG/JPG), up to **2 display items** (was "1").
+  - Upload the final compiled PDF built from the provided template.
+- Bump the stated word cap from 500 to note "≈500 words (a 600-word margin is accepted by the form)".
 
-### 2. Submission page — clarify platform input format
-`src/pages/Submission.tsx`, under "Length & file format" (and adjust the "Structured abstract" intro): make clear that on the submission platform authors will be asked to enter:
-- The **abstract text** (structured: Background / Methods / Results / Conclusion) directly into text fields.
-- **Figures/tables uploaded separately as image files** (PNG/JPG).
-- A **final compiled PDF** of the full abstract (text + figure/table) as a single upload.
+## 2. Submission form (`src/pages/Submit.tsx`) alignment
 
-Keep the 500-word / 1 figure-or-table / A4 constraints; reword the bullets so they match what the platform actually asks.
+- Add a live **word counter** across Background + Methods + Results + Conclusion; show `x / 600 words` and turn red past 600.
+- Enforce a **hard 600-word cap** in the zod schema (`refine` on the combined length) so oversized submissions are rejected client-side with a clear toast.
+- Update the "Abstract PDF" card copy to say the PDF must be produced from the provided Word/LaTeX template, single A4 page, double-blind (no author names in the PDF).
+- Allow **up to 2 figure/table image uploads** alongside the PDF (PNG/JPG, max 10 MB each). Store next to the PDF in the existing `abstracts` storage bucket under the same per-submission folder; persist their paths in a new nullable `figure_paths text[]` column on `abstracts` (single small migration with matching GRANTs, RLS already inherited).
+- Keep everything else (topics, authors block, submission window gating) unchanged.
 
-### 3. Program page — add structure + provisional schedule
-Rewrite `src/pages/Program.tsx` to keep the current header + "Program TBC" alert + previous-edition card, and add two new sections:
+## 3. Session-name consistency audit
 
-**a. Format block** — short description:
-> Six 90-min sessions in clinical-workflow order. Each session opens with a 30-min invited state-of-the-art talk (low self-reference), followed by 5 proffered papers (9 min + 3 min discussion). One cross-disciplinary keynote closes each day.
+Canonical list (from `Program.tsx`, matches the LaTeX template):
 
-**b. Sessions list** — S1–S6 as cards/list:
-- S1 Segmentation & Registration
-- S2 Reconstruction & Synthesis
-- S3 Foundation Models, Text, Explainability & Uncertainty
-- S4 Dose & Adaptive Workflows
-- S5 Clinical Predictions & Outcomes
-- S6 Implementation, QA & Ethics
+```
+S1 Segmentation & Registration
+S2 Reconstruction & Synthesis
+S3 Foundation Models, Text, Explainability & Uncertainty
+S4 Dose & Adaptive Workflows
+S5 Clinical Predictions & Outcomes
+S6 Implementation, QA & Ethics
+```
 
-**c. Provisional timetable** — two side-by-side (stacked on mobile) tables Day 1 / Day 2, with all rows from the user's message. Label clearly as "Provisional — subject to change".
+Apply this list verbatim to:
+- `src/pages/Submission.tsx` `topics` array (currently "Foundation Models & Text" → "Foundation Models, Text, Explainability & Uncertainty").
+- `src/data/aboutContent.ts` `scientific.themes` (rename to match S1–S6 exactly, drop "Treatment Planning" which is now covered by S4 "Dose & Adaptive Workflows", rename "Contouring & Registration" → "Segmentation & Registration", "Image Synthesis & Reconstruction" → "Reconstruction & Synthesis", "Clinical Predictions" → "Clinical Predictions & Outcomes", "Clinical Implementation" → "Implementation, QA & Ethics", "Foundation Models & Text" → "Foundation Models, Text, Explainability & Uncertainty").
+- `src/pages/Home.tsx` line 215 marketing bullet — rewrite to reference the six current sessions in workflow order.
+- Do **not** touch `src/data/scheduleScientific.ts` (2026 archive, historical).
+- Ensure the DB `topics` table (used by `Submit.tsx`) reflects the six canonical names via a migration `update`/`insert` (idempotent upsert keyed on `name`), so the topic dropdown matches.
 
-No changes to `scheduleScientific.ts` (that's 2026 archive data). Pure presentation via a new inline `programStructure` const inside `Program.tsx` (or a small `src/data/programStructure.ts` if cleaner — will inline unless it grows).
+## 4. Footer cleanup (`src/components/Footer.tsx`)
 
-### Non-goals
-No changes to routing, auth, DB, submission form logic, or other pages. No new dependencies.
+- Remove the entire "Organizers" column (the two single-name list). The Organizers tab already covers this.
+- Keep the "Contact" column as-is (this is the one place the Maspero email is allowed to remain).
+- Adjust grid to `md:grid-cols-2` since only two columns remain.
+
+## 5. Remove `M.Maspero@umcutrecht.nl` everywhere except the footer
+
+- `src/pages/Submission.tsx`: drop the "Questions? …" line with the mailto — or replace with a neutral "Questions? See the Contact section in the footer." No email rendered.
+- Grep audit confirms the only other renders of `siteConfig.contact.email` are in `Footer.tsx` (keep) and `Submission.tsx` (remove).
+- `siteConfig.contact.email` stays defined (footer needs it); `email2` (Terpstra) also stays for the footer.
+
+## Technical notes
+
+- New DB migration:
+  ```sql
+  ALTER TABLE public.abstracts ADD COLUMN IF NOT EXISTS figure_paths text[];
+  -- topics upsert to canonical S1–S6 names, preserving display_order
+  ```
+  No new grants needed (column added to existing table).
+- Assets registered via `lovable-assets create --file /mnt/user-uploads/… --filename …` producing `src/assets/*.asset.json` pointers imported by `Submission.tsx`.
+- No new dependencies. No auth or routing changes. No changes to `scheduleScientific.ts`, `Reviewers.tsx`, `Venue.tsx`, or the 2026 archive.
