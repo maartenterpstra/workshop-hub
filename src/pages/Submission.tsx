@@ -56,7 +56,8 @@ const Submission = () => {
             <section>
               <h3 className="font-semibold text-foreground mb-2">Structured abstract</h3>
               <p>
-                Abstracts must be submitted in structured form with the following sections:
+                On the submission platform, the abstract text is entered directly into
+                separate fields, one per section:
               </p>
               <ul className="list-disc list-inside space-y-1 mt-2 text-sm">
                 <li><strong className="text-foreground">Background</strong> — clinical/technical motivation</li>
@@ -67,12 +68,23 @@ const Submission = () => {
             </section>
 
             <section>
-              <h3 className="font-semibold text-foreground mb-2">Length & file format</h3>
+              <h3 className="font-semibold text-foreground mb-2">What you will upload</h3>
+              <p className="text-sm mb-2">
+                The submission form asks for three things separately — please prepare them in advance:
+              </p>
+              <ol className="list-decimal list-inside space-y-1 text-sm">
+                <li><strong className="text-foreground">Abstract text</strong> pasted into the structured fields above.</li>
+                <li><strong className="text-foreground">Figure and/or table</strong> uploaded as image files (PNG or JPG) — one file per figure/table.</li>
+                <li><strong className="text-foreground">Final compiled PDF</strong> of the full abstract (text + figure/table) as a single file (max 5 MB).</li>
+              </ol>
+            </section>
+
+            <section>
+              <h3 className="font-semibold text-foreground mb-2">Length & format constraints</h3>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 <li>Maximum <strong className="text-foreground">500 words</strong> across all sections (excluding title, authors, references).</li>
                 <li>Up to <strong className="text-foreground">1 figure or table</strong>.</li>
-                <li>Upload a single <strong className="text-foreground">PDF</strong> (max 5 MB). No Word or LaTeX source.</li>
-                <li>Use A4, 11pt, single column, 2 cm margins.</li>
+                <li>Compiled PDF: A4, 11pt, single column, 2 cm margins. No Word or LaTeX source.</li>
               </ul>
             </section>
 
