@@ -56,8 +56,12 @@ const Submit = () => {
     { name: "", affiliation: "", email: user?.email ?? "", is_presenting: true },
   ]);
   const [file, setFile] = useState<File | null>(null);
+  const [figures, setFigures] = useState<File[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const totalWords = countWords([background, methods, results, conclusion].join(" "));
+  const overLimit = totalWords > WORD_LIMIT;
 
   useEffect(() => {
     supabase.from("topics").select("id, name").order("display_order").then(({ data }) => {
@@ -83,6 +87,27 @@ const Submit = () => {
     }
     setFile(f);
   };
+
+  const handleFigures = (files: FileList | null) => {
+    if (!files) return;
+    const incoming = Array.from(files);
+    const combined = [...figures, ...incoming].slice(0, 2);
+    for (const f of incoming) {
+      if (!["image/png", "image/jpeg"].includes(f.type)) {
+        toast.error("Figures must be PNG or JPG.");
+        return;
+      }
+      if (f.size > 10 * 1024 * 1024) {
+        toast.error("Each figure must be under 10 MB.");
+        return;
+      }
+    }
+    if (figures.length + incoming.length > 2) {
+      toast.warning("Maximum 2 display items — extra files ignored.");
+    }
+    setFigures(combined);
+  };
+  const removeFigure = (i: number) => setFigures((p) => p.filter((_, idx) => idx !== i));
 
   const updateAuthor = (i: number, patch: Partial<AuthorRow>) => {
     setAuthors((prev) => prev.map((a, idx) => (idx === i ? { ...a, ...patch } : a)));
