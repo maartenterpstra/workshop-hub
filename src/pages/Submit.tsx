@@ -253,6 +253,10 @@ const Submit = () => {
                 <Textarea value={value} onChange={(e) => setter(e.target.value)} rows={4} maxLength={3000} required />
               </div>
             ))}
+            <div className={`text-xs text-right font-medium ${overLimit ? "text-destructive" : "text-muted-foreground"}`}>
+              {totalWords} / {WORD_LIMIT} words
+              {overLimit && " — please shorten before submitting"}
+            </div>
           </CardContent>
         </Card>
 
@@ -294,7 +298,10 @@ const Submit = () => {
         <Card>
           <CardHeader>
             <CardTitle>Abstract PDF *</CardTitle>
-            <CardDescription>Drag &amp; drop or click to upload. PDF only, max 20 MB.</CardDescription>
+            <CardDescription>
+              Compiled from the provided Word or LaTeX template. One A4 page, double-blind
+              (no author names in the PDF). Max 20 MB.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div
@@ -321,7 +328,46 @@ const Submit = () => {
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Figures / tables (optional)</CardTitle>
+            <CardDescription>
+              Upload up to 2 display items (figures and/or tables combined) as PNG or JPG,
+              max 10 MB each. These are stored alongside your PDF.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <input
+              type="file"
+              id="fig-upload"
+              accept="image/png,image/jpeg"
+              multiple
+              className="hidden"
+              onChange={(e) => { handleFigures(e.target.files); e.target.value = ""; }}
+            />
+            <label
+              htmlFor="fig-upload"
+              className="cursor-pointer inline-flex items-center gap-2 border border-dashed rounded-md px-4 py-2 text-sm hover:border-primary hover:bg-primary/5"
+            >
+              <UploadCloud className="h-4 w-4" />
+              {figures.length >= 2 ? "Maximum reached" : "Add figure/table"}
+            </label>
+            {figures.length > 0 && (
+              <ul className="space-y-1 text-sm">
+                {figures.map((f, i) => (
+                  <li key={i} className="flex items-center justify-between border rounded-md px-3 py-2">
+                    <span className="truncate">{f.name} <span className="text-xs text-muted-foreground">({(f.size / 1024 / 1024).toFixed(2)} MB)</span></span>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeFigure(i)}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        <Button type="submit" size="lg" className="w-full" disabled={submitting || overLimit}>
           {submitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting…</> : "Submit abstract"}
         </Button>
       </form>
