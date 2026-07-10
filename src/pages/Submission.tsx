@@ -1,14 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, FileText, CheckCircle2 } from "lucide-react";
+import { AlertCircle, FileText, CheckCircle2, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
+import docxTemplate from "@/assets/abstract-template-docx.asset.json";
+import texTemplate from "@/assets/abstract-template-tex.asset.json";
 
 const topics = [
   "Segmentation & Registration",
   "Reconstruction & Synthesis",
-  "Foundation Models & Text",
+  "Foundation Models, Text, Explainability & Uncertainty",
   "Dose & Adaptive Workflows",
   "Clinical Predictions & Outcomes",
   "Implementation, QA & Ethics",
@@ -44,6 +46,35 @@ const Submission = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Download className="h-5 w-5 text-primary" />
+              </div>
+              Download the abstract template
+            </CardTitle>
+            <CardDescription className="text-base">
+              Use either the Word or LaTeX template — they define the required layout
+              (one A4 page, ~500 words, up to 2 display items, double-blind).
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-3">
+            <Button asChild variant="outline">
+              <a href={docxTemplate.url} download>
+                <Download className="mr-2 h-4 w-4" />
+                Word template (.docx)
+              </a>
+            </Button>
+            <Button asChild variant="outline">
+              <a href={texTemplate.url} download>
+                <Download className="mr-2 h-4 w-4" />
+                LaTeX template (.tex)
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-card border-0 mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <FileText className="h-5 w-5 text-primary" />
               </div>
               Submission rules & format
@@ -56,35 +87,52 @@ const Submission = () => {
             <section>
               <h3 className="font-semibold text-foreground mb-2">Structured abstract</h3>
               <p>
-                On the submission platform, the abstract text is entered directly into
-                separate fields, one per section:
+                Prepare your abstract in the template, then on the submission platform paste
+                the text of each section into a separate field:
               </p>
               <ul className="list-disc list-inside space-y-1 mt-2 text-sm">
-                <li><strong className="text-foreground">Background</strong> — clinical/technical motivation</li>
-                <li><strong className="text-foreground">Methods</strong> — data, model, experimental setup</li>
+                <li><strong className="text-foreground">Introduction / Purpose</strong> — clinical or technical problem and aim</li>
+                <li><strong className="text-foreground">Materials & Methods</strong> — data, model, experimental setup</li>
                 <li><strong className="text-foreground">Results</strong> — quantitative outcomes</li>
                 <li><strong className="text-foreground">Conclusion</strong> — take-home message and outlook</li>
               </ul>
             </section>
 
             <section>
-              <h3 className="font-semibold text-foreground mb-2">What you will upload</h3>
+              <h3 className="font-semibold text-foreground mb-2">What you will provide on the form</h3>
               <p className="text-sm mb-2">
-                The submission form asks for three things separately — please prepare them in advance:
+                The form asks for three things separately — please have them ready:
               </p>
               <ol className="list-decimal list-inside space-y-1 text-sm">
-                <li><strong className="text-foreground">Abstract text</strong> pasted into the structured fields above.</li>
-                <li><strong className="text-foreground">Figure and/or table</strong> uploaded as image files (PNG or JPG) — one file per figure/table.</li>
-                <li><strong className="text-foreground">Final compiled PDF</strong> of the full abstract (text + figure/table) as a single file (max 5 MB).</li>
+                <li>
+                  <strong className="text-foreground">Abstract text</strong> copied from your template into the structured fields
+                  (Introduction / Methods / Results / Conclusion).
+                </li>
+                <li>
+                  <strong className="text-foreground">Figures and/or tables</strong> uploaded separately as image files
+                  (PNG or JPG) — up to <strong className="text-foreground">2 display items</strong> in total, one file each.
+                </li>
+                <li>
+                  <strong className="text-foreground">Final compiled PDF</strong> of the full abstract (built from the
+                  template) uploaded as a single file.
+                </li>
               </ol>
             </section>
 
             <section>
               <h3 className="font-semibold text-foreground mb-2">Length & format constraints</h3>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>Maximum <strong className="text-foreground">500 words</strong> across all sections (excluding title, authors, references).</li>
-                <li>Up to <strong className="text-foreground">1 figure or table</strong>.</li>
-                <li>Compiled PDF: A4, 11pt, single column, 2 cm margins. No Word or LaTeX source.</li>
+                <li>
+                  Target <strong className="text-foreground">500 words</strong> across the four sections
+                  (excluding title, authors, captions, references). The submission form accepts up to{" "}
+                  <strong className="text-foreground">600 words</strong> as a small margin.
+                </li>
+                <li>Up to <strong className="text-foreground">2 display items</strong> (figures and/or tables combined).</li>
+                <li>Compiled PDF: A4, single page, using the provided template. No Word or LaTeX source is required.</li>
+                <li>
+                  <strong className="text-foreground">Double-blind:</strong> no author names, affiliations or
+                  acknowledgements anywhere in the PDF. Author details are entered in the form only.
+                </li>
               </ul>
             </section>
 
@@ -99,7 +147,7 @@ const Submission = () => {
             <section>
               <h3 className="font-semibold text-foreground mb-2">Authors</h3>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>List all authors with affiliation and email.</li>
+                <li>List all authors with affiliation and email on the form.</li>
                 <li>Mark the <strong className="text-foreground">presenting author</strong>.</li>
                 <li><strong className="text-foreground">Author names must not appear inside the PDF.</strong></li>
               </ul>
@@ -129,6 +177,7 @@ const Submission = () => {
                 <li>Please disclose any prior or concurrent submission on the form — this <strong className="text-foreground">will not impact scoring</strong>.</li>
                 <li>Studies involving patient data must state ethical approval and data governance.</li>
                 <li>Disclose funding and conflicts of interest.</li>
+                <li>AI-use disclosure is mandatory ("None" is acceptable).</li>
               </ul>
             </section>
           </CardContent>
@@ -157,10 +206,7 @@ const Submission = () => {
               </Button>
             </div>
             <p className="text-sm">
-              Questions?{" "}
-              <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">
-                {siteConfig.contact.email}
-              </a>
+              Questions? See the Contact section in the footer.
             </p>
           </CardContent>
         </Card>
