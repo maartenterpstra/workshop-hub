@@ -23,6 +23,10 @@ const authorSchema = z.object({
   is_presenting: z.boolean(),
 });
 
+const WORD_LIMIT = 600;
+
+const countWords = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
+
 const formSchema = z.object({
   title: z.string().trim().min(5).max(300),
   topic_id: z.string().uuid(),
@@ -31,7 +35,10 @@ const formSchema = z.object({
   results: z.string().trim().min(20).max(3000),
   conclusion: z.string().trim().min(20).max(3000),
   authors: z.array(authorSchema).min(1).max(30),
-});
+}).refine(
+  (d) => countWords([d.background, d.methods, d.results, d.conclusion].join(" ")) <= WORD_LIMIT,
+  { message: `Abstract exceeds the ${WORD_LIMIT}-word limit.` }
+);
 
 const Submit = () => {
   const { user } = useAuth();
