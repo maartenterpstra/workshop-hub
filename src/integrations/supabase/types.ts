@@ -63,6 +63,7 @@ export type Database = {
         Row: {
           background: string | null
           conclusion: string | null
+          figure_paths: string[] | null
           file_path: string | null
           id: string
           methods: string | null
@@ -78,6 +79,7 @@ export type Database = {
         Insert: {
           background?: string | null
           conclusion?: string | null
+          figure_paths?: string[] | null
           file_path?: string | null
           id?: string
           methods?: string | null
@@ -93,6 +95,7 @@ export type Database = {
         Update: {
           background?: string | null
           conclusion?: string | null
+          figure_paths?: string[] | null
           file_path?: string | null
           id?: string
           methods?: string | null

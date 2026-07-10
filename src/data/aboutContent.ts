@@ -22,12 +22,12 @@ export const aboutContent = {
     description:
       "Scientific symposium organised in collaboration with Princess Máxima Center. The 2027 programme will be built from peer-reviewed abstract submissions.",
     themes: [
-      "Image Synthesis & Reconstruction",
-      "Contouring & Registration",
-      "Clinical Predictions",
-      "Foundation Models & Text",
-      "Treatment Planning",
-      "Clinical Implementation",
+      "Segmentation & Registration",
+      "Reconstruction & Synthesis",
+      "Foundation Models, Text, Explainability & Uncertainty",
+      "Dose & Adaptive Workflows",
+      "Clinical Predictions & Outcomes",
+      "Implementation, QA & Ethics",
     ],
     note: "Open to researchers, clinical physicists, industry, and policymakers.",
   },
