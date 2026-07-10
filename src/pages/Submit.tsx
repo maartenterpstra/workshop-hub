@@ -134,14 +134,27 @@ const Submit = () => {
 
     setSubmitting(true);
     try {
-      const filePath = `${user.id}/${crypto.randomUUID()}.pdf`;
+      const submissionId = crypto.randomUUID();
+      const filePath = `${user.id}/${submissionId}/abstract.pdf`;
       const { error: upErr } = await supabase.storage.from("abstracts").upload(filePath, file, {
         contentType: "application/pdf",
         upsert: false,
       });
       if (upErr) throw upErr;
 
-      const wordCount = [background, methods, results, conclusion].join(" ").split(/\s+/).filter(Boolean).length;
+      const figurePaths: string[] = [];
+      for (let i = 0; i < figures.length; i++) {
+        const fig = figures[i];
+        const ext = fig.type === "image/png" ? "png" : "jpg";
+        const figPath = `${user.id}/${submissionId}/figure-${i + 1}.${ext}`;
+        const { error: figErr } = await supabase.storage
+          .from("abstracts")
+          .upload(figPath, fig, { contentType: fig.type, upsert: false });
+        if (figErr) throw figErr;
+        figurePaths.push(figPath);
+      }
+
+      const wordCount = totalWords;
 
       const { data: abs, error: absErr } = await supabase
         .from("abstracts")
@@ -155,6 +168,7 @@ const Submit = () => {
           conclusion: parsed.data.conclusion,
           word_count: wordCount,
           file_path: filePath,
+          figure_paths: figurePaths.length ? figurePaths : null,
           status: "submitted",
         })
         .select("id")
