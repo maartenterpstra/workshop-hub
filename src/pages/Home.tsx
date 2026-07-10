@@ -212,7 +212,7 @@ const Home = () => {
                   <div className="grid gap-3 md:grid-cols-4">
                     {[
                       {
-                        text: "Sessions on segmentation, reconstruction, foundation models and adaptive workflows",
+                        text: "Six sessions covering segmentation & registration, reconstruction & synthesis, foundation models, dose & adaptive workflows, clinical predictions and implementation",
                         className: "border-primary/20 bg-primary/5 text-foreground",
                       },
                       {

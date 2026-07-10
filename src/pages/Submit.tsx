@@ -23,6 +23,10 @@ const authorSchema = z.object({
   is_presenting: z.boolean(),
 });
 
+const WORD_LIMIT = 600;
+
+const countWords = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
+
 const formSchema = z.object({
   title: z.string().trim().min(5).max(300),
   topic_id: z.string().uuid(),
@@ -31,7 +35,10 @@ const formSchema = z.object({
   results: z.string().trim().min(20).max(3000),
   conclusion: z.string().trim().min(20).max(3000),
   authors: z.array(authorSchema).min(1).max(30),
-});
+}).refine(
+  (d) => countWords([d.background, d.methods, d.results, d.conclusion].join(" ")) <= WORD_LIMIT,
+  { message: `Abstract exceeds the ${WORD_LIMIT}-word limit.` }
+);
 
 const Submit = () => {
   const { user } = useAuth();
@@ -49,8 +56,12 @@ const Submit = () => {
     { name: "", affiliation: "", email: user?.email ?? "", is_presenting: true },
   ]);
   const [file, setFile] = useState<File | null>(null);
+  const [figures, setFigures] = useState<File[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const totalWords = countWords([background, methods, results, conclusion].join(" "));
+  const overLimit = totalWords > WORD_LIMIT;
 
   useEffect(() => {
     supabase.from("topics").select("id, name").order("display_order").then(({ data }) => {
@@ -77,6 +88,27 @@ const Submit = () => {
     setFile(f);
   };
 
+  const handleFigures = (files: FileList | null) => {
+    if (!files) return;
+    const incoming = Array.from(files);
+    const combined = [...figures, ...incoming].slice(0, 2);
+    for (const f of incoming) {
+      if (!["image/png", "image/jpeg"].includes(f.type)) {
+        toast.error("Figures must be PNG or JPG.");
+        return;
+      }
+      if (f.size > 10 * 1024 * 1024) {
+        toast.error("Each figure must be under 10 MB.");
+        return;
+      }
+    }
+    if (figures.length + incoming.length > 2) {
+      toast.warning("Maximum 2 display items — extra files ignored.");
+    }
+    setFigures(combined);
+  };
+  const removeFigure = (i: number) => setFigures((p) => p.filter((_, idx) => idx !== i));
+
   const updateAuthor = (i: number, patch: Partial<AuthorRow>) => {
     setAuthors((prev) => prev.map((a, idx) => (idx === i ? { ...a, ...patch } : a)));
   };
@@ -102,14 +134,27 @@ const Submit = () => {
 
     setSubmitting(true);
     try {
-      const filePath = `${user.id}/${crypto.randomUUID()}.pdf`;
+      const submissionId = crypto.randomUUID();
+      const filePath = `${user.id}/${submissionId}/abstract.pdf`;
       const { error: upErr } = await supabase.storage.from("abstracts").upload(filePath, file, {
         contentType: "application/pdf",
         upsert: false,
       });
       if (upErr) throw upErr;
 
-      const wordCount = [background, methods, results, conclusion].join(" ").split(/\s+/).filter(Boolean).length;
+      const figurePaths: string[] = [];
+      for (let i = 0; i < figures.length; i++) {
+        const fig = figures[i];
+        const ext = fig.type === "image/png" ? "png" : "jpg";
+        const figPath = `${user.id}/${submissionId}/figure-${i + 1}.${ext}`;
+        const { error: figErr } = await supabase.storage
+          .from("abstracts")
+          .upload(figPath, fig, { contentType: fig.type, upsert: false });
+        if (figErr) throw figErr;
+        figurePaths.push(figPath);
+      }
+
+      const wordCount = totalWords;
 
       const { data: abs, error: absErr } = await supabase
         .from("abstracts")
@@ -123,6 +168,7 @@ const Submit = () => {
           conclusion: parsed.data.conclusion,
           word_count: wordCount,
           file_path: filePath,
+          figure_paths: figurePaths.length ? figurePaths : null,
           status: "submitted",
         })
         .select("id")
@@ -207,6 +253,10 @@ const Submit = () => {
                 <Textarea value={value} onChange={(e) => setter(e.target.value)} rows={4} maxLength={3000} required />
               </div>
             ))}
+            <div className={`text-xs text-right font-medium ${overLimit ? "text-destructive" : "text-muted-foreground"}`}>
+              {totalWords} / {WORD_LIMIT} words
+              {overLimit && " — please shorten before submitting"}
+            </div>
           </CardContent>
         </Card>
 
@@ -248,7 +298,10 @@ const Submit = () => {
         <Card>
           <CardHeader>
             <CardTitle>Abstract PDF *</CardTitle>
-            <CardDescription>Drag &amp; drop or click to upload. PDF only, max 20 MB.</CardDescription>
+            <CardDescription>
+              Compiled from the provided Word or LaTeX template. One A4 page, double-blind
+              (no author names in the PDF). Max 20 MB.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div
@@ -275,7 +328,46 @@ const Submit = () => {
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Figures / tables (optional)</CardTitle>
+            <CardDescription>
+              Upload up to 2 display items (figures and/or tables combined) as PNG or JPG,
+              max 10 MB each. These are stored alongside your PDF.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <input
+              type="file"
+              id="fig-upload"
+              accept="image/png,image/jpeg"
+              multiple
+              className="hidden"
+              onChange={(e) => { handleFigures(e.target.files); e.target.value = ""; }}
+            />
+            <label
+              htmlFor="fig-upload"
+              className="cursor-pointer inline-flex items-center gap-2 border border-dashed rounded-md px-4 py-2 text-sm hover:border-primary hover:bg-primary/5"
+            >
+              <UploadCloud className="h-4 w-4" />
+              {figures.length >= 2 ? "Maximum reached" : "Add figure/table"}
+            </label>
+            {figures.length > 0 && (
+              <ul className="space-y-1 text-sm">
+                {figures.map((f, i) => (
+                  <li key={i} className="flex items-center justify-between border rounded-md px-3 py-2">
+                    <span className="truncate">{f.name} <span className="text-xs text-muted-foreground">({(f.size / 1024 / 1024).toFixed(2)} MB)</span></span>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeFigure(i)}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        <Button type="submit" size="lg" className="w-full" disabled={submitting || overLimit}>
           {submitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting…</> : "Submit abstract"}
         </Button>
       </form>
