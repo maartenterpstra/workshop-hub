@@ -1,42 +1,33 @@
 ## Changes
 
-### 1. Venue page (`src/pages/Venue.tsx` + `src/data/venueContent.ts`)
+### 1. Remove specific dates (TBA)
+`src/data/siteConfig.ts`: change `dates: "18-19 March 2027"` → `dates: "Dates TBA"` (still labeled "2027 Workshop" via `subtitle`). All pages that render `siteConfig.dates` will automatically show "Dates TBA".
 
-- **Tram/bus stop**: change `byTrain.instructions` from "Get off at UMC Utrecht" to "Get off at **Prinses Máxima Centrum (P+R Science Park)**" stop. Line 12 (tram Uithoflijn) — verify wording so it clearly says PMC, not UMC.
-- **Auditorium location**: update `venueContent.venue.institution` from
-  `"Auditorium, Department of Radiotherapy, Heidelberglaan 25, ..."`
-  to
-  `"Auditorium (2nd floor), Heidelberglaan 25, 3584 CS Utrecht, The Netherlands"`.
-- **Contact info**: remove the "Contact Information" `<Card>` from the 2×2 travel grid, and rebalance the grid (three cards: train / car / air on a `md:grid-cols-3`). Keep contact info only in the site-wide `Footer.tsx` at the bottom of every page — nothing extra added.
+### 2. Submission page — clarify platform input format
+`src/pages/Submission.tsx`, under "Length & file format" (and adjust the "Structured abstract" intro): make clear that on the submission platform authors will be asked to enter:
+- The **abstract text** (structured: Background / Methods / Results / Conclusion) directly into text fields.
+- **Figures/tables uploaded separately as image files** (PNG/JPG).
+- A **final compiled PDF** of the full abstract (text + figure/table) as a single upload.
 
-### 2. Abstract submission page (`src/pages/Submission.tsx`)
+Keep the 500-word / 1 figure-or-table / A4 constraints; reword the bullets so they match what the platform actually asks.
 
-Add a friendly notice inside the "Ethics & originality" section (and mirror one line in the intro Alert) stating:
+### 3. Program page — add structure + provisional schedule
+Rewrite `src/pages/Program.tsx` to keep the current header + "Program TBC" alert + previous-edition card, and add two new sections:
 
-> We welcome submissions of work that has been submitted or is under review elsewhere, provided it has **not yet been presented** at another conference. Please disclose any such prior submission when uploading — this **will not affect scoring**. Our goal is a high-quality, science-focused meeting with a low threshold to participate.
+**a. Format block** — short description:
+> Six 90-min sessions in clinical-workflow order. Each session opens with a 30-min invited state-of-the-art talk (low self-reference), followed by 5 proffered papers (9 min + 3 min discussion). One cross-disciplinary keynote closes each day.
 
-Tweak the existing "Work must be original and not previously published in full" bullet to align (replace "originality" wording with the encouragement + disclosure request).
+**b. Sessions list** — S1–S6 as cards/list:
+- S1 Segmentation & Registration
+- S2 Reconstruction & Synthesis
+- S3 Foundation Models, Text, Explainability & Uncertainty
+- S4 Dose & Adaptive Workflows
+- S5 Clinical Predictions & Outcomes
+- S6 Implementation, QA & Ethics
 
-### 3. New Reviewers page
+**c. Provisional timetable** — two side-by-side (stacked on mobile) tables Day 1 / Day 2, with all rows from the user's message. Label clearly as "Provisional — subject to change".
 
-Parse the uploaded spreadsheet (37 reviewers, filtered to those who ticked "May we list you publicly … Yes"). Create:
+No changes to `scheduleScientific.ts` (that's 2026 archive data). Pure presentation via a new inline `programStructure` const inside `Program.tsx` (or a small `src/data/programStructure.ts` if cleaner — will inline unless it grows).
 
-- **`src/data/reviewers.ts`** — typed array `{ name, surname, affiliation, website?: string }[]`. Names normalized (trim, fix capitalization like "Bol / Gijs" → "Gijs Bol"). Bare-domain URLs (e.g. `konsta.com.pl`, `sebastiaanbreedveld.nl`) get `https://` prefixed. No emails displayed.
-- **`src/pages/Reviewers.tsx`** — simple responsive list (single-column readable layout, alphabetical by surname). Each entry:
-  - `**Name Surname**` — Affiliation
-  - Optional "Website ↗" link (opens in new tab, `rel="noopener noreferrer"`).
-  - No photos, no bios beyond affiliation (the spreadsheet has no bio text — only affiliation + optional URL, which matches "bio with link if provided").
-- Route + nav:
-  - Add `/reviewers` route in `src/App.tsx`.
-  - Add "Reviewers" link to `src/components/Header.tsx` (placed near Organizers).
-
-### 4. Non-goals
-
-- No schema changes, no auth changes, no scoring logic changes.
-- No photos for reviewers.
-- No copy changes outside the three items above.
-
-## Technical notes
-
-- Reviewer list is derived at build time from the xlsx and hardcoded in `reviewers.ts` — no runtime spreadsheet parsing. Anyone who answered "No" to public listing is excluded.
-- Sorting: alphabetical by surname on render (`localeCompare`), no user-facing controls needed.
+### Non-goals
+No changes to routing, auth, DB, submission form logic, or other pages. No new dependencies.
