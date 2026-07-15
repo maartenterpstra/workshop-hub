@@ -54,6 +54,7 @@ const Home = () => {
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl leading-relaxed">
               AIinRT2027 — a scientific symposium in the heart of Utrecht,
               organized by <strong className="font-semibold">UMC Utrecht</strong>{" "}
+              (<a href="https://www.computationalimaginggroup.com" target="_blank" rel="noopener noreferrer" className="underline decoration-white/40 hover:decoration-white">Computational Imaging Group</a>){" "}
               in collaboration with the{" "}
               <strong className="font-semibold">Princess Máxima Center</strong>{" "}
               for pediatric oncology and{" "}

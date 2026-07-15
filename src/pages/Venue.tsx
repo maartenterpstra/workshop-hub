@@ -139,6 +139,23 @@ const Venue = () => {
             <p className="text-muted-foreground mb-4">
               {venueContent.accommodation.description}
             </p>
+            <p className="text-muted-foreground mb-3">
+              {venueContent.accommodation.discountNote}
+            </p>
+            {venueContent.accommodation.accommodationListUrl ? (
+              <a
+                href={venueContent.accommodation.accommodationListUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-primary hover:underline text-sm font-medium"
+              >
+                View accommodation list →
+              </a>
+            ) : (
+              <p className="text-sm italic text-muted-foreground">
+                Link to the accommodation list — coming soon.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
