@@ -2,7 +2,7 @@
 export const aboutContent = {
   educational: {
     title: "Educational Workshop",
-    date: "18-19 March 2027",
+    date: "1–2 April 2027",
     description:
       "A 1-day educational workshop introducing the principles and clinical applications of deep learning in radiotherapy. Detailed topics for the 2027 edition will be confirmed closer to the event.",
     topics: [
