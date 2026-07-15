@@ -80,14 +80,6 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
           </div>
         </div>
       </a>
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-            Product catalog
-          </div>
-          <div className="text-sm font-bold text-foreground">
-            DLinRT<span className="text-secondary">.eu</span>
-          </div>
-        </div>
-      </a>
     </div>
   );
 };
