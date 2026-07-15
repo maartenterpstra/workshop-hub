@@ -49,6 +49,11 @@ const Registration = () => {
             <ul className="list-disc list-inside space-y-1 text-sm">
               <li>Fees, cancellation policy, and receipts are managed by PMC.</li>
               <li>Abstract acceptance is independent from registration — you can register before or after submitting.</li>
+              <li>
+                The PMC registration site also publishes a curated list of nearby hotels with
+                discounted rates negotiated for AIinRT2027 attendees — please consult it when
+                booking your travel.
+              </li>
               <li>For registration questions, contact the PMC events office via the external platform.</li>
             </ul>
 
