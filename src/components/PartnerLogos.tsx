@@ -11,7 +11,13 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
   return (
     <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
       {/* UMC Utrecht */}
-      <div className={wrapper} aria-label="UMC Utrecht">
+      <a
+        href="https://www.umcutrecht.nl"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${wrapper} hover:shadow-card transition-shadow`}
+        aria-label="UMC Utrecht"
+      >
         <img src={umcuLogo} alt="UMC Utrecht" className="h-10 w-auto object-contain" />
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -19,10 +25,16 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
           </div>
           <div className="text-sm font-bold text-primary">Utrecht</div>
         </div>
-      </div>
+      </a>
 
       {/* Princess Máxima Center */}
-      <div className={wrapper} aria-label="Princess Máxima Center">
+      <a
+        href="https://www.prinsesmaximacentrum.nl"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${wrapper} hover:shadow-card transition-shadow`}
+        aria-label="Princess Máxima Center"
+      >
         <img src={pmcLogo} alt="Princess Máxima Center" className="h-10 w-auto object-contain" />
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -30,7 +42,7 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
           </div>
           <div className="text-sm font-bold text-secondary">voor kinderoncologie</div>
         </div>
-      </div>
+      </a>
 
       {/* DLinRT.eu */}
       <a

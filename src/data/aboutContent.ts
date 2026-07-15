@@ -18,7 +18,7 @@ export const aboutContent = {
 
   scientific: {
     title: "Scientific Symposium",
-    date: "18-19 March 2027",
+    date: "1–2 April 2027",
     description:
       "Scientific symposium organised in collaboration with Princess Máxima Center. The 2027 programme will be built from peer-reviewed abstract submissions.",
     themes: [

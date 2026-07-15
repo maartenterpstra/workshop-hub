@@ -146,7 +146,7 @@ const Organizers = () => {
             Organizers & Committees
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            The people behind AIinRT 2027.
+            The people behind AIinRT2027.
           </p>
         </div>
 

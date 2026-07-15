@@ -13,7 +13,7 @@ const Home = () => {
     { label: "Registration opening", date: "1 October 2026" },
     { label: "Abstract submission deadline", date: "1 December 2026" },
     { label: "Abstract decisions communicated", date: "16 December 2026" },
-    { label: "AIinRT Symposium", date: "18–19 March 2027" },
+    { label: "AIinRT2027 Symposium", date: "1–2 April 2027" },
   ];
 
   return (
@@ -52,11 +52,12 @@ const Home = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl leading-relaxed">
-              AIinRT 2027 — a scientific symposium hosted in the heart
-              of Utrecht hosted by <strong className="font-semibold">UMC Utrecht</strong>{" "}
-              and the{" "}
+              AIinRT2027 — a scientific symposium in the heart of Utrecht,
+              organized by <strong className="font-semibold">UMC Utrecht</strong>{" "}
+              in collaboration with the{" "}
               <strong className="font-semibold">Princess Máxima Center</strong>{" "}
-              for pediatric oncology.
+              for pediatric oncology and{" "}
+              <strong className="font-semibold">DLinRT.eu</strong>.
             </p>
 
             <div className="flex flex-wrap gap-x-6 gap-y-3 text-white/95 mb-10">
@@ -99,8 +100,8 @@ const Home = () => {
         <div className="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-border py-4">
           <div className="container">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-semibold">
-                Organised by · In collaboration with
+              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-semibold text-center md:text-left">
+                Organized by UMC Utrecht<br className="hidden md:block" /> in collaboration with PMC & DLinRT.eu
               </span>
               <PartnerLogos />
             </div>

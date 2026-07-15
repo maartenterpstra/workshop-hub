@@ -153,6 +153,15 @@ const Submission = () => {
               </ul>
             </section>
 
+            <section className="rounded-lg border border-secondary/40 bg-secondary/5 p-4">
+              <h3 className="font-semibold text-foreground mb-1">Best-paper award — free APC waiver</h3>
+              <p className="text-sm">
+                The highest-scoring abstract (based on reviewer scores) will receive a
+                <strong className="text-foreground"> full Article Processing Charge (APC) waiver </strong>
+                toward a follow-up open-access publication.
+              </p>
+            </section>
+
             <section>
               <h3 className="font-semibold text-foreground mb-2">Review criteria</h3>
               <p>Each abstract is scored (1–5) by up to five reviewers on:</p>

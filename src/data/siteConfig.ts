@@ -2,7 +2,7 @@
 export const siteConfig = {
   title: "Artificial Intelligence in Radiotherapy",
   subtitle: "2027 Workshop",
-  dates: "Dates TBA",
+  dates: "1–2 April 2027",
   location: "UMC Utrecht & Princess Máxima Center",
   registrationDeadline: "TBC",
 
