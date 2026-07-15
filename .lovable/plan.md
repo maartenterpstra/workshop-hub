@@ -1,33 +1,17 @@
 ## Changes
 
-### 1. Logo assets
-Upload the four uploaded SVGs via `lovable-assets` CLI:
-- `aiinrt2027_icon.svg` → `src/assets/aiinrt2027-icon.svg.asset.json`
-- `aiinrt2027_logo_horizontal.svg` → `src/assets/aiinrt2027-logo-horizontal.svg.asset.json`
-- `aiinrt2027_logo_dark.svg` → `src/assets/aiinrt2027-logo-dark.svg.asset.json`
-- `aiinrt2027_logo_stacked.svg` → `src/assets/aiinrt2027-logo-stacked.svg.asset.json`
+### 1. Registration page (`src/pages/Registration.tsx`)
+In the PMC registration card content, add a bullet noting that the external PMC registration site also publishes a curated list of nearby hotels with discounted rates for AIinRT2027 attendees. Add a short paragraph directing users to consult it when booking travel.
 
-### 2. Header (`src/components/Header.tsx`)
-Replace current `logoImage` + adjacent text block with the **horizontal logo** (`aiinrt2027_logo_horizontal.svg`) — it already contains the "AIinRT 2027" wordmark, so the sibling `<div>` with "AIinRT 2027 / Artificial Intelligence in Radiotherapy" is removed. Height ~h-12. Alt text: "AIinRT2027".
+### 2. Venue page (`src/pages/Venue.tsx` + `src/data/venueContent.ts`)
+Extend the Accommodation card to remind attendees that a list of hotels with negotiated discounts will be provided on the PMC registration site. Add a placeholder external link (`accommodationListUrl` in `venueContent.accommodation`, empty for now) that renders as a "View accommodation list" button when set, and as a "Link coming soon" italic note when empty. No new fields elsewhere.
 
-### 3. Dates + branding (`src/data/siteConfig.ts` and content files)
-- `siteConfig.dates`: `"Dates TBA"` → `"1–2 April 2027"`
-- Search & replace across `src/data/aboutContent.ts`, `src/pages/Home.tsx`, `src/pages/Program.tsx`, `src/pages/Submission.tsx`, `src/pages/Venue.tsx`, `index.html` meta:
-  - Any placeholder dates ("18-19 March 2027", "Dates TBA", "TBA") in prose → "1–2 April 2027".
-  - Rename all instances of "AIinRT 2027" (with space) → "AIinRT2027" in visible copy, titles, meta description, alt text, page headings. `siteConfig.subtitle` stays as "2027 Workshop" but written together where "AIinRT2027" appears as the event name.
+### 3. Computational Imaging Group logo (`src/components/PartnerLogos.tsx` + Home "Organized by")
+- Upload the CIG logo via `lovable-assets` to `src/assets/cig-logo.<ext>.asset.json`. **The user needs to provide the CIG logo file** (PNG/SVG) — if not provided this turn, I'll add a text-only placeholder tile linking to https://www.computationalimaginggroup.com and swap in the image once the file lands.
+- Add a fourth tile in `PartnerLogos.tsx` for the Computational Imaging Group, wrapped in `<a href="https://www.computationalimaginggroup.com" target="_blank" rel="noopener noreferrer">`, matching the existing tile styling.
+- Update the "Organized by" line on `Home.tsx` to: **"Organized by UMC Utrecht (Computational Imaging Group) in collaboration with PMC & DLinRT.eu"** with CIG hyperlinked.
 
-### 4. "Organized by" clarity (`src/pages/Home.tsx` + `src/components/PartnerLogos.tsx`)
-- Add/adjust an "Organized by" line on Home stating: **"Organized by UMC Utrecht in collaboration with Princess Máxima Center and DLinRT.eu"**.
-- In `PartnerLogos.tsx`, wrap the UMCU tile in `<a href="https://www.umcutrecht.nl" target="_blank" rel="noopener noreferrer">` and the PMC tile in `<a href="https://www.prinsesmaximacentrum.nl" target="_blank" rel="noopener noreferrer">`. DLinRT.eu is already linked. Add matching hover shadow class.
+### Question for you
+Do you have the CIG logo file to upload, or should I ship a text-only tile now and swap in the logo when you send it?
 
-### 5. Best-paper APC waiver (`src/pages/Submission.tsx`)
-Add a short callout (Alert or new small card) under the "Review criteria" section:
-
-> **Best-paper award — free APC waiver.** The highest-scoring abstract (by reviewer scores) receives a full Article Processing Charge (APC) waiver toward a follow-up open-access publication.
-
-No DB, auth, routing, or migration changes.
-
-### Technical notes
-- Asset URLs referenced as `import logo from "@/assets/....asset.json"; <img src={logo.url} />`.
-- The user-uploaded SVGs contain embedded wordmarks, so header text duplication is removed to avoid double-branding.
-- Preserve existing responsive behavior on Header (logo hides nothing on mobile; still fits h-12).
+No DB, routing, or auth changes.

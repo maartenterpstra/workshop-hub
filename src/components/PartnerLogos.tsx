@@ -62,6 +62,24 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
           </div>
         </div>
       </a>
+
+      {/* Computational Imaging Group */}
+      <a
+        href="https://www.computationalimaginggroup.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${wrapper} hover:shadow-card transition-shadow`}
+        aria-label="Computational Imaging Group"
+      >
+        <div className="leading-tight">
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            UMC Utrecht
+          </div>
+          <div className="text-sm font-bold text-primary">
+            Computational Imaging Group
+          </div>
+        </div>
+      </a>
     </div>
   );
 };
