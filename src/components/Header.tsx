@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink } from "./NavLink";
 import { Button } from "./ui/button";
 import { Menu, X, LogOut } from "lucide-react";
-import logoImage from "@/assets/logo.png";
+import logoAsset from "@/assets/aiinrt2027-logo-horizontal.svg.asset.json";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -40,13 +40,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container flex h-16 items-center justify-between">
         <NavLink to="/" className="flex items-center space-x-2">
-          <div className="flex items-center gap-2">
-            <img src={logoImage} alt="AIinRT 2027 Logo" className="h-12" />
-            <div className="hidden sm:block">
-              <div className="text-lg font-bold text-foreground">AIinRT 2027</div>
-              <div className="text-xs text-muted-foreground">Artificial Intelligence in Radiotherapy</div>
-            </div>
-          </div>
+          <img src={logoAsset.url} alt="AIinRT2027" className="h-12 w-auto" />
         </NavLink>
 
         {/* Desktop Navigation */}
