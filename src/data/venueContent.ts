@@ -45,5 +45,7 @@ export const venueContent = {
   accommodation: {
     title: "Accommodation",
     description: "Utrecht offers a variety of accommodation options. We recommend booking early, especially during the conference dates. Hotels in Utrecht city center are approximately 15-20 minutes from UMC Utrecht by public transport.",
+    discountNote: "A curated list of nearby hotels with discounted rates for AIinRT2027 attendees will be provided on the PMC registration site.",
+    accommodationListUrl: "",
   }
 };
