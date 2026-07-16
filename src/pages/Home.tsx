@@ -137,7 +137,7 @@ const Home = () => {
                 <Button
                   size="lg"
                   variant="secondary"
-                  onClick={() => navigate("/registration")}
+                  onClick={() => navigate("/submission")}
                   className="bg-white text-secondary hover:bg-white/90 font-semibold shadow-lg"
                 >
                   Learn more

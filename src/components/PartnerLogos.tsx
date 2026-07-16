@@ -1,6 +1,8 @@
 import umcuLogo from "@/assets/umcu_logo.png";
 import pmcLogo from "@/assets/pmc_logo.png";
+import ailabslogo from "@/assets/ailabs_logo.png";
 import dlinrtLogo from "@/assets/dlinrteu_logo.png";
+import ciglogo from "@/assets/cig_logo.png";
 
 const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => {
   const isDark = variant === "dark";
@@ -65,12 +67,13 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
 
       {/* Computational Imaging Group */}
       <a
-        href="https://www.computationalimaginggroup.com"
+        href="https://www.cig-utrecht.org"
         target="_blank"
         rel="noopener noreferrer"
         className={`${wrapper} hover:shadow-card transition-shadow`}
         aria-label="Computational Imaging Group"
       >
+        <img src={ciglogo} alt="Computational Imaging Group" className="h-10 w-auto object-contain" />
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
             UMC Utrecht
@@ -80,6 +83,24 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
           </div>
         </div>
       </a>
+      <a
+        href="https://www.uu.nl/onderzoek/ai-labs"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${wrapper} hover:shadow-card transition-shadow`}
+        aria-label="AI Labs"
+      >
+        <img src={ailabslogo} alt="AI Labs" className="h-10 w-auto object-contain" />
+        <div className="leading-tight">
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Utrecht University 
+          </div>
+          <div className="text-sm font-bold text-foreground">
+            AI Labs 
+          </div>
+        </div>
+      </a>
+
     </div>
   );
 };
