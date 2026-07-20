@@ -23,7 +23,7 @@ const day1: Array<[string, string]> = [
   ["13:00–14:15", "Lunch"],
   ["14:15–15:45", "Session 3: Foundation Models, Text, Explainability & Uncertainty"],
   ["16:00–16:45", "Keynote 1"],
-  ["17:00–18:30", "Networking drinks"],
+  ["16:45-17:30", "Refreshments"],
   [">19:00", "Optional: social dinner"],
 ];
 

@@ -36,7 +36,7 @@ const Submission = () => {
             Deadline: {siteConfig.abstractSubmissionDeadline}. Decisions follow peer review.{" "}
             <span className="block mt-2 text-foreground/90">
               Work that has been submitted to (or is under review at) another venue is welcome,
-              provided it has <strong>not yet been presented</strong>. Please disclose it on
+              provided it has <strong>not yet been presented by December 2026</strong>. Please disclose it on
               submission — this does not affect scoring.
             </span>
           </AlertDescription>
@@ -158,7 +158,8 @@ const Submission = () => {
               <p className="text-sm">
                 The highest-scoring abstract (based on reviewer scores) will receive a
                 <strong className="text-foreground"> full Article Processing Charge (APC) waiver </strong>
-                toward a follow-up open-access publication.
+                toward a follow-up open-access publication in a dedicated issue. The specific journal will be
+                disclosed in December 2026. 
               </p>
             </section>
 

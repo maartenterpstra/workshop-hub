@@ -13,6 +13,7 @@ const Home = () => {
     { label: "Registration opening", date: "1 October 2026" },
     { label: "Abstract submission deadline", date: "1 December 2026" },
     { label: "Abstract decisions communicated", date: "16 December 2026" },
+    { label: "Registration closes", date: "1 March 2027" },
     { label: "AIinRT2027 Symposium", date: "1–2 April 2027" },
   ];
 
@@ -124,11 +125,15 @@ const Home = () => {
                   Call for Abstracts
                 </h2>
                 <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
-                  The scientific programme will be built entirely from
-                  peer-reviewed abstract submissions. Authors, reviewers, and
+                  The scientific programme is built entirely from 
+                  peer-reviewed abstract submissions evaluated through a double-blind review process. 
+                  Authors, reviewers, and the scientific organising committee use this site throughout
+                  the submission and review process.
+{/*                  The scientific programme will be built entirely from
+                  double-blinded, peer-reviewed abstract submissions. Authors, reviewers, and
                   the scientific organising committee use this site throughout
                   the submission and review process.
-                </p>
+*/}                </p>
                 <p className="text-sm text-muted-foreground mt-4">
                   Attendee registration will be handled on a separate site — details to follow.
                 </p>
@@ -169,22 +174,22 @@ const Home = () => {
               <CardContent className="p-8 md:p-10">
                 <div className="mb-8">
                   <div className="text-xs uppercase tracking-[0.2em] text-secondary font-bold mb-3">
-                    Timeline
+                    When it happens
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                    Tentative timeline
+                 <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                    Timeline
                   </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Important dates for the workshop and symposium
+                    Important dates for the symposium
                   </p>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5">
+                <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-6">
                   {timelineItems.map((item, index) => (
                     <div
                       key={item.label}
                       className="rounded-2xl border border-border/60 bg-background/70 p-4 text-center"
                     >
-                      <div className="mx-auto mb-3 flex h-10 w-42 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                      <div className="mx-auto mb-4 flex h-10 w-34 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
                         {item.date}
                       </div>
                       <p className="font-semibold text-foreground">{item.label}</p>

@@ -43,6 +43,8 @@ const raw: Reviewer[] = [
   { name: "Lukas", surname: "Zimmermann", affiliation: "Department of Radiooncology, Medical University of Vienna, Austria" },
   { name: "André", surname: "Haraldsson", affiliation: "Radiation Physics, Skåne University Hospital, Sweden" },
   { name: "Wouter", surname: "Crijns", affiliation: "Laboratory of Experimental Radiotherapy, Department of Oncology, KU Leuven, Belgium" },
+  { name: "Chelsea", surname: "Sargeant", affiliation: "University of Manchester, United Kingdom" },
+  { name: "Federica", surname: "Carmen Maruccio", affiliation: "Department of Radiotherapy, Netherlands Cancer Institute, The Netherlands" },
   { name: "Tomas", surname: "Janssen", affiliation: "Netherlands Cancer Institute (NKI), The Netherlands" },
   { name: "Ye", surname: "Zhang", affiliation: "Center for Proton Therapy, Paul Scherrer Institute, Switzerland" },
   { name: "Cecile", surname: "Wolfs", affiliation: "Clinical Data Science, Maastro, The Netherlands" },

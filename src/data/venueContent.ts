@@ -2,7 +2,7 @@
 export const venueContent = {
   venue: {
     name: "Princess Máxima Center",
-    institution: "Auditorium (2nd floor), Heidelberglaan 25, 3584 CS Utrecht, The Netherlands",
+    institution: "Auditorium (6th floor), Heidelberglaan 25, 3584 CS Utrecht, The Netherlands",
     routesteps: [
       "At the main entrance of the UMC (that is on floor 1, you don't need any changes w.r.t. floor)",
       "Walk straight ahead following route Q, past the waiting area and shops",
@@ -45,7 +45,7 @@ export const venueContent = {
   accommodation: {
     title: "Accommodation",
     description: "Utrecht offers a variety of accommodation options. We recommend booking early, especially during the conference dates. Hotels in Utrecht city center are approximately 15-20 minutes from UMC Utrecht by public transport.",
-    discountNote: "A curated list of nearby hotels with discounted rates for AIinRT2027 attendees will be provided on the PMC registration site.",
+    discountNote: "A curated list of nearby hotels with discounted rates for AIinRT2027 attendees will be provided here.",
     accommodationListUrl: "",
   }
 };

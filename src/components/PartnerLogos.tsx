@@ -1,5 +1,5 @@
-import umcuLogo from "@/assets/umcu_logo.png";
-import pmcLogo from "@/assets/pmc_logo.png";
+import umcuLogo from "@/assets/umcu_logo.svg";
+import pmcLogo from "@/assets/pmc_logo.svg";
 import ailabslogo from "@/assets/ailabs_logo.png";
 import dlinrtLogo from "@/assets/dlinrteu_logo.png";
 import ciglogo from "@/assets/cig_logo.png";
@@ -21,12 +21,12 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
         aria-label="UMC Utrecht"
       >
         <img src={umcuLogo} alt="UMC Utrecht" className="h-10 w-auto object-contain" />
-        <div className="leading-tight">
+{/*        <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
             University Medical Center
           </div>
           <div className="text-sm font-bold text-primary">Utrecht</div>
-        </div>
+        </div>*/}
       </a>
 
       {/* Princess Máxima Center */}
@@ -40,9 +40,9 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
         <img src={pmcLogo} alt="Princess Máxima Center" className="h-10 w-auto object-contain" />
         <div className="leading-tight">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-            Prinses Máxima Centrum
+            Prinses Máxima Center
           </div>
-          <div className="text-sm font-bold text-secondary">voor kinderoncologie</div>
+          <div className="text-sm font-bold text-secondary">for pediatric oncology</div>
         </div>
       </a>
 

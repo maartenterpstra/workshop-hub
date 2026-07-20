@@ -170,30 +170,6 @@ const Organizers = () => {
           description="Provides strategic guidance to the SOC and the local team."
           people={advisoryBoard}
         />
-
-        <section className="mb-4">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
-              <ClipboardCheck className="h-5 w-5 text-secondary" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">Reviewers</h2>
-              <p className="text-muted-foreground text-sm">
-                Volunteer experts who peer-review submitted abstracts across the six workshop topics.
-              </p>
-            </div>
-          </div>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Reviewer panel</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              The full list of reviewers for the 2027 edition will be published here after
-              the review process closes. Interested in reviewing? Contact the local
-              organizers.
-            </CardContent>
-          </Card>
-        </section>
       </div>
     </div>
   );
