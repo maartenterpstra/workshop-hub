@@ -7,8 +7,8 @@ In the PMC registration card content, add a bullet noting that the external PMC 
 Extend the Accommodation card to remind attendees that a list of hotels with negotiated discounts will be provided on the PMC registration site. Add a placeholder external link (`accommodationListUrl` in `venueContent.accommodation`, empty for now) that renders as a "View accommodation list" button when set, and as a "Link coming soon" italic note when empty. No new fields elsewhere.
 
 ### 3. Computational Imaging Group logo (`src/components/PartnerLogos.tsx` + Home "Organized by")
-- Upload the CIG logo via `lovable-assets` to `src/assets/cig-logo.<ext>.asset.json`. **The user needs to provide the CIG logo file** (PNG/SVG) — if not provided this turn, I'll add a text-only placeholder tile linking to https://www.computationalimaginggroup.com and swap in the image once the file lands.
-- Add a fourth tile in `PartnerLogos.tsx` for the Computational Imaging Group, wrapped in `<a href="https://www.computationalimaginggroup.com" target="_blank" rel="noopener noreferrer">`, matching the existing tile styling.
+- Upload the CIG logo via `lovable-assets` to `src/assets/cig-logo.<ext>.asset.json`. **The user needs to provide the CIG logo file** (PNG/SVG) — if not provided this turn, I'll add a text-only placeholder tile linking to https://www.cig-utrecht.org and swap in the image once the file lands.
+- Add a fourth tile in `PartnerLogos.tsx` for the Computational Imaging Group, wrapped in `<a href="https://www.cig_utrecht.org" target="_blank" rel="noopener noreferrer">`, matching the existing tile styling.
 - Update the "Organized by" line on `Home.tsx` to: **"Organized by UMC Utrecht (Computational Imaging Group) in collaboration with PMC & DLinRT.eu"** with CIG hyperlinked.
 
 ### Question for you
