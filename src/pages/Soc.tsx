@@ -183,7 +183,7 @@ const Soc = () => {
                         <Badge>{r.recommendation ?? "—"}</Badge>
                         <span className="ml-auto font-semibold">avg {avg?.toFixed(2) ?? "—"}</span>
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-xs">
                         <span>Tech: {r.score_technical ?? "—"}</span>
                         <span>Rel: {r.score_relevance ?? "—"}</span>
                         <span>Nov: {r.score_novelty ?? "—"}</span>

@@ -20,7 +20,7 @@ const Home = () => {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-[92vh] flex items-center overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">
           <img
@@ -35,16 +35,16 @@ const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
         </div>
 
-        <div className="container relative py-24 md:py-28">
+        <div className="container relative py-12 sm:py-16 md:py-24 lg:py-28">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 mb-3 sm:mb-6">
               <Sparkles className="h-3.5 w-3.5 text-white" />
               <span className="text-xs uppercase tracking-[0.2em] text-white font-medium">
                 Utrecht · Pre-announcement
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4 sm:mb-6 leading-[1.05] tracking-tight">
               Artificial Intelligence
               <br />
               <span className="bg-gradient-to-r from-white via-orange-100 to-orange-300 bg-clip-text text-transparent">
@@ -52,7 +52,7 @@ const Home = () => {
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl leading-relaxed">
               AIinRT2027 — a scientific symposium in the heart of Utrecht,
               organized by <strong className="font-semibold">UMC Utrecht</strong>{" "}
               (<a href="https://www.cig-utrecht.org" target="_blank" rel="noopener noreferrer" className="underline decoration-white/40 hover:decoration-white">Computational Imaging Group</a>){" "}
@@ -97,16 +97,16 @@ const Home = () => {
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Bottom partner strip */}
-        <div className="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-border py-4">
-          <div className="container">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-semibold text-center md:text-left">
-                Organized by UMC Utrecht<br className="hidden md:block" /> in collaboration with PMC & DLinRT.eu
-              </span>
-              <PartnerLogos />
-            </div>
+      {/* Partner logos section */}
+      <section className="bg-white/95 backdrop-blur-md border-t border-border py-4">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-semibold text-center md:text-left">
+              Organized by UMC Utrecht<br className="hidden md:block" /> in collaboration with PMC & DLinRT.eu
+            </span>
+            <PartnerLogos />
           </div>
         </div>
       </section>
@@ -114,8 +114,8 @@ const Home = () => {
       {/* Call for Abstracts highlight */}
       <section className="py-16 px-4 bg-gradient-section">
         <div className="container max-w-5xl">
-          <Card className="border-0 shadow-card overflow-hidden">
-            <div className="grid md:grid-cols-[1fr_auto]">
+          <Card className="border-0 shadow-card overflow-hidden bg-gray-100">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto]">
               <CardContent className="pt-8 pb-8 md:pl-10">
                 <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-secondary font-bold mb-3">
                   <span className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
@@ -138,12 +138,12 @@ const Home = () => {
                   Attendee registration will be handled on a separate site — details to follow.
                 </p>
               </CardContent>
-              <div className="hidden md:flex items-center justify-center bg-gradient-warm p-10">
+              <div className="flex items-center justify-center bg-gradient-warm p-6 md:p-10">
                 <Button
                   size="lg"
                   variant="secondary"
                   onClick={() => navigate("/submission")}
-                  className="bg-white text-secondary hover:bg-white/90 font-semibold shadow-lg"
+                  className="bg-white text-secondary hover:bg-white/90 font-semibold shadow-lg w-full md:w-auto"
                 >
                   Learn more
                   <ArrowRight className="h-4 w-4" />
@@ -183,7 +183,7 @@ const Home = () => {
                     Important dates for the symposium
                   </p>
                 </div>
-                <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-6">
+                <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
                   {timelineItems.map((item, index) => (
                     <div
                       key={item.label}
@@ -216,7 +216,7 @@ const Home = () => {
                       conversation and exchange.
                     </p>
                   </div>
-                  <div className="grid gap-3 md:grid-cols-4">
+                  <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {[
                       {
                         text: "Six sessions covering segmentation & registration, reconstruction & synthesis, foundation models, dose & adaptive workflows, clinical predictions and implementation",

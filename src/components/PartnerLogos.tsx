@@ -6,12 +6,12 @@ import ciglogo from "@/assets/cig_logo.png";
 
 const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => {
   const isDark = variant === "dark";
-  const wrapper = `flex items-center gap-3 px-4 py-2 rounded-md ${
+  const wrapper = `flex flex-col sm:flex-row items-center gap-3 px-4 py-2 rounded-md ${
     isDark ? "bg-white/95" : "bg-background"
   } shadow-soft`;
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-10">
       {/* UMC Utrecht */}
       <a
         href="https://www.umcutrecht.nl"
