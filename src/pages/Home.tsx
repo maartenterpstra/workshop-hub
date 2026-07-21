@@ -12,7 +12,7 @@ const Home = () => {
     { label: "Call for abstracts", date: "1 September 2026" },
     { label: "Registration opening", date: "1 October 2026" },
     { label: "Abstract submission deadline", date: "1 December 2026" },
-    { label: "Abstract decisions communicated", date: "16 December 2026" },
+    { label: "Abstract decisions communicated", date: "17 December 2026" },
     { label: "Registration closes", date: "1 March 2027" },
     { label: "AIinRT2027 Symposium", date: "1–2 April 2027" },
   ];
