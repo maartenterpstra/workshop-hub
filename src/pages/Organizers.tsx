@@ -54,7 +54,7 @@ const regionalOrganizers: Person[] = [
   { name: "Prof. Javier Pascau", affiliation: "U. Carlos III, Madrid", region: "ES", photoUrl: "/src/assets/organizers/javier-pascau.jpg" },
   { name: "Dr. Eliana Vasquez Osorio", affiliation: "University of Manchester", region: "UK", photoUrl: "/src/assets/organizers/eliana-vasquez-osorio.jpg" },
   { name: "Barbara Knäusl", affiliation: "Medical University of Vienna", region: "AT", photoUrl: "/src/assets/organizers/barbara-knausl.jpg" },
-  { name: "Assoc. Prof. Christian Gustafsson", affiliation: "Lund University", region: "SE", photoUrl: "/src/assets/organizers/christian-gustafsson.jpg" },
+  { name: "Assoc. Prof. Christian Jamtheim Gustafsson", affiliation: "Lund University", region: "SE", photoUrl: "/src/assets/organizers/christian-gustafsson.jpg" },
   { name: "Prof. Guillaume Landry", affiliation: "LMU Munich", region: "DE", photoUrl: "/src/assets/organizers/guillaume-landry.jpg" },
   { name: "Prof. Steve Jiang", affiliation: "UT Southwestern", region: "USA", photoUrl: "/src/assets/organizers/steve-jiang.jpg" },
 ];
