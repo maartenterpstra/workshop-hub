@@ -68,7 +68,7 @@ const Signup = () => {
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardDescription>
-            Required to submit an abstract to DLinRT 2027. Reviewer / SOC access is granted by the organising
+            Required to submit an abstract to AIinRT 2027. Reviewer / SOC access is granted by the organising
             committee.
           </CardDescription>
         </CardHeader>
