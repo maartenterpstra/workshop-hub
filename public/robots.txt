@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://workshop-spark-25.lovable.app/sitemap.xml

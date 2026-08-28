@@ -21,6 +21,8 @@ import Review from "./pages/Review";
 import Soc from "./pages/Soc";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RouteSeo from "./components/RouteSeo";
+
 
 const queryClient = new QueryClient();
 
@@ -31,8 +33,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <RouteSeo />
           <div className="flex flex-col min-h-screen">
             <Header />
+
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<Home />} />
