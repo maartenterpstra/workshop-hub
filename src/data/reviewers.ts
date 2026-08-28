@@ -56,6 +56,9 @@ const raw: Reviewer[] = [
   { name: "Annette", surname: "Schwarz", affiliation: "Department of Radiation Oncology, University Hospital Erlangen, Germany" },
   { name: "Marianna", surname: "Sijtsema", affiliation: "University Medical Center Groningen, The Netherlands" },
   { name: "Coen", surname: "Hurkmans", affiliation: "Catharina Hospital, The Netherlands" },
+  { name: "Josien", surname: "Pluim", affiliation: "Biomedical Engineering, TU/e, The Netherlands" },
+  { name: "Pim", surname: "Borman", affiliation: "UMC Utrecht, The Netherlands" },
+  { name: "Viktor", surname: "Rogowski", affiliation: "Skåne University Hospital and Lund University, Sweden" },
 ];
 
 export const reviewers: Reviewer[] = raw
