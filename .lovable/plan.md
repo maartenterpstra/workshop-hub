@@ -1,17 +1,30 @@
 ## Changes
 
-### 1. Registration page (`src/pages/Registration.tsx`)
-In the PMC registration card content, add a bullet noting that the external PMC registration site also publishes a curated list of nearby hotels with discounted rates for AIinRT2027 attendees. Add a short paragraph directing users to consult it when booking travel.
+### 1. Add three reviewers (`src/data/reviewers.ts`)
+Append to the `raw` array, sorted automatically by the existing `.sort()`:
+- Josien Pluim — Biomedical Engineering, TU/e, The Netherlands
+- Pim Borman — UMC Utrecht, The Netherlands
+- Viktor Rogowski — Skåne University Hospital and Lund University, Sweden
 
-### 2. Venue page (`src/pages/Venue.tsx` + `src/data/venueContent.ts`)
-Extend the Accommodation card to remind attendees that a list of hotels with negotiated discounts will be provided on the PMC registration site. Add a placeholder external link (`accommodationListUrl` in `venueContent.accommodation`, empty for now) that renders as a "View accommodation list" button when set, and as a "Link coming soon" italic note when empty. No new fields elsewhere.
+No website links provided for any of the three, so they render as name + affiliation only (matching existing entries without `website`).
 
-### 3. Computational Imaging Group logo (`src/components/PartnerLogos.tsx` + Home "Organized by")
-- Upload the CIG logo via `lovable-assets` to `src/assets/cig-logo.<ext>.asset.json`. **The user needs to provide the CIG logo file** (PNG/SVG) — if not provided this turn, I'll add a text-only placeholder tile linking to https://www.cig-utrecht.org and swap in the image once the file lands.
-- Add a fourth tile in `PartnerLogos.tsx` for the Computational Imaging Group, wrapped in `<a href="https://www.cig_utrecht.org" target="_blank" rel="noopener noreferrer">`, matching the existing tile styling.
-- Update the "Organized by" line on `Home.tsx` to: **"Organized by UMC Utrecht (Computational Imaging Group) in collaboration with PMC & DLinRT.eu"** with CIG hyperlinked.
+### 2. Fix "Call for Abstracts" link on Home (`src/pages/Home.tsx`)
+The hero "Call for Abstracts" button (line ~79) currently `navigate("/registration")`. Change it to `navigate("/submission")` so it points to the submission page. The secondary "Learn more" button on the Call-for-Abstracts card already goes to `/submission` — leave it.
 
-### Question for you
-Do you have the CIG logo file to upload, or should I ship a text-only tile now and swap in the logo when you send it?
+### 3. Replace accommodation card content (`src/data/venueContent.ts` + `src/pages/Venue.tsx`)
+- Remove the `discountNote` field and its rendered paragraph ("A curated list of nearby hotels with discounted rates…").
+- Add a `hotels` array to `venueContent.accommodation`, each entry `{ name, url }`, covering the eight hotels provided. Use the English-language registration URLs given.
+- Update the copy to state that the list is provided as a convenience and that booking and payment are the participants' own responsibility.
+- Render the list as clickable links (external, `noopener noreferrer`) in the Venue accommodation card, replacing the current "Link coming soon" / `accommodationListUrl` logic.
+
+Hotels to add (name → URL):
+- Inntel Hotels Utrecht Centre → https://www.inntelhotels.nl/utrechtcentre/en
+- Hotel NH Utrecht → https://www.nh-hotels.com/en/hotel/nh-utrecht
+- Malie House → https://www.maliehouse.com/en/
+- Moxy Utrecht → https://www.marriott.com/en-us/hotels/amsou-moxy-utrecht/overview/
+- Park Plaza → https://www.radissonhotels.com/en-us/hotels/park-plaza-utrecht
+- Utrecht Boutique Hotels → https://www.utrechtboutiquehotels.nl/en/
+- Stayokay Hostel Utrecht Centrum → https://www.stayokay.com/en/hostel/utrecht-centrum
+- BUNK Hotel Utrecht Centre → https://wearebunk.com/utrecht/bunk-rooms/
 
 No DB, routing, or auth changes.
