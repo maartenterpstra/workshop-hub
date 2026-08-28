@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Train, Car, Plane } from "lucide-react";
+import { MapPin, Train, Car, Plane, ExternalLink } from "lucide-react";
 import { venueContent } from "@/data/venueContent";
 import { siteConfig } from "@/data/siteConfig";
 import mapImg from "@/assets/plattegrond-umc-utrecht.png";
