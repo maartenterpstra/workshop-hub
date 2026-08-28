@@ -21,6 +21,8 @@ import Review from "./pages/Review";
 import Soc from "./pages/Soc";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RouteSeo from "./components/RouteSeo";
+
 
 const queryClient = new QueryClient();
 
