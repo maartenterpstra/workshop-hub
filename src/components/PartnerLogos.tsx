@@ -1,8 +1,9 @@
 import umcuLogo from "@/assets/umcu_logo.svg";
-import pmcLogo from "@/assets/pmc_logo.svg";
+import pmcLogo from "@/assets/pmc_logo.png";
 import ailabslogo from "@/assets/ailabs_logo.png";
 import dlinrtLogo from "@/assets/dlinrteu_logo.png";
 import ciglogo from "@/assets/cig_logo.png";
+import estroEndorsement from "@/assets/estro.svg"
 
 const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => {
   const isDark = variant === "dark";
@@ -98,6 +99,17 @@ const PartnerLogos = ({ variant = "light" }: { variant?: "light" | "dark" }) => 
           <div className="text-sm font-bold text-foreground">
             AI Labs 
           </div>
+        </div>
+      </a>
+      <a
+        href="https://www.estro.org/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${wrapper} hover:shadow-card transition-shadow`}
+        aria-label="ESTRO"
+      >
+        <img src={estroEndorsement} alt="Endorsed by ESTRO" className="h-10 w-auto object-contain" />
+        <div className="leading-tight">
         </div>
       </a>
 

@@ -10,6 +10,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4 text-foreground">{siteConfig.title}</h3>
             <p className="text-sm text-muted-foreground mb-2">{siteConfig.dates}</p>
             <p className="text-sm text-muted-foreground">{siteConfig.location}</p>
+            <p className="text-sm text-muted-foreground">Endorsed by ESTRO</p>
           </div>
 
           <div>

@@ -95,7 +95,7 @@ const Program = () => {
               Format
             </CardTitle>
             <CardDescription className="text-base">
-              A two-day scientific symposium organised along the clinical workflow.
+              A two-day scientific symposium organised along the clinical workflow. Endorsed by ESTRO.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-muted-foreground">

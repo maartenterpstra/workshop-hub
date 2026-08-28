@@ -33,7 +33,7 @@ const Login = () => {
       <Card>
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
-          <CardDescription>Access your DLinRT 2027 account.</CardDescription>
+          <CardDescription>Access your AIinRT 2027 account.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
