@@ -139,23 +139,24 @@ const Venue = () => {
             <p className="text-muted-foreground mb-4">
               {venueContent.accommodation.description}
             </p>
-            <p className="text-muted-foreground mb-3">
-              {venueContent.accommodation.discountNote}
+            <p className="text-sm text-muted-foreground mb-4">
+              {venueContent.accommodation.hotelsNote}
             </p>
-            {venueContent.accommodation.accommodationListUrl ? (
-              <a
-                href={venueContent.accommodation.accommodationListUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline text-sm font-medium"
-              >
-                View accommodation list →
-              </a>
-            ) : (
-              <p className="text-sm italic text-muted-foreground">
-                Link to the accommodation list — coming soon.
-              </p>
-            )}
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {venueContent.accommodation.hotels.map((hotel) => (
+                <li key={hotel.name}>
+                  <a
+                    href={hotel.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-medium"
+                  >
+                    {hotel.name}
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       </div>
