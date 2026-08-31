@@ -68,6 +68,8 @@ export type Database = {
           id: string
           methods: string | null
           results: string | null
+          reviewers_confirmed_at: string | null
+          reviewers_confirmed_by: string | null
           status: Database["public"]["Enums"]["abstract_status"]
           submitted_at: string
           submitted_by: string
@@ -84,6 +86,8 @@ export type Database = {
           id?: string
           methods?: string | null
           results?: string | null
+          reviewers_confirmed_at?: string | null
+          reviewers_confirmed_by?: string | null
           status?: Database["public"]["Enums"]["abstract_status"]
           submitted_at?: string
           submitted_by: string
@@ -100,6 +104,8 @@ export type Database = {
           id?: string
           methods?: string | null
           results?: string | null
+          reviewers_confirmed_at?: string | null
+          reviewers_confirmed_by?: string | null
           status?: Database["public"]["Enums"]["abstract_status"]
           submitted_at?: string
           submitted_by?: string
@@ -149,6 +155,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          must_change_password: boolean
           updated_at: string
         }
         Insert: {
@@ -157,6 +164,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          must_change_password?: boolean
           updated_at?: string
         }
         Update: {
@@ -165,6 +173,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          must_change_password?: boolean
           updated_at?: string
         }
         Relationships: []

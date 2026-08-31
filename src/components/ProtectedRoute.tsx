@@ -6,10 +6,12 @@ interface Props {
   children: ReactNode;
   /** If provided, user must have at least one of these roles. */
   roles?: AppRole[];
+  /** Set on the password-change route itself to avoid a redirect loop. */
+  allowPasswordChange?: boolean;
 }
 
-const ProtectedRoute = ({ children, roles }: Props) => {
-  const { user, roles: userRoles, loading } = useAuth();
+const ProtectedRoute = ({ children, roles, allowPasswordChange }: Props) => {
+  const { user, roles: userRoles, mustChangePassword, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -20,6 +22,10 @@ const ProtectedRoute = ({ children, roles }: Props) => {
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  }
+
+  if (mustChangePassword && !allowPasswordChange) {
+    return <Navigate to="/set-password" replace />;
   }
 
   if (roles && roles.length > 0 && !roles.some((r) => userRoles.includes(r))) {
