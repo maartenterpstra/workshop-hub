@@ -1,0 +1,136 @@
+% =========================================================================
+%  AIinRT 2027 â€” Abstract submission template (LaTeX)
+%  Artificial Intelligence in Radiation Therapy
+%  25â€“26 March 2027 Â· Princess MÃ¡xima Center, Utrecht Â· https://AIinRT.org
+%
+%  REQUIREMENTS (delete the framed instructions box before submission):
+%   â€¢ Main text (Introductionâ€“Conclusion): max. 500 words
+%   â€¢ One A4 page total, including display items and references
+%   â€¢ Max. 2 display items (figures and/or tables combined), each captioned;
+%     captions and references are NOT counted in the 500 words
+%   â€¢ Do not change fonts, margins, or spacing; do not add pages
+%   â€¢ DOUBLE-BLIND review: no author names, affiliations, acknowledgements,
+%     or identifying info anywhere in this document; cite own prior work in
+%     the third person; author details go in the submission system only
+%   â€¢ AI-use disclosure is mandatory ("None" is acceptable)
+%   â€¢ Submit as PDF via AIinRT.org (deadline: see website)
+%   â€¢ Accepted abstracts: proffered papers, 9 min + 3 min discussion
+%
+%  Word-count check (TeX Live):  texcount -inc -sum main.tex
+% =========================================================================
+\documentclass[10pt,a4paper]{article}
+
+% ---- Layout (do not modify) ---------------------------------------------
+\usepackage[a4paper,top=20mm,bottom=18mm,left=20mm,right=20mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{helvet}\renewcommand{\familydefault}{\sfdefault} % Calibri-like sans
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{aiNavy}{HTML}{1F3864}
+\definecolor{aiAccent}{HTML}{2E74B5}
+\definecolor{aiGrey}{HTML}{595959}
+\usepackage{titlesec}
+\titleformat{\section}{\normalsize\bfseries\color{aiNavy}}{}{0pt}{}
+\titlespacing{\section}{0pt}{6pt}{1pt}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tcolorbox}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+
+\begin{document}
+
+% ---- Header --------------------------------------------------------------
+\begin{center}
+  {\LARGE\bfseries\color{aiNavy} AIinRT 2027}\\[2pt]
+  {\small\color{aiGrey} Artificial Intelligence in Radiation Therapy
+   \,\textperiodcentered\, 2027
+   \,\textperiodcentered\, Princess M\'axima Center, Utrecht}\\[2pt]
+  {\color{aiAccent}\bfseries Abstract submission template}\\[2pt]
+  \textcolor{aiAccent}{\rule{\textwidth}{0.8pt}}
+\end{center}
+
+% ---- Instructions (DELETE THIS BOX BEFORE SUBMISSION) --------------------
+\begin{tcolorbox}[colback=aiNavy!6,colframe=aiAccent,title=Instructions
+  (delete this box before submission),fonttitle=\bfseries\small,fontupper=\small]
+\begin{itemize}\setlength\itemsep{1pt}
+  \item Main text max.\ \textbf{500 words}; \textbf{one A4 page} including
+        display items and references.
+  \item Max.\ \textbf{2 display items} (figures and/or tables combined);
+        captions and references not counted in the word limit.
+  \item Do not alter fonts, margins, or spacing; do not add pages.
+  \item \textbf{Double-blind review}: no author names, affiliations,
+        acknowledgements, or identifying information anywhere in this
+        document; cite your own prior work in the third person. Author
+        details are entered in the submission system only.
+  \item \textbf{AI-use disclosure is mandatory}; ``None'' is acceptable.
+  \item Submit as PDF via \url{https://AIinRT.org} (deadline: see website;
+        2027 meeting dates to be confirmed). Accepted abstracts: proffered
+        paper, 9\,min + 3\,min discussion.
+\end{itemize}
+\end{tcolorbox}
+
+% ---- Title & authors ------------------------------------------------------
+{\large\bfseries Title of the abstract (max.\ 20 words, sentence case, no
+abbreviations)}\\[4pt]
+{\small\itshape\color{aiGrey} Double-blind review --- no author names,
+affiliations, or contact details in this document. Author information is
+collected separately in the submission system.}
+
+\section{Session preference (select one)}
+{\small\itshape\color{aiGrey}
+S1 Segmentation \& Registration \,\textperiodcentered\,
+S2 Reconstruction \& Synthesis \,\textperiodcentered\,
+S3 Foundation Models, Text, Explainability \& Uncertainty \,\textperiodcentered\,
+S4 Dose \& Adaptive Workflows \,\textperiodcentered\,
+S5 Clinical Predictions \& Outcomes \,\textperiodcentered\,
+S6 Implementation, QA \& Ethics}
+
+\section{Introduction / Purpose}
+\textit{State the clinical or technical problem, its relevance to radiation
+therapy, and the aim of the work. [Main text: max.\ 500 words in total across
+the four sections.]}
+
+\section{Materials \& Methods}
+\textit{Describe data (cohort size, modality, source), model/algorithm,
+training and validation strategy, and evaluation metrics. Report
+ethics/consent status where applicable.}
+
+\section{Results}
+\textit{Present quantitative results with uncertainty where possible (e.g.,
+mean\,$\pm$\,SD, CI). Refer to Figure~\ref{fig:example} / Table~1.}
+
+\section{Conclusion}
+\textit{Summarise the main finding and its potential clinical impact or next
+steps.}
+
+% ---- Display item (max. 2 in total) ---------------------------------------
+\begin{figure}[h]
+  \centering
+  % \includegraphics[width=0.7\textwidth]{figure1}
+  \fbox{\parbox[c][22mm][c]{0.7\textwidth}{\centering\itshape\color{aiGrey}
+    Insert figure or table here (max.\ 2 display items in total)}}
+  \caption{Concise, self-contained description (not counted in the 500 words).}
+  \label{fig:example}
+\end{figure}
+
+\section{References (optional, max.\ 5)}
+{\small [1] Author A \emph{et al.} Journal Year;Vol:Pages. DOI}
+
+\section{Disclosure of AI use (mandatory)}
+\textit{Declare any use of generative AI or AI-assisted tools in the conduct
+of the research and/or the preparation of this abstract (e.g., code
+generation, text drafting/editing, figure creation), naming the tool(s) and
+purpose. Authors remain fully responsible for content. Write ``None'' if not
+applicable.}
+
+\section{Conflicts of interest \& funding}
+\textit{Declare relevant conflicts of interest and funding sources, or state
+``None''.}
+
+\end{document}
+
