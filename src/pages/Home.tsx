@@ -76,7 +76,7 @@ const Home = () => {
             <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 size="lg"
-                onClick={() => navigate("/registration")}
+                onClick={() => navigate("/submission")}
                 className="bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-warm font-semibold"
               >
                 <FileText className="h-4 w-4" />

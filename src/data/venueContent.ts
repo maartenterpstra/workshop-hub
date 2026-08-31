@@ -45,7 +45,16 @@ export const venueContent = {
   accommodation: {
     title: "Accommodation",
     description: "Utrecht offers a variety of accommodation options. We recommend booking early, especially during the conference dates. Hotels in Utrecht city center are approximately 15-20 minutes from UMC Utrecht by public transport.",
-    discountNote: "A curated list of nearby hotels with discounted rates for AIinRT2027 attendees will be provided here.",
-    accommodationListUrl: "",
+    hotelsNote: "The list below is provided as a convenience for attendees. Booking and payment are the participants' own responsibility; no special rates are negotiated by the organizers.",
+    hotels: [
+      { name: "Inntel Hotels Utrecht Centre", url: "https://www.inntelhotels.nl/utrechtcentre/en" },
+      { name: "Hotel NH Utrecht", url: "https://www.nh-hotels.com/en/hotel/nh-utrecht" },
+      { name: "Malie House", url: "https://www.maliehouse.com/en/" },
+      { name: "Moxy Utrecht", url: "https://www.marriott.com/en-us/hotels/amsou-moxy-utrecht/overview/" },
+      { name: "Park Plaza", url: "https://www.radissonhotels.com/en-us/hotels/park-plaza-utrecht" },
+      { name: "Utrecht Boutique Hotels", url: "https://www.utrechtboutiquehotels.nl/en/" },
+      { name: "Stayokay Hostel Utrecht Centrum", url: "https://www.stayokay.com/en/hostel/utrecht-centrum" },
+      { name: "BUNK Hotel Utrecht Centre", url: "https://wearebunk.com/utrecht/bunk-rooms/" },
+    ],
   }
 };

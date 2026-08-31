@@ -36,23 +36,21 @@ const Signup = () => {
 
     const userId = data.user.id;
 
-    // Create profile + assign default author role. RLS allows the user to insert their own rows.
-    const [{ error: profileError }, { error: roleError }] = await Promise.all([
-      supabase.from("profiles").insert({
-        id: userId,
-        email,
-        full_name: fullName || null,
-        affiliation: affiliation || null,
-      }),
-      supabase.from("user_roles").insert({ user_id: userId, role: "author" }),
-    ]);
+    // Create profile. The default "author" role is granted server-side by a
+    // database trigger on profile creation (clients cannot assign roles).
+    const { error: profileError } = await supabase.from("profiles").insert({
+      id: userId,
+      email,
+      full_name: fullName || null,
+      affiliation: affiliation || null,
+    });
 
     setLoading(false);
 
-    if (profileError || roleError) {
+    if (profileError) {
       toast({
         title: "Account created, profile setup failed",
-        description: (profileError ?? roleError)?.message ?? "Please contact the organisers.",
+        description: profileError.message ?? "Please contact the organisers.",
         variant: "destructive",
       });
     } else {
