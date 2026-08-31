@@ -6,7 +6,7 @@ Turn the 41 reviewers from the preference form into real platform accounts with 
 
 ## 1. Reviewer data import
 
-The CSV topic labels are outdated and get mapped to the current six sessions:
+The CSV topic labels are outdated and get mapped to the current abstract submission topics ("Segmentation & Registration", "Reconstruction & Synthesis", "Foundation Models, Text, Explainability & Uncertainty", "Dose & Adaptive Workflows", "Clinical Predictions & Outcomes", "Implementation, QA & Ethics"):
 
 | CSV label | Platform topic |
 | --- | --- |
