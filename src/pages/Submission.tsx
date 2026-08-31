@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, FileText, CheckCircle2, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
-import docxTemplate from "@/assets/abstract-template-docx.asset.json";
-import texTemplate from "@/assets/abstract-template-tex.asset.json";
+import docxTemplate from "@/assets/AIinRT2027_Abstract_Template.docx";
+import texTemplate from "@/assets/AIinRT2027_Abstract_Template.tex";
 
 const topics = [
   "Segmentation & Registration",
@@ -57,13 +57,13 @@ const Submission = () => {
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
             <Button asChild variant="outline">
-              <a href={docxTemplate.url} download>
+              <a href={docxTemplate} download="AIinRT2027_Abstract_Template.docx">
                 <Download className="mr-2 h-4 w-4" />
                 Word template (.docx)
               </a>
             </Button>
             <Button asChild variant="outline">
-              <a href={texTemplate.url} download>
+              <a href={texTemplate} download="AIinRT2027_Abstract_Template.tex">
                 <Download className="mr-2 h-4 w-4" />
                 LaTeX template (.tex)
               </a>

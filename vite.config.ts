@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => ({
   // base: '/demo/',
 
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  assetsInclude: ['**/*.tex', '**/*.docx'],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
