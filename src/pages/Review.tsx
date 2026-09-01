@@ -167,7 +167,8 @@ const Review = () => {
       <div>
         <h1 className="text-3xl font-bold">Reviewer dashboard</h1>
         <p className="text-muted-foreground mt-2">
-          {assignments.length} abstract{assignments.length === 1 ? "" : "s"} assigned. Authors are blinded.
+          {assignments.length} abstract{assignments.length === 1 ? "" : "s"} assigned. Authors are
+          blinded. Abstracts appear here once the organisers have confirmed your review panel.
         </p>
       </div>
 

@@ -27,6 +27,8 @@ const Header = () => {
     authLinks.push({ to: "/review", label: "Review" });
   if (roles.includes("soc") || roles.includes("admin"))
     authLinks.push({ to: "/soc", label: "SOC" });
+  if (roles.includes("admin"))
+    authLinks.push({ to: "/admin/assignments", label: "Assignments" });
 
   const navLinks = [...baseLinks, ...authLinks];
 
