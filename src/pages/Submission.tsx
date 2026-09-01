@@ -15,7 +15,8 @@ const topics = [
   "Clinical Predictions & Outcomes",
   "Implementation, QA & Ethics",
 ];
-
+// Compares current timestamp against the opening date
+const isOpen = new Date() >= new Date(siteConfig.callForAbstractsOpens);
 const Submission = () => {
   return (
     <div className="py-16 px-4">
@@ -29,10 +30,24 @@ const Submission = () => {
           </p>
         </div>
 
-        <Alert className="mb-8 border-primary/50 bg-primary/5">
-          <AlertCircle className="h-4 w-4 text-primary" />
+        <Alert
+          className={
+            isOpen
+              ? "mb-8 border-green-500/50 bg-green-500/10 text-green-950 dark:text-green-100"
+              : "mb-8 border-primary/50 bg-primary/5"
+          }
+        >
+          {isOpen ? (
+            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+          ) : (
+            <AlertCircle className="h-4 w-4 text-primary" />
+          )}
           <AlertDescription className="text-base">
-            <strong className="text-foreground">Submission opens {siteConfig.callForAbstractsOpens}.</strong>{" "}
+            <strong className="text-foreground">
+              {isOpen
+                ? "Submissions are now open!"
+                : `Submission opens ${siteConfig.callForAbstractsOpens}.`}
+            </strong>{" "}
             Deadline: {siteConfig.abstractSubmissionDeadline}. Decisions follow peer review.{" "}
             <span className="block mt-2 text-foreground/90">
               Work that has been submitted to (or is under review at) another venue is welcome,
