@@ -19,6 +19,8 @@ import Signup from "./pages/Signup";
 import Submit from "./pages/Submit";
 import Review from "./pages/Review";
 import Soc from "./pages/Soc";
+import AdminAssignments from "./pages/AdminAssignments";
+import SetPassword from "./pages/SetPassword";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RouteSeo from "./components/RouteSeo";
@@ -70,6 +72,22 @@ const App = () => (
                   element={
                     <ProtectedRoute roles={["soc", "admin"]}>
                       <Soc />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/assignments"
+                  element={
+                    <ProtectedRoute roles={["admin"]}>
+                      <AdminAssignments />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/set-password"
+                  element={
+                    <ProtectedRoute allowPasswordChange>
+                      <SetPassword />
                     </ProtectedRoute>
                   }
                 />
