@@ -186,7 +186,7 @@ const Submit = () => {
       const { error: authErr } = await supabase.from("abstract_authors").insert(authorRows);
       if (authErr) throw authErr;
 
-      toast.success("Abstract submitted. Reviewers assigned automatically.");
+      toast.success("Abstract successfully submitted!");
       navigate("/");
     } catch (err: any) {
       console.error(err);
