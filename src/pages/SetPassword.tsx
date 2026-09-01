@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { DEFAULT_REVIEWER_PASSWORD } from "@/data/reviewerImport";
-import Seo from "@/components/Seo";
 
 const SetPassword = () => {
   const navigate = useNavigate();
@@ -50,7 +49,6 @@ const SetPassword = () => {
 
   return (
     <div className="container max-w-md py-16">
-      <Seo title="Set your password | AIinRT2027" description="Choose a new password for your AIinRT2027 account." />
       <Card>
         <CardHeader>
           <CardTitle>Set your password</CardTitle>
