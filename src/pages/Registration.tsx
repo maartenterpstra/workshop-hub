@@ -37,7 +37,8 @@ const Registration = () => {
               Register via the Princess Máxima Center
             </CardTitle>
             <CardDescription className="text-base">
-              Opens {siteConfig.registrationOpensOn}
+              Opens {siteConfig.registrationOpensOn} · Registration closes{" "}
+              {siteConfig.registrationDeadline}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
