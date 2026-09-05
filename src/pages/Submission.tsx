@@ -52,7 +52,7 @@ const Submission = () => {
             {siteConfig.abstractDecisionsOn}.{" "}
             <span className="block mt-2 text-foreground/90">
               Work that has been submitted to (or is under review at) another venue is welcome,
-              provided it has <strong>not yet been presented by December 2026</strong>. Please disclose it on
+              provided it has <strong>not yet been presented by {siteConfig.abstractDecisionsOn}</strong>. Please disclose it on
               submission — this does not affect scoring.
             </span>
           </AlertDescription>
