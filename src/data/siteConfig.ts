@@ -20,6 +20,7 @@ export const siteConfig = {
     email2: "M.L.Terpstra-5@umcutrecht.nl",
     department: "Department of Radiotherapy",
     institution: "UMC Utrecht",
+    linkedin: "https://www.linkedin.com/in/ai-in-radiotherapy-461969432/"
   },
 
   organizers: [

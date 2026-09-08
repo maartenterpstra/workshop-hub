@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Mail, Linkedin } from "lucide-react";
 import { siteConfig } from "@/data/siteConfig";
 
 const Footer = () => {
@@ -31,6 +31,15 @@ const Footer = () => {
                 <Mail className="h-4 w-4" />
                 {siteConfig.contact.email2}
               </a>
+              <a
+                  href={siteConfig.contact.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-primary hover:underline"
+                >
+                  <Linkedin className="h-4 w-4" />
+                  LinkedIn
+                </a>
             </div>
           </div>
         </div>
