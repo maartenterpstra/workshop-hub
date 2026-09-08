@@ -4,11 +4,12 @@ export const siteConfig = {
   subtitle: "2027 Workshop",
   dates: "1–2 April 2027",
   location: "UMC Utrecht & Princess Máxima Center",
-  registrationDeadline: "TBC",
+  registrationDeadline: "1 March 2027",
 
   // Phase / status flags for 2027 — keep these in sync with the timeline
-  callForAbstractsOpens: "September 1, 2026",
-  abstractSubmissionDeadline: "TBC",
+  callForAbstractsOpens: "1 September 2026",
+  abstractSubmissionDeadline: "1 December 2026",
+  abstractDecisionsOn: "17 December 2026",
   registrationOpensOn: "TBC",
 
   // Registration is handled on a separate site for 2027; leave empty until live.

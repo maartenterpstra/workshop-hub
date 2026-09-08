@@ -9,12 +9,12 @@ import utrechtHero from "@/assets/utrecht-hero.jpg";
 const Home = () => {
   const navigate = useNavigate();
   const timelineItems = [
-    { label: "Call for abstracts", date: "1 September 2026" },
-    { label: "Registration opening", date: "1 October 2026" },
-    { label: "Abstract submission deadline", date: "1 December 2026" },
-    { label: "Abstract decisions communicated", date: "17 December 2026" },
-    { label: "Registration closes", date: "1 March 2027" },
-    { label: "AIinRT2027 Symposium", date: "1–2 April 2027" },
+    { label: "Call for abstracts", date: siteConfig.callForAbstractsOpens },
+    { label: "Registration opening", date: siteConfig.registrationOpensOn },
+    { label: "Abstract submission deadline", date: siteConfig.abstractSubmissionDeadline },
+    { label: "Abstract decisions communicated", date: siteConfig.abstractDecisionsOn },
+    { label: "Registration closes", date: siteConfig.registrationDeadline },
+    { label: "AIinRT2027 Symposium", date: siteConfig.dates },
   ];
 
   return (
