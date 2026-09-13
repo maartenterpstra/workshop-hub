@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useNavigate } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
 import PartnerLogos from "@/components/PartnerLogos";
+import EndorsementLogos from "@/components/EndorsementLogos";
 import utrechtHero from "@/assets/utrecht-hero.jpg";
 
 const Home = () => {
@@ -100,13 +101,21 @@ const Home = () => {
       </section>
 
       {/* Partner logos section */}
-      <section className="bg-white/95 backdrop-blur-md border-t border-border py-4">
-        <div className="container">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+      <section className="border-t border-border bg-background/95 py-5 backdrop-blur-md">
+        <div className="container space-y-5">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-semibold text-center md:text-left">
               Organized by UMC Utrecht<br className="hidden md:block" /> in collaboration with PMC & DLinRT.eu
             </span>
             <PartnerLogos />
+          </div>
+          <div className="border-t border-border pt-5">
+            <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Endorsed by
+              </span>
+              <EndorsementLogos />
+            </div>
           </div>
         </div>
       </section>
