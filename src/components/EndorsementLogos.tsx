@@ -1,18 +1,18 @@
-import efompLogo from "@/assets/efomp-logo.png.asset.json";
-import miccaiLogo from "@/assets/miccai-logo.png.asset.json";
+import efompLogo from "@/assets/efomp-logo.png";
+import miccaiLogo from "@/assets/miccai-logo.png";
 import estroLogo from "@/assets/estro.svg";
 
 const endorsements = [
   {
     name: "EFOMP",
     href: "https://www.efomp.org/",
-    src: efompLogo.url,
+    src: efompLogo,
     imageClassName: "h-10 sm:h-12",
   },
   {
     name: "MICCAI Society",
     href: "https://miccai.org/",
-    src: miccaiLogo.url,
+    src: miccaiLogo,
     imageClassName: "h-14 sm:h-16",
   },
   {
