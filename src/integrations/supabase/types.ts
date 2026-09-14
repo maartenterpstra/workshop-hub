@@ -128,6 +128,7 @@ export type Database = {
         Row: {
           debug_mode: boolean
           id: boolean
+          review_closes_at: string | null
           submission_closes_at: string | null
           submission_opens_at: string | null
           updated_at: string
@@ -135,6 +136,7 @@ export type Database = {
         Insert: {
           debug_mode?: boolean
           id?: boolean
+          review_closes_at?: string | null
           submission_closes_at?: string | null
           submission_opens_at?: string | null
           updated_at?: string
@@ -142,6 +144,7 @@ export type Database = {
         Update: {
           debug_mode?: boolean
           id?: boolean
+          review_closes_at?: string | null
           submission_closes_at?: string | null
           submission_opens_at?: string | null
           updated_at?: string
