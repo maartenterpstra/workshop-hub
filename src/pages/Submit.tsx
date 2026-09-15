@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,9 @@ const formSchema = z.object({
 const Submit = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { submissionOpen, debug, opensAt, loading: cfgLoading } = useAppConfig();
+  const { abstractId } = useParams<{ abstractId: string }>();
+  const editing = Boolean(abstractId);
+  const { submissionOpen, debug, opensAt, closesAt, loading: cfgLoading } = useAppConfig();
 
   const [topics, setTopics] = useState<Topic[]>([]);
   const [title, setTitle] = useState("");
@@ -57,8 +59,12 @@ const Submit = () => {
   ]);
   const [file, setFile] = useState<File | null>(null);
   const [figures, setFigures] = useState<File[]>([]);
+  const [existingFilePath, setExistingFilePath] = useState<string | null>(null);
+  const [existingFigurePaths, setExistingFigurePaths] = useState<string[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingAbstract, setLoadingAbstract] = useState(editing);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const totalWords = countWords([background, methods, results, conclusion].join(" "));
   const overLimit = totalWords > WORD_LIMIT;
@@ -68,6 +74,55 @@ const Submit = () => {
       setTopics((data ?? []) as Topic[]);
     });
   }, []);
+
+  useEffect(() => {
+    if (!editing || !abstractId || !user) return;
+    (async () => {
+      const [{ data: abstract, error: abstractError }, { data: authorRows, error: authorError }] =
+        await Promise.all([
+          supabase
+            .from("abstracts")
+            .select("id, title, topic_id, background, methods, results, conclusion, file_path, figure_paths, status")
+            .eq("id", abstractId)
+            .eq("submitted_by", user.id)
+            .maybeSingle(),
+          supabase
+            .from("abstract_authors")
+            .select("name, affiliation, email, is_presenting, author_order")
+            .eq("abstract_id", abstractId)
+            .order("author_order"),
+        ]);
+
+      if (abstractError || authorError || !abstract) {
+        setLoadError("This abstract could not be found or you do not have access to it.");
+        setLoadingAbstract(false);
+        return;
+      }
+      if (abstract.status !== "submitted") {
+        setLoadError("This abstract can no longer be edited because a decision has been recorded.");
+        setLoadingAbstract(false);
+        return;
+      }
+
+      setTitle(abstract.title);
+      setTopicId(abstract.topic_id ?? "");
+      setBackground(abstract.background ?? "");
+      setMethods(abstract.methods ?? "");
+      setResults(abstract.results ?? "");
+      setConclusion(abstract.conclusion ?? "");
+      setExistingFilePath(abstract.file_path);
+      setExistingFigurePaths(abstract.figure_paths ?? []);
+      if (authorRows?.length) {
+        setAuthors(authorRows.map((author) => ({
+          name: author.name,
+          affiliation: author.affiliation ?? "",
+          email: author.email ?? "",
+          is_presenting: author.is_presenting,
+        })));
+      }
+      setLoadingAbstract(false);
+    })();
+  }, [abstractId, editing, user]);
 
   const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -119,8 +174,16 @@ const Submit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
+    if (!submissionOpen) {
+      toast.error("The submission period is closed.");
+      return;
+    }
+    if (!file && !existingFilePath) {
       toast.error("Please attach your abstract PDF.");
+      return;
+    }
+    if (figures.length === 0 && existingFigurePaths.length === 0) {
+      toast.error("Please attach at least one figure or table image.");
       return;
     }
     const parsed = formSchema.safeParse({
@@ -134,31 +197,34 @@ const Submit = () => {
 
     setSubmitting(true);
     try {
-      const submissionId = crypto.randomUUID();
+      const submissionId = abstractId ?? crypto.randomUUID();
       const filePath = `${user.id}/${submissionId}/abstract.pdf`;
-      const { error: upErr } = await supabase.storage.from("abstracts").upload(filePath, file, {
-        contentType: "application/pdf",
-        upsert: false,
-      });
-      if (upErr) throw upErr;
+      if (file) {
+        const { error: upErr } = await supabase.storage.from("abstracts").upload(filePath, file, {
+          contentType: "application/pdf",
+          upsert: editing,
+        });
+        if (upErr) throw upErr;
+      }
 
-      const figurePaths: string[] = [];
-      for (let i = 0; i < figures.length; i++) {
-        const fig = figures[i];
-        const ext = fig.type === "image/png" ? "png" : "jpg";
-        const figPath = `${user.id}/${submissionId}/figure-${i + 1}.${ext}`;
-        const { error: figErr } = await supabase.storage
-          .from("abstracts")
-          .upload(figPath, fig, { contentType: fig.type, upsert: false });
-        if (figErr) throw figErr;
-        figurePaths.push(figPath);
+      let figurePaths = existingFigurePaths;
+      if (figures.length > 0) {
+        figurePaths = [];
+        for (let i = 0; i < figures.length; i++) {
+          const fig = figures[i];
+          const ext = fig.type === "image/png" ? "png" : "jpg";
+          const figPath = `${user.id}/${submissionId}/figure-${i + 1}.${ext}`;
+          const { error: figErr } = await supabase.storage
+            .from("abstracts")
+            .upload(figPath, fig, { contentType: fig.type, upsert: editing });
+          if (figErr) throw figErr;
+          figurePaths.push(figPath);
+        }
       }
 
       const wordCount = totalWords;
 
-      const { data: abs, error: absErr } = await supabase
-        .from("abstracts")
-        .insert({
+      const abstractPayload = {
           submitted_by: user.id,
           title: parsed.data.title,
           topic_id: parsed.data.topic_id,
@@ -167,12 +233,14 @@ const Submit = () => {
           results: parsed.data.results,
           conclusion: parsed.data.conclusion,
           word_count: wordCount,
-          file_path: filePath,
-          figure_paths: figurePaths.length ? figurePaths : null,
+          file_path: existingFilePath ?? filePath,
+          figure_paths: figurePaths,
           status: "submitted",
-        })
-        .select("id")
-        .single();
+        };
+      const abstractMutation = editing && abstractId
+        ? supabase.from("abstracts").update(abstractPayload).eq("id", abstractId).eq("submitted_by", user.id)
+        : supabase.from("abstracts").insert(abstractPayload);
+      const { data: abs, error: absErr } = await abstractMutation.select("id").single();
       if (absErr) throw absErr;
 
       const authorRows = parsed.data.authors.map((a, idx) => ({
@@ -183,11 +251,18 @@ const Submit = () => {
         is_presenting: a.is_presenting,
         author_order: idx + 1,
       }));
+      if (editing) {
+        const { error: deleteAuthorsError } = await supabase
+          .from("abstract_authors")
+          .delete()
+          .eq("abstract_id", abs.id);
+        if (deleteAuthorsError) throw deleteAuthorsError;
+      }
       const { error: authErr } = await supabase.from("abstract_authors").insert(authorRows);
       if (authErr) throw authErr;
 
-      toast.success("Abstract successfully submitted!");
-      navigate("/");
+      toast.success(editing ? "Abstract changes saved." : "Abstract successfully submitted!");
+      navigate("/my-abstracts");
     } catch (err: any) {
       console.error(err);
       toast.error(err.message ?? "Submission failed.");
@@ -196,8 +271,18 @@ const Submit = () => {
     }
   };
 
-  if (cfgLoading) {
+  if (cfgLoading || loadingAbstract) {
     return <div className="container py-16 text-center text-muted-foreground">Loading…</div>;
+  }
+
+  if (loadError) {
+    return (
+      <div className="container max-w-2xl space-y-4 py-16 text-center">
+        <h1 className="text-3xl font-bold">Abstract unavailable</h1>
+        <p className="text-muted-foreground">{loadError}</p>
+        <Button onClick={() => navigate("/my-abstracts")}>Back to my abstracts</Button>
+      </div>
+    );
   }
 
   if (!submissionOpen) {
@@ -216,10 +301,20 @@ const Submit = () => {
   return (
     <div className="container max-w-3xl py-12 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Submit an abstract</h1>
+        <h1 className="text-3xl font-bold">{editing ? "Edit abstract" : "Submit an abstract"}</h1>
         <p className="text-muted-foreground mt-2">
           Signed in as {user?.email}. {debug && <span className="text-secondary">(debug mode)</span>}
         </p>
+        {closesAt && (
+          <p className="mt-2 text-sm font-medium">
+            Submissions and revisions close {new Intl.DateTimeFormat("en-GB", {
+              dateStyle: "long",
+              timeStyle: "short",
+              timeZone: "Europe/Amsterdam",
+              timeZoneName: "short",
+            }).format(closesAt)}.
+          </p>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -330,10 +425,12 @@ const Submit = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Figures / tables (optional)</CardTitle>
+            <CardTitle>Figures / tables *</CardTitle>
             <CardDescription>
-              Upload up to 2 display items (figures and/or tables combined) as PNG or JPG,
-              max 10 MB each. These are stored alongside your PDF.
+              Upload 1–2 display items (figures and/or tables combined) as PNG or JPG,
+              max 10 MB each. {editing && existingFigurePaths.length > 0
+                ? "Your existing images remain unless you upload replacements."
+                : "At least one image is required."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -364,11 +461,18 @@ const Submit = () => {
                 ))}
               </ul>
             )}
+            {editing && figures.length === 0 && existingFigurePaths.length > 0 && (
+              <p className="text-sm text-muted-foreground">
+                {existingFigurePaths.length} existing image{existingFigurePaths.length === 1 ? "" : "s"} will be retained.
+              </p>
+            )}
           </CardContent>
         </Card>
 
         <Button type="submit" size="lg" className="w-full" disabled={submitting || overLimit}>
-          {submitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting…</> : "Submit abstract"}
+          {submitting ? (
+            <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{editing ? "Saving…" : "Submitting…"}</>
+          ) : editing ? "Save changes" : "Submit abstract"}
         </Button>
       </form>
     </div>
