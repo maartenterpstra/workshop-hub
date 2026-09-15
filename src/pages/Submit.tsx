@@ -262,6 +262,13 @@ const Submit = () => {
       if (authErr) throw authErr;
 
       toast.success(editing ? "Abstract changes saved." : "Abstract successfully submitted!");
+      const { error: emailError } = await supabase.functions.invoke("send-confirmation-email", {
+        body: { abstractId: abs.id, event: editing ? "updated" : "submitted" },
+      });
+      if (emailError) {
+        console.error("Confirmation email failed:", emailError);
+        toast.warning("Saved, but the confirmation email could not be sent.");
+      }
       navigate("/my-abstracts");
     } catch (err: any) {
       console.error(err);
