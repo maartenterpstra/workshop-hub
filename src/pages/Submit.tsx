@@ -235,7 +235,7 @@ const Submit = () => {
           word_count: wordCount,
           file_path: existingFilePath ?? filePath,
           figure_paths: figurePaths,
-          status: "submitted",
+          status: "submitted" as const,
         };
       const abstractMutation = editing && abstractId
         ? supabase.from("abstracts").update(abstractPayload).eq("id", abstractId).eq("submitted_by", user.id)

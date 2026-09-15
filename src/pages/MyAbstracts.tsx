@@ -89,7 +89,7 @@ const MyAbstracts = () => {
                 <p className="text-xs font-semibold uppercase text-secondary">{abstract.topic?.name ?? "No topic"}</p>
                 <CardTitle className="mt-1">{abstract.title}</CardTitle>
               </div>
-              <Badge variant="outline">{abstract.status.replaceAll("_", " ")}</Badge>
+              <Badge variant="outline">{abstract.status.replace(/_/g, " ")}</Badge>
             </div>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center justify-between gap-3">
