@@ -17,6 +17,7 @@ import SpeakerUpload from "./pages/Upload";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Submit from "./pages/Submit";
+import MyAbstracts from "./pages/MyAbstracts";
 import Review from "./pages/Review";
 import Soc from "./pages/Soc";
 import AdminAssignments from "./pages/AdminAssignments";
@@ -56,6 +57,22 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <Submit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/submit/:abstractId"
+                  element={
+                    <ProtectedRoute>
+                      <Submit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-abstracts"
+                  element={
+                    <ProtectedRoute>
+                      <MyAbstracts />
                     </ProtectedRoute>
                   }
                 />

@@ -22,7 +22,7 @@ const Header = () => {
   ];
 
   const authLinks: { to: string; label: string }[] = [];
-  if (user) authLinks.push({ to: "/submit", label: "Submit Abstract" });
+  if (user) authLinks.push({ to: "/my-abstracts", label: "My Abstracts" });
   if (roles.includes("reviewer") || roles.includes("soc") || roles.includes("admin"))
     authLinks.push({ to: "/review", label: "Review" });
   if (roles.includes("soc") || roles.includes("admin"))

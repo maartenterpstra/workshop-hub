@@ -59,7 +59,7 @@ const scoreFields: { key: keyof ReviewRow; label: string }[] = [
 
 const Review = () => {
   const { user } = useAuth();
-  const { submissionClosed, debug, loading: cfgLoading } = useAppConfig();
+  const { submissionClosed, reviewOpen, reviewClosed, reviewClosesAt, debug, loading: cfgLoading } = useAppConfig();
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [drafts, setDrafts] = useState<Record<string, ReviewRow>>({});
   const [loading, setLoading] = useState(true);
@@ -116,6 +116,10 @@ const Review = () => {
     setDrafts((prev) => ({ ...prev, [aid]: { ...prev[aid], ...patch } }));
 
   const submitReview = async (a: Assignment) => {
+    if (!reviewOpen) {
+      toast.error("The review period is closed.");
+      return;
+    }
     const d = drafts[a.id];
     if (!d) return;
     for (const f of scoreFields) {
@@ -170,6 +174,19 @@ const Review = () => {
           {assignments.length} abstract{assignments.length === 1 ? "" : "s"} assigned. Authors are
           blinded. Abstracts appear here once the organisers have confirmed your review panel.
         </p>
+        {reviewClosesAt && (
+          <p className="mt-2 text-sm font-medium text-foreground">
+            Reviews can be submitted and updated until {new Intl.DateTimeFormat("en-GB", {
+              dateStyle: "long",
+              timeStyle: "short",
+              timeZone: "Europe/Amsterdam",
+              timeZoneName: "short",
+            }).format(reviewClosesAt)}.
+          </p>
+        )}
+        {reviewClosed && (
+          <p className="mt-2 text-sm text-destructive">The review period has closed. Saved reviews are read-only.</p>
+        )}
       </div>
 
       {assignments.length === 0 && (
@@ -205,6 +222,7 @@ const Review = () => {
                     <Select
                       value={d[f.key] ? String(d[f.key]) : ""}
                       onValueChange={(v) => setField(a.id, { [f.key]: Number(v) } as any)}
+                      disabled={!reviewOpen}
                     >
                       <SelectTrigger><SelectValue placeholder="Score…" /></SelectTrigger>
                       <SelectContent>
@@ -218,6 +236,7 @@ const Review = () => {
                   <Select
                     value={d.recommendation ?? ""}
                     onValueChange={(v) => setField(a.id, { recommendation: v as any })}
+                    disabled={!reviewOpen}
                   >
                     <SelectTrigger><SelectValue placeholder="Choose…" /></SelectTrigger>
                     <SelectContent>
@@ -231,14 +250,14 @@ const Review = () => {
 
               <div className="space-y-1">
                 <Label>Comments to authors</Label>
-                <Textarea rows={3} value={d.comments_for_authors ?? ""} onChange={(e) => setField(a.id, { comments_for_authors: e.target.value })} />
+                <Textarea disabled={!reviewOpen} rows={3} value={d.comments_for_authors ?? ""} onChange={(e) => setField(a.id, { comments_for_authors: e.target.value })} />
               </div>
               <div className="space-y-1">
                 <Label>Confidential comments to chairs</Label>
-                <Textarea rows={3} value={d.comments_for_soc ?? ""} onChange={(e) => setField(a.id, { comments_for_soc: e.target.value })} />
+                <Textarea disabled={!reviewOpen} rows={3} value={d.comments_for_soc ?? ""} onChange={(e) => setField(a.id, { comments_for_soc: e.target.value })} />
               </div>
 
-              <Button onClick={() => submitReview(a)} disabled={saving === a.id}>
+              <Button onClick={() => submitReview(a)} disabled={saving === a.id || !reviewOpen}>
                 {saving === a.id ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving…</> : d.id ? "Update review" : "Submit review"}
               </Button>
             </CardContent>

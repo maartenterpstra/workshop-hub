@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, FileText, CheckCircle2, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
+import { useAppConfig } from "@/hooks/useAppConfig";
 import docxTemplate from "@/assets/AIinRT2027_Abstract_Template.docx";
 import texTemplate from "@/assets/AIinRT2027_Abstract_Template.tex";
 
@@ -15,9 +16,16 @@ const topics = [
   "Clinical Predictions & Outcomes",
   "Implementation, QA & Ethics",
 ];
-// Compares current timestamp against the opening date
-const isOpen = new Date() >= new Date(siteConfig.callForAbstractsOpens);
 const Submission = () => {
+  const { submissionOpen: isOpen, closesAt } = useAppConfig();
+  const deadline = closesAt
+    ? new Intl.DateTimeFormat("en-GB", {
+        dateStyle: "long",
+        timeStyle: "short",
+        timeZone: "Europe/Amsterdam",
+        timeZoneName: "short",
+      }).format(closesAt)
+    : siteConfig.abstractSubmissionDeadline;
   return (
     <div className="py-16 px-4">
       <div className="container max-w-4xl">
@@ -48,7 +56,7 @@ const Submission = () => {
                 ? "Submissions are now open!"
                 : `Submission opens ${siteConfig.callForAbstractsOpens}.`}
             </strong>{" "}
-            Deadline: {siteConfig.abstractSubmissionDeadline}. Decisions communicated{" "}
+            Deadline: {deadline}. Decisions communicated{" "}
             {siteConfig.abstractDecisionsOn}.{" "}
             <span className="block mt-2 text-foreground/90">
               Work that has been submitted to (or is under review at) another venue is welcome,
@@ -125,8 +133,8 @@ const Submission = () => {
                   (Introduction / Methods / Results / Conclusion).
                 </li>
                 <li>
-                  <strong className="text-foreground">Figures and/or tables</strong> uploaded separately as image files
-                  (PNG or JPG) — up to <strong className="text-foreground">2 display items</strong> in total, one file each.
+                   <strong className="text-foreground">At least one figure or table</strong> uploaded separately as an image
+                   (PNG or JPG) — up to <strong className="text-foreground">2 display items</strong> in total, one file each.
                 </li>
                 <li>
                   <strong className="text-foreground">Final compiled PDF</strong> of the full abstract (built from the
@@ -143,7 +151,7 @@ const Submission = () => {
                   (excluding title, authors, captions, references). The submission form accepts up to{" "}
                   <strong className="text-foreground">600 words</strong> as a small margin.
                 </li>
-                <li>Up to <strong className="text-foreground">2 display items</strong> (figures and/or tables combined).</li>
+                 <li><strong className="text-foreground">1–2 display items are required</strong> (figures and/or tables combined).</li>
                 <li>Compiled PDF: A4, single page, using the provided template. No Word or LaTeX source is required.</li>
                 <li>
                   <strong className="text-foreground">Double-blind:</strong> no author names, affiliations or
@@ -225,7 +233,7 @@ const Submission = () => {
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link to="/submit">Go to submission form</Link>
+                <Link to="/my-abstracts">Manage my abstracts</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link to="/signup">Create an account</Link>
