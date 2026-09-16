@@ -7,6 +7,7 @@ import { siteConfig } from "@/data/siteConfig";
 import { useAppConfig } from "@/hooks/useAppConfig";
 import docxTemplate from "@/assets/AIinRT2027_Abstract_Template.docx";
 import texTemplate from "@/assets/AIinRT2027_Abstract_Template.tex";
+import { formatAmsterdam } from "@/lib/formatDate";
 
 const topics = [
   "Segmentation & Registration",

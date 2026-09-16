@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppConfig } from "@/hooks/useAppConfig";
+import { formatAmsterdam } from "@/lib/formatDate";
 
 interface Topic { id: string; name: string; }
 interface AuthorRow { name: string; affiliation: string; email: string; is_presenting: boolean; }
