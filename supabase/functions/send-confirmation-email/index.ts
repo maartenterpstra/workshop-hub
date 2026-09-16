@@ -2,9 +2,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-// Sender address. onboarding@resend.dev only delivers to the Resend account
-// owner; switch to an address on a domain verified in Resend to email all authors.
-const FROM_ADDRESS = "AIinRT2027 <onboarding@resend.dev>";
+// Sender address on the verified aiinrt.org Resend domain.
+const FROM_ADDRESS = "AIinRT2027 <abstracts@aiinrt.org>";
 const MY_ABSTRACTS_URL = "https://workshop-spark-25.lovable.app/my-abstracts";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
