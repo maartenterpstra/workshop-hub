@@ -24,6 +24,7 @@ import AdminAssignments from "./pages/AdminAssignments";
 import SetPassword from "./pages/SetPassword";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
 import RouteSeo from "./components/RouteSeo";
 
 

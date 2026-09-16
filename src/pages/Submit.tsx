@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppConfig } from "@/hooks/useAppConfig";
+import { formatAmsterdam } from "@/lib/formatDate";
 
 interface Topic { id: string; name: string; }
 interface AuthorRow { name: string; affiliation: string; email: string; is_presenting: boolean; }
@@ -314,14 +315,10 @@ const Submit = () => {
         </p>
         {closesAt && (
           <p className="mt-2 text-sm font-medium">
-            Submissions and revisions close {new Intl.DateTimeFormat("en-GB", {
-              dateStyle: "long",
-              timeStyle: "short",
-              timeZone: "Europe/Amsterdam",
-              timeZoneName: "short",
-            }).format(closesAt)}.
+            Submissions and revisions close {formatAmsterdam(closesAt)}.
           </p>
         )}
+
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

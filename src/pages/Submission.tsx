@@ -7,6 +7,7 @@ import { siteConfig } from "@/data/siteConfig";
 import { useAppConfig } from "@/hooks/useAppConfig";
 import docxTemplate from "@/assets/AIinRT2027_Abstract_Template.docx";
 import texTemplate from "@/assets/AIinRT2027_Abstract_Template.tex";
+import { formatAmsterdam } from "@/lib/formatDate";
 
 const topics = [
   "Segmentation & Registration",
@@ -19,13 +20,9 @@ const topics = [
 const Submission = () => {
   const { submissionOpen: isOpen, closesAt } = useAppConfig();
   const deadline = closesAt
-    ? new Intl.DateTimeFormat("en-GB", {
-        dateStyle: "long",
-        timeStyle: "short",
-        timeZone: "Europe/Amsterdam",
-        timeZoneName: "short",
-      }).format(closesAt)
+    ? formatAmsterdam(closesAt)
     : siteConfig.abstractSubmissionDeadline;
+
   return (
     <div className="py-16 px-4">
       <div className="container max-w-4xl">
