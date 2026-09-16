@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppConfig } from "@/hooks/useAppConfig";
+import { formatAmsterdam } from "@/lib/formatDate";
 
 interface AbstractSummary {
   id: string;
@@ -17,32 +18,38 @@ interface AbstractSummary {
   topic: { name: string } | null;
 }
 
-const formatAmsterdam = (date: Date) =>
-  new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "long",
-    timeStyle: "short",
-    timeZone: "Europe/Amsterdam",
-    timeZoneName: "short",
-  }).format(date);
-
 const MyAbstracts = () => {
   const { user } = useAuth();
   const { submissionOpen, closesAt, loading: configLoading } = useAppConfig();
   const [abstracts, setAbstracts] = useState<AbstractSummary[]>([]);
+  const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    let active = true;
     supabase
       .from("abstracts")
       .select("id, title, status, submitted_at, updated_at, topic:topics(name)")
       .eq("submitted_by", user.id)
       .order("updated_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) {
+          console.error("Failed to load abstracts", error);
+          setLoadError(true);
+        }
         setAbstracts((data ?? []) as AbstractSummary[]);
         setLoading(false);
       });
+    return () => {
+      active = false;
+    };
   }, [user]);
+
 
   if (loading || configLoading) {
     return <div className="container py-16 text-center text-muted-foreground">Loading…</div>;

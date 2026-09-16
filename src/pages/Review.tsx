@@ -176,14 +176,10 @@ const Review = () => {
         </p>
         {reviewClosesAt && (
           <p className="mt-2 text-sm font-medium text-foreground">
-            Reviews can be submitted and updated until {new Intl.DateTimeFormat("en-GB", {
-              dateStyle: "long",
-              timeStyle: "short",
-              timeZone: "Europe/Amsterdam",
-              timeZoneName: "short",
-            }).format(reviewClosesAt)}.
+            Reviews can be submitted and updated until {formatAmsterdam(reviewClosesAt)}.
           </p>
         )}
+
         {reviewClosed && (
           <p className="mt-2 text-sm text-destructive">The review period has closed. Saved reviews are read-only.</p>
         )}

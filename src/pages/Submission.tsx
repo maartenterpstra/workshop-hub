@@ -19,13 +19,9 @@ const topics = [
 const Submission = () => {
   const { submissionOpen: isOpen, closesAt } = useAppConfig();
   const deadline = closesAt
-    ? new Intl.DateTimeFormat("en-GB", {
-        dateStyle: "long",
-        timeStyle: "short",
-        timeZone: "Europe/Amsterdam",
-        timeZoneName: "short",
-      }).format(closesAt)
+    ? formatAmsterdam(closesAt)
     : siteConfig.abstractSubmissionDeadline;
+
   return (
     <div className="py-16 px-4">
       <div className="container max-w-4xl">

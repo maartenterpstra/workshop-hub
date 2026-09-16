@@ -314,14 +314,10 @@ const Submit = () => {
         </p>
         {closesAt && (
           <p className="mt-2 text-sm font-medium">
-            Submissions and revisions close {new Intl.DateTimeFormat("en-GB", {
-              dateStyle: "long",
-              timeStyle: "short",
-              timeZone: "Europe/Amsterdam",
-              timeZoneName: "short",
-            }).format(closesAt)}.
+            Submissions and revisions close {formatAmsterdam(closesAt)}.
           </p>
         )}
+
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
