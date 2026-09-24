@@ -11,6 +11,13 @@ const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 interface Body {
   abstractId?: string;
   event?: "submitted" | "updated";
+  mode?: "single" | "all";
+}
+
+interface BulkResult {
+  sent: number;
+  failed: { abstractId: string; email: string | null; error: string }[];
+  total: number;
 }
 
 const escapeHtml = (s: string) =>
@@ -72,18 +79,26 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const { abstractId, event } = body;
-    if (typeof abstractId !== "string" || !/^[0-9a-f-]{36}$/i.test(abstractId)) {
-      return new Response(JSON.stringify({ error: "abstractId must be a UUID." }), {
+    const { abstractId, event, mode = "single" } = body;
+    if (mode !== "single" && mode !== "all") {
+      return new Response(JSON.stringify({ error: "mode must be 'single' or 'all'." }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    if (event !== "submitted" && event !== "updated") {
-      return new Response(JSON.stringify({ error: "event must be 'submitted' or 'updated'." }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    if (mode === "single") {
+      if (typeof abstractId !== "string" || !/^[0-9a-f-]{36}$/i.test(abstractId)) {
+        return new Response(JSON.stringify({ error: "abstractId must be a UUID." }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (event !== "submitted" && event !== "updated") {
+        return new Response(JSON.stringify({ error: "event must be 'submitted' or 'updated'." }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -103,6 +118,61 @@ serve(async (req) => {
     }
 
     const admin = createClient(supabaseUrl, serviceKey);
+
+    if (mode === "all") {
+      const { data: adminRole } = await admin
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userData.user.id)
+        .eq("role", "admin");
+      if (!adminRole?.length) {
+        return new Response(JSON.stringify({ error: "Forbidden." }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: all, error: allErr } = await admin
+        .from("abstracts")
+        .select("id, title, submitted_by")
+        .order("submitted_at", { ascending: true });
+      if (allErr) throw allErr;
+      const out: BulkResult = { sent: 0, failed: [], total: all?.length ?? 0 };
+      for (const a of all ?? []) {
+        const { data: u } = await admin.auth.admin.getUserById(a.submitted_by);
+        const email = u?.user?.email ?? null;
+        if (!email) {
+          out.failed.push({ abstractId: a.id, email, error: "No email on account" });
+          continue;
+        }
+        const r = await fetch(`${GATEWAY_URL}/emails`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+            "X-Connection-Api-Key": RESEND_API_KEY,
+          },
+          body: JSON.stringify({
+            from: FROM_ADDRESS,
+            to: [email],
+            subject: `AIinRT2027: abstract received — ${a.title}`,
+            html: buildHtml(a.title, "submitted"),
+          }),
+        });
+        if (r.ok) out.sent++;
+        else {
+          const t = await r.text();
+          console.error(`Bulk send failed [${r.status}] for ${a.id}: ${t}`);
+          out.failed.push({ abstractId: a.id, email, error: `[${r.status}] ${t.slice(0, 200)}` });
+        }
+        // Stay under Resend's default rate limit (~2 req/s).
+        await new Promise((res) => setTimeout(res, 600));
+      }
+      return new Response(JSON.stringify(out), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { data: abstract, error: abstractError } = await admin
       .from("abstracts")
       .select("id, title, submitted_by")
@@ -155,7 +225,7 @@ serve(async (req) => {
           event === "submitted"
             ? `AIinRT2027: abstract received — ${abstract.title}`
             : `AIinRT2027: abstract updated — ${abstract.title}`,
-        html: buildHtml(abstract.title, event),
+        html: buildHtml(abstract.title, event!),
       }),
     });
 
