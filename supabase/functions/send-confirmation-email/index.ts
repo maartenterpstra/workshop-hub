@@ -118,6 +118,61 @@ serve(async (req) => {
     }
 
     const admin = createClient(supabaseUrl, serviceKey);
+
+    if (mode === "all") {
+      const { data: adminRole } = await admin
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userData.user.id)
+        .eq("role", "admin");
+      if (!adminRole?.length) {
+        return new Response(JSON.stringify({ error: "Forbidden." }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: all, error: allErr } = await admin
+        .from("abstracts")
+        .select("id, title, submitted_by")
+        .order("submitted_at", { ascending: true });
+      if (allErr) throw allErr;
+      const out: BulkResult = { sent: 0, failed: [], total: all?.length ?? 0 };
+      for (const a of all ?? []) {
+        const { data: u } = await admin.auth.admin.getUserById(a.submitted_by);
+        const email = u?.user?.email ?? null;
+        if (!email) {
+          out.failed.push({ abstractId: a.id, email, error: "No email on account" });
+          continue;
+        }
+        const r = await fetch(`${GATEWAY_URL}/emails`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+            "X-Connection-Api-Key": RESEND_API_KEY,
+          },
+          body: JSON.stringify({
+            from: FROM_ADDRESS,
+            to: [email],
+            subject: `AIinRT2027: abstract received — ${a.title}`,
+            html: buildHtml(a.title, "submitted"),
+          }),
+        });
+        if (r.ok) out.sent++;
+        else {
+          const t = await r.text();
+          console.error(`Bulk send failed [${r.status}] for ${a.id}: ${t}`);
+          out.failed.push({ abstractId: a.id, email, error: `[${r.status}] ${t.slice(0, 200)}` });
+        }
+        // Stay under Resend's default rate limit (~2 req/s).
+        await new Promise((res) => setTimeout(res, 600));
+      }
+      return new Response(JSON.stringify(out), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { data: abstract, error: abstractError } = await admin
       .from("abstracts")
       .select("id, title, submitted_by")
