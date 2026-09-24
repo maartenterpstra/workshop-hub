@@ -1,4 +1,5 @@
 import efompLogo from "@/assets/efomp-logo.png";
+import aapmLogo from "@/assets/aapm-endorsement.png";
 import miccaiLogo from "@/assets/miccai-logo.png";
 import estroLogo from "@/assets/estro.svg";
 
@@ -8,6 +9,12 @@ const endorsements = [
     href: "https://www.efomp.org/",
     src: efompLogo,
     imageClassName: "h-10 sm:h-12",
+  },
+  {
+    name: "American Association of Physicists in Medicine (AAPM)",
+    href: "https://www.aapm.org/",
+    src: aapmLogo,
+    imageClassName: "h-14 sm:h-16",
   },
   {
     name: "MICCAI Society",
