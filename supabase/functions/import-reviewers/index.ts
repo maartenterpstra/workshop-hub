@@ -11,9 +11,13 @@ const RecordSchema = z.object({
 });
 
 const BodySchema = z.object({
-  password: z.string().min(8).max(200),
   reviewers: z.array(RecordSchema).min(1).max(500),
 });
+
+const randomPassword = () => {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return `${Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("")}Aa1!`;
+};
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -51,7 +55,7 @@ Deno.serve(async (req) => {
   if (!parsed.success) {
     return json({ error: parsed.error.flatten().fieldErrors }, 400);
   }
-  const { password, reviewers } = parsed.data;
+  const { reviewers } = parsed.data;
 
   const { data: topicRows, error: topicErr } = await admin.from("topics").select("id, name");
   if (topicErr) return json({ error: topicErr.message }, 500);
@@ -69,12 +73,13 @@ Deno.serve(async (req) => {
     try {
       let userId: string | null = null;
 
-      const { data: createdUser, error: createErr } = await admin.auth.admin.createUser({
+      const { data: createdUser, error: createErr } = await admin.auth.admin.inviteUserByEmail(
         email,
-        password,
-        email_confirm: true,
-        user_metadata: { full_name: fullName, affiliation: r.affiliation },
-      });
+        {
+          data: { full_name: fullName, affiliation: r.affiliation },
+          redirectTo: "https://aiinrt.org/set-password",
+        },
+      );
 
       if (createErr) {
         // Already exists -> look the user up instead of creating a duplicate
@@ -87,6 +92,17 @@ Deno.serve(async (req) => {
           continue;
         }
         userId = existing.id;
+        const { error: rotateErr } = await admin.auth.admin.updateUserById(userId, {
+          password: randomPassword(),
+        });
+        if (rotateErr) {
+          errors.push(`${email}: credentials could not be rotated`);
+          continue;
+        }
+        const { error: recoveryErr } = await asCaller.auth.resetPasswordForEmail(email, {
+          redirectTo: "https://aiinrt.org/set-password",
+        });
+        if (recoveryErr) errors.push(`${email}: password reset email could not be sent`);
         updated++;
       } else {
         userId = createdUser.user!.id;

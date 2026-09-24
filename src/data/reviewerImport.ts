@@ -11,8 +11,6 @@ export type ReviewerImportRecord = {
   topics: string[];
 };
 
-export const DEFAULT_REVIEWER_PASSWORD = "AIinRT2027";
-
 export const reviewerImportRoster: ReviewerImportRecord[] = [
   {"firstName": "Ana María", "lastName": "Barragán Montero", "email": "ana.barragan@uclouvain.be", "affiliation": "MIRO (Molecular Imaging Radiation Oncology), UCLouvain, Belgium", "topics": ["Dose & Adaptive Workflows", "Segmentation & Registration"]},
   {"firstName": "Tom Julius", "lastName": "Bloecker", "email": "hallo@tomjulius.de", "affiliation": "Department of Radiation Oncology, LMU University Hospital, Munich, Germany", "topics": ["Segmentation & Registration", "Foundation Models, Text, Explainability & Uncertainty"]},
