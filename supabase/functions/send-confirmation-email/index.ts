@@ -225,7 +225,7 @@ serve(async (req) => {
           event === "submitted"
             ? `AIinRT2027: abstract received — ${abstract.title}`
             : `AIinRT2027: abstract updated — ${abstract.title}`,
-        html: buildHtml(abstract.title, event),
+        html: buildHtml(abstract.title, event!),
       }),
     });
 
