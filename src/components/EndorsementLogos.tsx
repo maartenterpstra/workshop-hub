@@ -39,7 +39,7 @@ const EndorsementLogos = () => (
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Visit the ${endorsement.name} website`}
-        className={`flex min-w-32 items-center justify-center rounded-md border border-border bg-background px-5 py-2 shadow-soft transition-shadow hover:shadow-card ${endorsement.wrapperClassName ?? "h-20"}`}
+        className="flex h-20 min-w-32 items-center justify-center rounded-md border border-border bg-background px-5 py-2 shadow-soft transition-shadow hover:shadow-card"
       >
         <img
           src={endorsement.src}
