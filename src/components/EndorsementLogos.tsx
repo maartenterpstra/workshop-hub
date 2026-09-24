@@ -1,4 +1,5 @@
 import efompLogo from "@/assets/efomp-logo.png";
+import aapmLogoAsset from "@/assets/aapm-endorsement.png.asset.json";
 import miccaiLogo from "@/assets/miccai-logo.png";
 import estroLogo from "@/assets/estro.svg";
 
@@ -8,6 +9,13 @@ const endorsements = [
     href: "https://www.efomp.org/",
     src: efompLogo,
     imageClassName: "h-10 sm:h-12",
+  },
+  {
+    name: "American Association of Physicists in Medicine (AAPM)",
+    href: "https://www.aapm.org/",
+    src: aapmLogoAsset.url,
+    imageClassName: "h-20 sm:h-24",
+    wrapperClassName: "h-32 sm:h-36",
   },
   {
     name: "MICCAI Society",
@@ -32,7 +40,7 @@ const EndorsementLogos = () => (
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Visit the ${endorsement.name} website`}
-        className="flex h-20 min-w-32 items-center justify-center rounded-md border border-border bg-background px-5 py-2 shadow-soft transition-shadow hover:shadow-card"
+        className={`flex min-w-32 items-center justify-center rounded-md border border-border bg-background px-5 py-2 shadow-soft transition-shadow hover:shadow-card ${endorsement.wrapperClassName ?? "h-20"}`}
       >
         <img
           src={endorsement.src}
