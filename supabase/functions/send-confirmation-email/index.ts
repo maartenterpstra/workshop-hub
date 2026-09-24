@@ -79,18 +79,26 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const { abstractId, event } = body;
-    if (typeof abstractId !== "string" || !/^[0-9a-f-]{36}$/i.test(abstractId)) {
-      return new Response(JSON.stringify({ error: "abstractId must be a UUID." }), {
+    const { abstractId, event, mode = "single" } = body;
+    if (mode !== "single" && mode !== "all") {
+      return new Response(JSON.stringify({ error: "mode must be 'single' or 'all'." }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    if (event !== "submitted" && event !== "updated") {
-      return new Response(JSON.stringify({ error: "event must be 'submitted' or 'updated'." }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    if (mode === "single") {
+      if (typeof abstractId !== "string" || !/^[0-9a-f-]{36}$/i.test(abstractId)) {
+        return new Response(JSON.stringify({ error: "abstractId must be a UUID." }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (event !== "submitted" && event !== "updated") {
+        return new Response(JSON.stringify({ error: "event must be 'submitted' or 'updated'." }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
