@@ -11,6 +11,13 @@ const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 interface Body {
   abstractId?: string;
   event?: "submitted" | "updated";
+  mode?: "single" | "all";
+}
+
+interface BulkResult {
+  sent: number;
+  failed: { abstractId: string; email: string | null; error: string }[];
+  total: number;
 }
 
 const escapeHtml = (s: string) =>
