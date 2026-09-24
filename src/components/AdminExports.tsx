@@ -189,35 +189,13 @@ const AdminExports = () => {
     }
   };
 
-  const sendAllConfirmations = async () => {
-    setBusy("emails");
-    try {
-      const { data, error } = await supabase.functions.invoke("send-confirmation-email", {
-        body: { mode: "all" },
-      });
-      if (error) throw error;
-      const res = data as {
-        sent: number;
-        total: number;
-        failed: { abstractId: string; error: string }[];
-      };
-      toast.success(`${res.sent} of ${res.total} confirmation email(s) sent.`);
-      if (res.failed?.length) {
-        toast.error(`${res.failed.length} failed: ${res.failed[0].error}`);
-      }
-    } catch (e: any) {
-      toast.error(e.message ?? "Sending failed.");
-    } finally {
-      setBusy(null);
-    }
-  };
 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">Exports & emails</CardTitle>
+        <CardTitle className="text-base">Exports</CardTitle>
         <CardDescription>
-          Download review scores or the author contact list, and re-send submission confirmations.
+          Download review scores or the author contact list.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
@@ -236,14 +214,6 @@ const AdminExports = () => {
             <Download className="mr-2 h-4 w-4" />
           )}
           Export titles & author emails (CSV)
-        </Button>
-        <Button variant="outline" onClick={sendAllConfirmations} disabled={busy !== null}>
-          {busy === "emails" ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Mail className="mr-2 h-4 w-4" />
-          )}
-          Send confirmation to all submitters
         </Button>
       </CardContent>
     </Card>
