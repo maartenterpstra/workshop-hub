@@ -42,6 +42,7 @@ const App = () => (
             <Header />
 
             <main className="flex-1">
+              <ErrorBoundary>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/program" element={<Program />} />
@@ -111,6 +112,7 @@ const App = () => (
                 />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </ErrorBoundary>
             </main>
             <Footer />
           </div>
