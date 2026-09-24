@@ -11,40 +11,34 @@ const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 interface Body {
   abstractId?: string;
   event?: "submitted" | "updated";
-  mode?: "single" | "all";
-}
-
-interface BulkResult {
-  sent: number;
-  failed: { abstractId: string; email: string | null; error: string }[];
-  total: number;
 }
 
 const escapeHtml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const buildHtml = (title: string, event: "submitted" | "updated") => {
-  const action = event === "submitted" ? "submitted" : "updated";
+  const action = event === "submitted" ? "successfully submitted" : "successfully updated";
   return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:600px;margin:0 auto;padding:24px;">
     <div style="border-bottom:3px solid #005EB8;padding-bottom:12px;">
       <span style="font-size:20px;font-weight:bold;color:#005EB8;">AIinRT2027</span>
     </div>
-    <h1 style="font-size:18px;color:#111827;margin:24px 0 8px;">Abstract ${action}</h1>
+    <h1 style="font-size:18px;color:#111827;margin:24px 0 8px;">Abstract ${event === "submitted" ? "received" : "updated"}</h1>
     <p style="font-size:14px;color:#374151;line-height:1.6;">
-      Your abstract <strong>&ldquo;${escapeHtml(title)}&rdquo;</strong> has been
-      successfully ${action} for AIinRT2027 (Utrecht, 1&ndash;2 April 2027).
+      Your abstract <strong>&ldquo;${escapeHtml(title)}&rdquo;</strong> was ${action}
+      for AIinRT2027 (Utrecht, 1&ndash;2 April 2027).
     </p>
     <p style="font-size:14px;color:#374151;line-height:1.6;">
-      You can review or revise it until the submission deadline
-      (1 December 2026, 12:00 Europe/Amsterdam) from your author area.
+      The submitting author can review or revise the abstract until the submission deadline
+      (1 December 2026, 12:00 Europe/Amsterdam) from their author area.
     </p>
     <p style="margin:24px 0;">
-      <a href="${MY_ABSTRACTS_URL}" style="background:#FF8C00;color:#ffffff;text-decoration:none;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:bold;">View my abstracts</a>
+      <a href="${MY_ABSTRACTS_URL}" style="background:#FF8C00;color:#ffffff;text-decoration:none;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:bold;">Open AIinRT2027</a>
     </p>
     <p style="font-size:12px;color:#6b7280;line-height:1.6;">
-      You received this email because you ${action} an abstract on the AIinRT2027 submission platform.
+      You received this email because you are listed as an author of an abstract
+      submitted to the AIinRT2027 workshop.
     </p>
   </div>
 </body></html>`;
@@ -79,33 +73,24 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const { abstractId, event, mode = "single" } = body;
-    if (mode !== "single" && mode !== "all") {
-      return new Response(JSON.stringify({ error: "mode must be 'single' or 'all'." }), {
+    const { abstractId, event } = body;
+    if (typeof abstractId !== "string" || !/^[0-9a-f-]{36}$/i.test(abstractId)) {
+      return new Response(JSON.stringify({ error: "abstractId must be a UUID." }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    if (mode === "single") {
-      if (typeof abstractId !== "string" || !/^[0-9a-f-]{36}$/i.test(abstractId)) {
-        return new Response(JSON.stringify({ error: "abstractId must be a UUID." }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (event !== "submitted" && event !== "updated") {
-        return new Response(JSON.stringify({ error: "event must be 'submitted' or 'updated'." }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+    if (event !== "submitted" && event !== "updated") {
+      return new Response(JSON.stringify({ error: "event must be 'submitted' or 'updated'." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Verify the caller's session.
     const caller = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -118,64 +103,9 @@ serve(async (req) => {
     }
 
     const admin = createClient(supabaseUrl, serviceKey);
-
-    if (mode === "all") {
-      const { data: adminRole } = await admin
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userData.user.id)
-        .eq("role", "admin");
-      if (!adminRole?.length) {
-        return new Response(JSON.stringify({ error: "Forbidden." }), {
-          status: 403,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const { data: all, error: allErr } = await admin
-        .from("abstracts")
-        .select("id, title, submitted_by")
-        .order("submitted_at", { ascending: true });
-      if (allErr) throw allErr;
-      const out: BulkResult = { sent: 0, failed: [], total: all?.length ?? 0 };
-      for (const a of all ?? []) {
-        const { data: u } = await admin.auth.admin.getUserById(a.submitted_by);
-        const email = u?.user?.email ?? null;
-        if (!email) {
-          out.failed.push({ abstractId: a.id, email, error: "No email on account" });
-          continue;
-        }
-        const r = await fetch(`${GATEWAY_URL}/emails`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-            "X-Connection-Api-Key": RESEND_API_KEY,
-          },
-          body: JSON.stringify({
-            from: FROM_ADDRESS,
-            to: [email],
-            subject: `AIinRT2027: abstract received — ${a.title}`,
-            html: buildHtml(a.title, "submitted"),
-          }),
-        });
-        if (r.ok) out.sent++;
-        else {
-          const t = await r.text();
-          console.error(`Bulk send failed [${r.status}] for ${a.id}: ${t}`);
-          out.failed.push({ abstractId: a.id, email, error: `[${r.status}] ${t.slice(0, 200)}` });
-        }
-        // Stay under Resend's default rate limit (~2 req/s).
-        await new Promise((res) => setTimeout(res, 600));
-      }
-      return new Response(JSON.stringify(out), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const { data: abstract, error: abstractError } = await admin
       .from("abstracts")
-      .select("id, title, submitted_by")
+      .select("id, title, submitted_by, authors:abstract_authors(email)")
       .eq("id", abstractId)
       .maybeSingle();
     if (abstractError || !abstract) {
@@ -185,7 +115,6 @@ serve(async (req) => {
       });
     }
 
-    // Only the submitting author (or an admin/SOC) may trigger the email.
     const isOwner = abstract.submitted_by === userData.user.id;
     if (!isOwner) {
       const { data: roles } = await admin
@@ -201,48 +130,56 @@ serve(async (req) => {
       }
     }
 
-    const { data: recipient, error: recipientError } = await admin.auth.admin.getUserById(
-      abstract.submitted_by,
-    );
-    if (recipientError || !recipient.user?.email) {
-      return new Response(JSON.stringify({ error: "Recipient not found." }), {
+    // Collect recipients: submitting account + every author with an email.
+    const recipients = new Set<string>();
+    const { data: submitter } = await admin.auth.admin.getUserById(abstract.submitted_by);
+    if (submitter?.user?.email) recipients.add(submitter.user.email.toLowerCase());
+    for (const a of (abstract as any).authors ?? []) {
+      const e = (a?.email ?? "").trim().toLowerCase();
+      if (e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) recipients.add(e);
+    }
+    if (recipients.size === 0) {
+      return new Response(JSON.stringify({ error: "No recipient email addresses." }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const response = await fetch(`${GATEWAY_URL}/emails`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": RESEND_API_KEY,
-      },
-      body: JSON.stringify({
-        from: FROM_ADDRESS,
-        to: [recipient.user.email],
-        subject:
-          event === "submitted"
-            ? `AIinRT2027: abstract received — ${abstract.title}`
-            : `AIinRT2027: abstract updated — ${abstract.title}`,
-        html: buildHtml(abstract.title, event!),
-      }),
-    });
+    const to = Array.from(recipients);
+    const subject =
+      event === "submitted"
+        ? `AIinRT2027: abstract received — ${abstract.title}`
+        : `AIinRT2027: abstract updated — ${abstract.title}`;
+    const html = buildHtml(abstract.title, event);
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(`Resend request failed [${response.status}]: ${errorBody}`);
-      return new Response(
-        JSON.stringify({ error: "Email provider request failed", status: response.status, details: errorBody }),
-        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    // Send one email per recipient so each address is a direct "to:", not cc/bcc.
+    const results: { email: string; ok: boolean; error?: string }[] = [];
+    for (const email of to) {
+      const r = await fetch(`${GATEWAY_URL}/emails`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+          "X-Connection-Api-Key": RESEND_API_KEY,
+        },
+        body: JSON.stringify({ from: FROM_ADDRESS, to: [email], subject, html }),
+      });
+      if (r.ok) {
+        results.push({ email, ok: true });
+      } else {
+        const t = await r.text();
+        console.error(`Resend failed [${r.status}] for ${email}: ${t}`);
+        results.push({ email, ok: false, error: `[${r.status}] ${t.slice(0, 200)}` });
+      }
+      // Stay under Resend's default ~2 req/s rate limit.
+      await new Promise((res) => setTimeout(res, 600));
     }
 
-    const result = await response.json();
-    return new Response(JSON.stringify({ sent: true, id: result?.id ?? null }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    const sent = results.filter((r) => r.ok).length;
+    return new Response(
+      JSON.stringify({ sent, total: results.length, results }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   } catch (err) {
     console.error("send-confirmation-email failed:", err);
     return new Response(JSON.stringify({ error: (err as Error).message }), {
