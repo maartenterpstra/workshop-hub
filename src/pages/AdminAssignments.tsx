@@ -14,6 +14,7 @@ import { CheckCircle2, Loader2, Lock, Unlock, UserPlus, X, Users } from "lucide-
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { reviewerImportRoster, DEFAULT_REVIEWER_PASSWORD } from "@/data/reviewerImport";
+import AdminExports from "@/components/AdminExports";
 
 interface ReviewerInfo {
   id: string;
@@ -235,6 +236,8 @@ const AdminAssignments = () => {
           </Button>
         </div>
       </div>
+
+      <AdminExports />
 
       <Card>
         <CardHeader className="pb-3">
