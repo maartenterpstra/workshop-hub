@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { DEFAULT_REVIEWER_PASSWORD } from "@/data/reviewerImport";
 
 const SetPassword = () => {
   const navigate = useNavigate();
@@ -20,10 +19,6 @@ const SetPassword = () => {
     e.preventDefault();
     if (password.length < 8) {
       toast.error("Use at least 8 characters.");
-      return;
-    }
-    if (password === DEFAULT_REVIEWER_PASSWORD) {
-      toast.error("Please choose a password different from the default one.");
       return;
     }
     if (password !== confirm) {
@@ -54,7 +49,7 @@ const SetPassword = () => {
           <CardTitle>Set your password</CardTitle>
           <CardDescription>
             {mustChangePassword
-              ? "Your account still uses the default password. Please choose a personal password to continue."
+              ? "Please choose a personal password to continue."
               : "Choose a new password for your account."}
           </CardDescription>
         </CardHeader>

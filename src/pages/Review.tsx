@@ -24,7 +24,6 @@ interface Assignment {
     topic: { name: string } | null;
   };
   existingReview?: ReviewRow;
-  fileUrl?: string;
 }
 
 interface ReviewRow {
@@ -85,14 +84,7 @@ const Review = () => {
           .eq("assignment_id", a.id)
           .maybeSingle();
 
-        let fileUrl: string | undefined;
-        if (a.abstract?.file_path) {
-          const { data: signed } = await supabase.storage
-            .from("abstracts")
-            .createSignedUrl(a.abstract.file_path, 3600);
-          fileUrl = signed?.signedUrl;
-        }
-        enriched.push({ ...a, existingReview: existing ?? undefined, fileUrl });
+        enriched.push({ ...a, existingReview: existing ?? undefined });
         nextDrafts[a.id] = existing
           ? {
               id: existing.id,
@@ -112,6 +104,24 @@ const Review = () => {
       setLoading(false);
     })();
   }, [user, submissionClosed, debug]);
+
+  const openAbstractPdf = async (filePath: string) => {
+    const popup = window.open("about:blank", "_blank");
+    if (popup) popup.opener = null;
+
+    const { data, error } = await supabase.storage
+      .from("abstracts")
+      .createSignedUrl(filePath, 30);
+
+    if (error || !data?.signedUrl) {
+      popup?.close();
+      toast.error("The abstract PDF could not be opened.");
+      return;
+    }
+
+    if (popup) popup.location.replace(data.signedUrl);
+    else window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+  };
 
   const setField = (aid: string, patch: Partial<ReviewRow>) =>
     setDrafts((prev) => ({ ...prev, [aid]: { ...prev[aid], ...patch } }));
@@ -202,13 +212,17 @@ const Review = () => {
               <CardDescription>Assignment {a.id.slice(0, 8)}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {a.fileUrl && (
-                <div className="border rounded-md overflow-hidden">
-                  <div className="flex items-center gap-2 p-2 text-sm bg-muted">
-                    <FileText className="h-4 w-4" /> Abstract PDF
-                    <a href={a.fileUrl} target="_blank" rel="noreferrer" className="ml-auto text-primary underline">Open</a>
-                  </div>
-                  <iframe src={a.fileUrl} title="abstract" className="w-full" style={{ height: 480 }} />
+              {a.abstract.file_path && (
+                <div className="flex items-center gap-2 rounded-md border p-3 text-sm bg-muted">
+                  <FileText className="h-4 w-4" /> Abstract PDF
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="ml-auto h-auto p-0"
+                    onClick={() => openAbstractPdf(a.abstract.file_path!)}
+                  >
+                    Open securely
+                  </Button>
                 </div>
               )}
 

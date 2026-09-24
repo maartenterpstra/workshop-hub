@@ -13,7 +13,7 @@ import {
 import { CheckCircle2, Loader2, Lock, Unlock, UserPlus, X, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { reviewerImportRoster, DEFAULT_REVIEWER_PASSWORD } from "@/data/reviewerImport";
+import { reviewerImportRoster } from "@/data/reviewerImport";
 import AdminExports from "@/components/AdminExports";
 
 interface ReviewerInfo {
@@ -118,7 +118,7 @@ const AdminAssignments = () => {
     setImporting(true);
     try {
       const { data, error } = await supabase.functions.invoke("import-reviewers", {
-        body: { password: DEFAULT_REVIEWER_PASSWORD, reviewers: reviewerImportRoster },
+        body: { reviewers: reviewerImportRoster },
       });
       if (error) throw error;
       const res = data as {
@@ -248,8 +248,7 @@ const AdminAssignments = () => {
         <CardContent className="flex flex-wrap gap-2 text-xs">
           {reviewers.length === 0 && (
             <span className="text-muted-foreground">
-              No reviewer accounts yet — run “Import reviewer roster”. Default password:{" "}
-              <code>{DEFAULT_REVIEWER_PASSWORD}</code> (reviewers must change it at first sign-in).
+              No reviewer accounts yet — run “Import reviewer roster”. Each reviewer will receive a secure invitation by email.
             </span>
           )}
           {reviewers.map((r) => (
