@@ -10,7 +10,7 @@ export const siteConfig = {
   callForAbstractsOpens: "1 September 2026",
   abstractSubmissionDeadline: "1 December 2026",
   abstractDecisionsOn: "17 December 2026",
-  registrationOpensOn: "TBC",
+  registrationOpensOn: "1 October 2026",
 
   // Registration is handled on a separate site for 2027; leave empty until live.
   externalRegistrationUrl: "",
