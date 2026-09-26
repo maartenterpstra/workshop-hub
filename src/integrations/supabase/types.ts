@@ -379,7 +379,10 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      withdraw_abstract: {
+        Args: { _abstract_id: string; _restore?: boolean }
+        Returns: string
+      }
     }
     Enums: {
       abstract_status:
@@ -387,6 +390,7 @@ export type Database = {
         | "accepted_oral"
         | "accepted_poster"
         | "rejected"
+        | "withdrawn"
       app_role: "author" | "reviewer" | "soc" | "admin"
       assignment_status: "pending" | "done" | "declined_coi"
       review_recommendation:
@@ -526,6 +530,7 @@ export const Constants = {
         "accepted_oral",
         "accepted_poster",
         "rejected",
+        "withdrawn",
       ],
       app_role: ["author", "reviewer", "soc", "admin"],
       assignment_status: ["pending", "done", "declined_coi"],
