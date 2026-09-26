@@ -5,6 +5,7 @@ import { Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { toCsv, downloadCsv, todayStamp } from "@/lib/csv";
+import { exportAbstractsExcel } from "@/lib/excelExport";
 
 const scoreKeys = [
   "score_technical",
@@ -199,6 +200,24 @@ const AdminExports = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          disabled={busy !== null}
+          onClick={async () => {
+            setBusy("xlsx");
+            try {
+              const n = await exportAbstractsExcel();
+              toast.success(`Exported ${n} abstracts.`);
+            } catch (e: any) {
+              toast.error(e.message ?? "Export failed.");
+            } finally {
+              setBusy(null);
+            }
+          }}
+        >
+          {busy === "xlsx" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+          Export abstracts & scores (Excel)
+        </Button>
         <Button variant="outline" onClick={exportScores} disabled={busy !== null}>
           {busy === "scores" ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

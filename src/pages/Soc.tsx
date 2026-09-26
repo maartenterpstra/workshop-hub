@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText } from "lucide-react";
+import { Download, FileText, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { exportAbstractsExcel } from "@/lib/excelExport";
+import SocScoreTable from "@/components/SocScoreTable";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ReviewRow {
@@ -44,6 +47,13 @@ const Soc = () => {
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState<SortKey>("avgScore");
   const [asc, setAsc] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const doExport = async () => {
+    setExporting(true);
+    try { const n = await exportAbstractsExcel(); toast.success(`Exported ${n} abstracts.`); }
+    catch (e: any) { toast.error(e.message ?? "Export failed."); }
+    finally { setExporting(false); }
+  };
 
   useEffect(() => {
     (async () => {
@@ -113,7 +123,11 @@ const Soc = () => {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <h1 className="text-3xl font-bold">SOC dashboard</h1>
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">Sort by:</span>
+          <Button size="sm" onClick={doExport} disabled={exporting}>
+            {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Export to Excel
+          </Button>
+          <span className="ml-2 text-muted-foreground">Sort by:</span>
           {(["firstAuthor", "title", "avgScore"] as SortKey[]).map((k) => (
             <Button key={k} size="sm" variant={sortKey === k ? "default" : "outline"}
               onClick={() => { if (sortKey === k) setAsc(!asc); else { setSortKey(k); setAsc(k !== "avgScore"); } }}>
@@ -129,20 +143,20 @@ const Soc = () => {
       )}
 
       {sorted.map((a) => (
-        <Card key={a.id}>
+        <Card key={a.id} className={a.status === "withdrawn" ? "opacity-60" : undefined}>
           <CardHeader>
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
-                <div className="text-xs uppercase tracking-wide text-secondary font-semibold">
-                  {a.topic?.name ?? "—"}
+                <div className="flex flex-wrap items-center gap-2">
+                  <CardTitle>{a.title}</CardTitle>
+                  <Badge variant="secondary">{a.topic?.name ?? "No session"}</Badge>
                 </div>
-                <CardTitle className="mt-1">{a.title}</CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
                   {a.authors.map((au) => `${au.name}${au.is_presenting ? "*" : ""}`).join(", ")}
                 </p>
               </div>
               <div className="text-right space-y-1">
-                <Badge variant="outline">{a.status}</Badge>
+                <Badge variant={a.status === "withdrawn" ? "destructive" : "outline"}>{a.status.replace(/_/g, " ")}</Badge>
                 <div className="text-2xl font-bold text-primary">
                   {a.avgScore != null ? a.avgScore.toFixed(2) : "—"}
                 </div>
@@ -151,6 +165,7 @@ const Soc = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            <SocScoreTable reviews={a.reviews} />
             {a.fileUrl && (
               <a href={a.fileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm text-primary underline">
                 <FileText className="h-4 w-4" /> Open PDF
