@@ -10,21 +10,24 @@ const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
 interface Body {
   abstractId?: string;
-  event?: "submitted" | "updated";
+  event?: "submitted" | "updated" | "withdrawn" | "restored";
 }
 
 const escapeHtml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-const buildHtml = (title: string, event: "submitted" | "updated") => {
-  const action = event === "submitted" ? "successfully submitted" : "successfully updated";
+type Ev = "submitted" | "updated" | "withdrawn" | "restored";
+const ACTION: Record<Ev, string> = { submitted: "successfully submitted", updated: "successfully updated", withdrawn: "withdrawn", restored: "restored (withdrawal cancelled)" };
+const HEAD: Record<Ev, string> = { submitted: "received", updated: "updated", withdrawn: "withdrawn", restored: "restored" };
+const buildHtml = (title: string, event: Ev) => {
+  const action = ACTION[event];
   return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:600px;margin:0 auto;padding:24px;">
     <div style="border-bottom:3px solid #005EB8;padding-bottom:12px;">
       <span style="font-size:20px;font-weight:bold;color:#005EB8;">AIinRT2027</span>
     </div>
-    <h1 style="font-size:18px;color:#111827;margin:24px 0 8px;">Abstract ${event === "submitted" ? "received" : "updated"}</h1>
+    <h1 style="font-size:18px;color:#111827;margin:24px 0 8px;">Abstract ${HEAD[event]}</h1>
     <p style="font-size:14px;color:#374151;line-height:1.6;">
       Your abstract <strong>&ldquo;${escapeHtml(title)}&rdquo;</strong> was ${action}
       for AIinRT2027 (Utrecht, 1&ndash;2 April 2027).
@@ -80,7 +83,7 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    if (event !== "submitted" && event !== "updated") {
+    if (!event || !(event in ACTION)) {
       return new Response(JSON.stringify({ error: "event must be 'submitted' or 'updated'." }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -146,11 +149,8 @@ serve(async (req) => {
     }
 
     const to = Array.from(recipients);
-    const subject =
-      event === "submitted"
-        ? `AIinRT2027: abstract received — ${abstract.title}`
-        : `AIinRT2027: abstract updated — ${abstract.title}`;
-    const html = buildHtml(abstract.title, event);
+    const subject = `AIinRT2027: abstract ${HEAD[event as Ev]} — ${abstract.title}`;
+    const html = buildHtml(abstract.title, event as Ev);
 
     // Send one email per recipient so each address is a direct "to:", not cc/bcc.
     const results: { email: string; ok: boolean; error?: string }[] = [];
