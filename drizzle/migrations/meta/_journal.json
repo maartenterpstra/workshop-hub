@@ -8,6 +8,13 @@
       "when": 1790284822693,
       "tag": "0000_restrict_public_configuration_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790400183556,
+      "tag": "0001_abstract_withdrawal",
+      "breakpoints": true
     }
   ]
 }
