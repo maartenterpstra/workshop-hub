@@ -13,7 +13,7 @@ export const siteConfig = {
   registrationOpensOn: "1 October 2026",
 
   // Registration is handled on a separate site for 2027; leave empty until live.
-  externalRegistrationUrl: "",
+  externalRegistrationUrl: "https://aiinrt2027.prinsesmaximacentrum-events.nl/",
 
   contact: {
     name: "Matteo Maspero & Maarten Terpstra",
