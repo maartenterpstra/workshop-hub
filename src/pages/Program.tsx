@@ -6,12 +6,48 @@ import { useNavigate } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
 
 const sessions = [
-  { id: "S1", title: "Segmentation & Registration" },
-  { id: "S2", title: "Reconstruction & Synthesis" },
-  { id: "S3", title: "Foundation Models, Text, Explainability & Uncertainty" },
-  { id: "S4", title: "Dose & Adaptive Workflows" },
-  { id: "S5", title: "Clinical Predictions & Outcomes" },
-  { id: "S6", title: "Implementation, QA & Ethics" },
+  {
+    id: "S1",
+    title: "Segmentation & Registration",
+    talk: "State of the art: AI for segmentation and registration in radiotherapy",
+    speaker: "Ana Barragán-Montero",
+    affiliation: "UCLouvain, Belgium",
+  },
+  {
+    id: "S2",
+    title: "Reconstruction & Synthesis",
+    talk: "State of the art: AI for image reconstruction and synthesis",
+    speaker: "Adrian Thummerer",
+    affiliation: "LMU Klinikum, Munich, Germany",
+  },
+  {
+    id: "S3",
+    title: "Foundation Models, Text, Explainability & Uncertainty",
+    talk: "State of the art: foundation models, language and uncertainty in radiotherapy",
+    speaker: "Harini Veeraraghavan",
+    affiliation: "Memorial Sloan Kettering Cancer Center, USA",
+  },
+  {
+    id: "S4",
+    title: "Dose & Adaptive Workflows",
+    talk: "State of the art: AI for dose prediction and adaptive workflows",
+    speaker: "Ye Zhang",
+    affiliation: "Paul Scherrer Institute, Switzerland",
+  },
+  {
+    id: "S5",
+    title: "Clinical Predictions & Outcomes",
+    talk: "State of the art: AI for outcome modelling and clinical prediction",
+    speaker: "Cécile Wolfs",
+    affiliation: "MAASTRO Clinic, Maastricht, the Netherlands",
+  },
+  {
+    id: "S6",
+    title: "Implementation, QA & Ethics",
+    talk: "State of the art: clinical implementation, QA and ethics of AI in radiotherapy",
+    speaker: "Tomas Janssen",
+    affiliation: "Netherlands Cancer Institute (NKI), Amsterdam",
+  },
 ];
 
 const day1: Array<[string, string]> = [
@@ -129,7 +165,21 @@ const Program = () => {
                   <span className="font-mono text-sm font-semibold text-primary shrink-0">
                     {s.id}
                   </span>
-                  <span className="text-foreground">{s.title}</span>
+                  <div>
+                    <p className="font-medium text-foreground">{s.title}</p>
+                    <div className="mt-3 border-l-2 border-primary bg-primary/5 py-2 pl-3 pr-2">
+                      <span className="inline-block rounded-sm bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
+                        Expert talk
+                      </span>
+                      <p className="mt-2 text-sm font-semibold leading-snug text-primary">
+                        {s.talk}
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        <span className="font-semibold text-foreground">{s.speaker}</span>
+                        <span> · {s.affiliation}</span>
+                      </p>
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>

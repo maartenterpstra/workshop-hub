@@ -41,7 +41,7 @@ const Home = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 mb-3 sm:mb-6">
               <Sparkles className="h-3.5 w-3.5 text-white" />
               <span className="text-xs uppercase tracking-[0.2em] text-white font-medium">
-                Utrecht · Pre-announcement
+                Abstract submission and registration are now open!
               </span>
             </div>
 
