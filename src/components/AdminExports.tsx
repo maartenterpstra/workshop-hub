@@ -234,6 +234,33 @@ const AdminExports = () => {
           )}
           Export titles & author emails (CSV)
         </Button>
+        <Button
+          variant="outline"
+          disabled={busy !== null}
+          onClick={async () => {
+            setBusy("news");
+            try {
+              const { data, error } = await supabase
+                .from("newsletter_subscribers")
+                .select("email, name, consent_at, unsubscribed_at, created_at")
+                .order("created_at");
+              if (error) throw error;
+              downloadCsv(
+                `aiinrt-newsletter-subscribers-${todayStamp()}.csv`,
+                toCsv(["Email", "Name", "Status", "Consent at", "Unsubscribed at"],
+                  (data ?? []).map((r) => [r.email, r.name ?? "", r.unsubscribed_at ? "unsubscribed" : "active", r.consent_at, r.unsubscribed_at ?? ""])),
+              );
+              toast.success(`Exported ${data?.length ?? 0} subscribers.`);
+            } catch (e: any) {
+              toast.error(e.message ?? "Export failed.");
+            } finally {
+              setBusy(null);
+            }
+          }}
+        >
+          {busy === "news" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+          Export newsletter subscribers (CSV)
+        </Button>
       </CardContent>
     </Card>
   );

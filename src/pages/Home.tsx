@@ -1,3 +1,4 @@
+import NewsletterSignup from "@/components/NewsletterSignup";
 import { Calendar, MapPin, FileText, Archive, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -356,6 +357,13 @@ const Home = () => {
               </Card>
             </div>
           </div>
+        </div>
+      </section>
+      <section className="py-16 px-4 bg-gradient-section">
+        <div className="container max-w-2xl text-center space-y-4">
+          <h2 className="text-3xl font-bold">Stay updated</h2>
+          <p className="text-muted-foreground">Subscribe to the AIinRT newsletter for deadlines, programme news and registration updates.</p>
+          <div className="text-left"><NewsletterSignup /></div>
         </div>
       </section>
     </div>

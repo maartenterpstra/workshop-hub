@@ -22,6 +22,7 @@ import Review from "./pages/Review";
 import Soc from "./pages/Soc";
 import AdminAssignments from "./pages/AdminAssignments";
 import SetPassword from "./pages/SetPassword";
+import Unsubscribe from "./pages/Unsubscribe";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -54,6 +55,7 @@ const App = () => (
                 <Route path="/upload" element={<SpeakerUpload />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route
                   path="/submit"
                   element={
