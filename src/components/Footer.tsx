@@ -1,11 +1,12 @@
 import { Mail, Linkedin } from "lucide-react";
 import { siteConfig } from "@/data/siteConfig";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 const Footer = () => {
   return (
     <footer className="border-t bg-muted/30">
       <div className="container py-12">
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-3">
           <div>
             <h3 className="text-lg font-semibold mb-4 text-foreground">{siteConfig.title}</h3>
             <p className="text-sm text-muted-foreground mb-2">{siteConfig.dates}</p>
@@ -41,6 +42,11 @@ const Footer = () => {
                   LinkedIn
                 </a>
             </div>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2 text-foreground">Stay updated</h3>
+            <p className="text-sm text-muted-foreground mb-3">Get AIinRT news, deadlines and programme updates.</p>
+            <NewsletterSignup compact />
           </div>
         </div>
       </div>

@@ -15,6 +15,13 @@
       "when": 1790400183556,
       "tag": "0001_abstract_withdrawal",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790951666115,
+      "tag": "0002_newsletter_subscribers",
+      "breakpoints": true
     }
   ]
 }
