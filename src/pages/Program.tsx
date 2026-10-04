@@ -5,8 +5,55 @@ import { Calendar, MapPin, Archive, AlertCircle, Clock, Download, Loader2 } from
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
-import { programDays, programNotice, type ExpertTalk, type ProgramDay } from "@/data/program";
+import { programDays, programNotice, type ExpertTalk, type Keynote, type ProgramDay } from "@/data/program";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+const KeynoteRow = ({ time, label, k }: { time: string; label: string; k: Keynote }) => (
+  <Dialog>
+    <DialogTrigger asChild>
+      <button className="w-full text-left px-3 py-3 bg-secondary/5 hover:bg-secondary/10 transition-colors">
+        <div className="flex gap-3 text-sm">
+          <span className="font-mono text-xs font-semibold text-muted-foreground w-24 shrink-0 pt-0.5">{time}</span>
+          <p className="font-semibold text-secondary">{label}</p>
+        </div>
+        <div className="mt-3 flex items-center gap-3 border-l-2 border-secondary p-3">
+          <img src={k.avatarUrl} alt="" className="h-16 w-16 shrink-0 rounded-full object-cover" />
+          <div className="min-w-0">
+            <span className="inline-block rounded-sm bg-secondary px-2 py-0.5 text-xs font-semibold text-secondary-foreground">Keynote</span>
+            <p className="mt-1.5 text-sm font-semibold text-foreground">{k.speaker}</p>
+            <p className="text-xs text-muted-foreground">{k.title} · View bio & abstract</p>
+          </div>
+        </div>
+      </button>
+    </DialogTrigger>
+    <DialogContent className="max-w-lg">
+      <DialogHeader>
+        <div className="flex items-center gap-4">
+          <img src={k.avatarUrl} alt="" className="h-20 w-20 rounded-full object-cover" />
+          <div>
+            <DialogTitle>{k.speaker}</DialogTitle>
+            <DialogDescription>{label} · {time}{k.affiliation ? ` · ${k.affiliation}` : ""}</DialogDescription>
+          </div>
+        </div>
+      </DialogHeader>
+      <div className="space-y-4 text-sm">
+        <div>
+          <h4 className="font-semibold text-foreground mb-1">{k.title}</h4>
+        </div>
+        <div>
+          <h4 className="font-semibold text-foreground mb-1">Biography</h4>
+          <p className="text-muted-foreground">{k.bio || "Coming soon."}</p>
+        </div>
+        <div>
+          <h4 className="font-semibold text-foreground mb-1">Abstract</h4>
+          <p className="text-muted-foreground">{k.abstract || "Coming soon."}</p>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+);
+
 
 const TalkAvatar = ({ t }: { t: ExpertTalk }) => (
   <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-base font-bold text-primary overflow-hidden">
@@ -30,6 +77,8 @@ const DaySchedule = ({ day }: { day: ProgramDay }) => (
             <span className="font-mono text-xs text-muted-foreground w-24 shrink-0 pt-0.5">{r.time}</span>
             <span className="text-foreground">{r.label}</span>
           </div>
+        ) : r.kind === "keynote" ? (
+          <KeynoteRow key={r.label} time={r.time} label={r.label} k={r.keynote} />
         ) : (
           <div key={r.id} className="px-3 py-3 bg-background">
             <div className="flex gap-3 text-sm">
