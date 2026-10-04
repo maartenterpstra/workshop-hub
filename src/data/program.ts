@@ -1,5 +1,10 @@
 import adrianImg from "@/assets/speakers/adrian-thummerer.jpg";
 import anaImg from "@/assets/organizers/ana-maria-barragan-montero.jpg";
+import hariniImg from "@/assets/speakers/harini-veeraraghavan.jpg";
+import yeImg from "@/assets/speakers/ye-zhang.jpg";
+import cecileImg from "@/assets/speakers/cecile-wolfs.jpg";
+import keynoteManImg from "@/assets/keynotes/placeholder-man.svg";
+import keynoteWomanImg from "@/assets/keynotes/placeholder-woman.svg";
 
 export type ExpertTalk = {
   title: string;
@@ -9,13 +14,28 @@ export type ExpertTalk = {
   avatarUrl?: string;
 };
 
+/** Website-only details; never included in the PDF programme. */
+export type Keynote = {
+  speaker: string;
+  affiliation: string;
+  title: string;
+  bio: string;
+  abstract: string;
+  avatarUrl: string;
+};
+
 export type ProgramRow =
   | { kind: "item"; time: string; label: string }
+  | { kind: "keynote"; time: string; label: string; keynote: Keynote }
   | { kind: "session"; time: string; id: string; title: string; talk: ExpertTalk };
 
 export type ProgramDay = { label: string; date: string; rows: ProgramRow[] };
 
 const item = (time: string, label: string): ProgramRow => ({ kind: "item", time, label });
+const keynote = (time: string, label: string, avatarUrl: string): ProgramRow => ({
+  kind: "keynote", time, label,
+  keynote: { speaker: "Speaker to be announced", affiliation: "", title: "Title to be announced", bio: "", abstract: "", avatarUrl },
+});
 
 export const programDays: ProgramDay[] = [
   {
