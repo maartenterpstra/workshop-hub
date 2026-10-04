@@ -1,109 +1,83 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Calendar, MapPin, Archive, AlertCircle, Layers, Clock } from "lucide-react";
+import { Calendar, MapPin, Archive, AlertCircle, Clock, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
+import { programDays, programNotice, type ExpertTalk, type ProgramDay } from "@/data/program";
+import { toast } from "sonner";
 
-const sessions = [
-  {
-    id: "S1",
-    title: "Segmentation & Registration",
-    talk: "State of the art: AI for segmentation and registration in radiotherapy",
-    speaker: "Ana Barragán-Montero",
-    affiliation: "UCLouvain, Belgium",
-  },
-  {
-    id: "S2",
-    title: "Reconstruction & Synthesis",
-    talk: "State of the art: AI for image reconstruction and synthesis",
-    speaker: "Adrian Thummerer",
-    affiliation: "LMU Klinikum, Munich, Germany",
-  },
-  {
-    id: "S3",
-    title: "Foundation Models, Text, Explainability & Uncertainty",
-    talk: "State of the art: foundation models, language and uncertainty in radiotherapy",
-    speaker: "Harini Veeraraghavan",
-    affiliation: "Memorial Sloan Kettering Cancer Center, USA",
-  },
-  {
-    id: "S4",
-    title: "Dose & Adaptive Workflows",
-    talk: "State of the art: AI for dose prediction and adaptive workflows",
-    speaker: "Ye Zhang",
-    affiliation: "Paul Scherrer Institute, Switzerland",
-  },
-  {
-    id: "S5",
-    title: "Clinical Predictions & Outcomes",
-    talk: "State of the art: AI for outcome modelling and clinical prediction",
-    speaker: "Cécile Wolfs",
-    affiliation: "MAASTRO Clinic, Maastricht, the Netherlands",
-  },
-  {
-    id: "S6",
-    title: "Implementation, QA & Ethics",
-    talk: "State of the art: clinical implementation, QA and ethics of AI in radiotherapy",
-    speaker: "Tomas Janssen",
-    affiliation: "Netherlands Cancer Institute (NKI), Amsterdam",
-  },
-];
+const TalkAvatar = ({ t }: { t: ExpertTalk }) => (
+  <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-base font-bold text-primary overflow-hidden">
+    {t.avatarUrl ? (
+      <img src={t.avatarUrl} alt={t.speaker} loading="lazy" className="h-16 w-16 rounded-full object-cover object-top" />
+    ) : (
+      t.initials
+    )}
+  </div>
+);
 
-const day1: Array<[string, string]> = [
-  ["08:30–09:15", "Registration & welcome coffee"],
-  ["09:15–09:30", "Opening remarks"],
-  ["09:30–11:00", "Session 1: Segmentation & Registration"],
-  ["11:00–11:30", "Coffee break"],
-  ["11:30–13:00", "Session 2: Reconstruction & Synthesis"],
-  ["13:00–14:15", "Lunch"],
-  ["14:15–15:45", "Session 3: Foundation Models, Text, Explainability & Uncertainty"],
-  ["16:00–16:45", "Keynote 1"],
-  ["16:45-17:30", "Refreshments"],
-  [">19:00", "Optional: social dinner"],
-];
-
-const day2: Array<[string, string]> = [
-  ["08:30–09:15", "Morning coffee / re-registration"],
-  ["09:15–10:45", "Session 4: Dose & Adaptive Workflows"],
-  ["10:45–11:15", "Coffee break"],
-  ["11:15–12:45", "Session 5: Clinical Predictions & Outcomes"],
-  ["12:45–14:00", "Lunch"],
-  ["14:00–15:30", "Session 6: Implementation, QA & Ethics"],
-  ["15:45–16:30", "Keynote 2"],
-  ["16:30–17:00", "Awards & closing"],
-  ["17:00–18:30", "Farewell borrel"],
-];
-
-const DayTable = ({ label, rows }: { label: string; rows: Array<[string, string]> }) => (
+const DaySchedule = ({ day }: { day: ProgramDay }) => (
   <div>
-    <h3 className="font-semibold text-foreground mb-3">{label}</h3>
-    <div className="overflow-hidden rounded-lg border border-border">
-      <table className="w-full text-sm">
-        <tbody>
-          {rows.map(([time, item], i) => (
-            <tr
-              key={time + i}
-              className={i % 2 === 0 ? "bg-muted/30" : "bg-background"}
-            >
-              <td className="px-3 py-2 font-mono text-xs whitespace-nowrap align-top text-muted-foreground w-32">
-                {time}
-              </td>
-              <td className="px-3 py-2 text-foreground">{item}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <h3 className="font-semibold text-foreground mb-3">
+      {day.label} <span className="text-muted-foreground font-normal">— {day.date}</span>
+    </h3>
+    <div className="overflow-hidden rounded-lg border border-border divide-y divide-border">
+      {day.rows.map((r, i) =>
+        r.kind === "item" ? (
+          <div key={r.time + i} className={`flex gap-3 px-3 py-2 text-sm ${i % 2 === 0 ? "bg-muted/30" : "bg-background"}`}>
+            <span className="font-mono text-xs text-muted-foreground w-24 shrink-0 pt-0.5">{r.time}</span>
+            <span className="text-foreground">{r.label}</span>
+          </div>
+        ) : (
+          <div key={r.id} className="px-3 py-3 bg-background">
+            <div className="flex gap-3 text-sm">
+              <span className="font-mono text-xs font-semibold text-muted-foreground w-24 shrink-0 pt-0.5">{r.time}</span>
+              <p className="font-semibold text-primary">
+                <span className="font-mono mr-2">{r.id}</span>
+                {r.title}
+              </p>
+            </div>
+            <div className="mt-3 flex gap-3 border-l-2 border-primary bg-primary/5 p-3">
+              <TalkAvatar t={r.talk} />
+              <div className="min-w-0">
+                <span className="inline-block rounded-sm bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
+                  Expert talk
+                </span>
+                <p className="mt-1.5 text-sm font-semibold leading-snug text-primary">{r.talk.title}</p>
+                <p className="mt-1 text-sm font-semibold text-foreground">{r.talk.speaker}</p>
+                <p className="text-xs text-muted-foreground">{r.talk.affiliation}</p>
+              </div>
+            </div>
+            <p className="mt-2 text-xs italic text-muted-foreground">+ 5 proffered papers (to be announced)</p>
+          </div>
+        ),
+      )}
     </div>
   </div>
 );
 
 const Program = () => {
   const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+
+  const handlePdf = async () => {
+    setBusy(true);
+    try {
+      const { downloadProgramPdf } = await import("@/lib/programPdf");
+      await downloadProgramPdf();
+    } catch (e) {
+      console.error(e);
+      toast.error("Could not create the PDF. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <div className="py-16 px-4">
-      <div className="container max-w-5xl">
+      <div className="container max-w-6xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Program</h1>
           <p className="text-xl text-muted-foreground mb-2">{siteConfig.dates}</p>
@@ -115,11 +89,7 @@ const Program = () => {
 
         <Alert className="mb-8 border-primary/50 bg-primary/5">
           <AlertCircle className="h-4 w-4 text-primary" />
-          <AlertDescription className="text-base">
-            <strong className="text-foreground">Program TBC.</strong> The final programme
-            will be built from peer-reviewed abstracts. Call for Abstracts opens{" "}
-            {siteConfig.callForAbstractsOpens}.
-          </AlertDescription>
+          <AlertDescription className="text-base">{programNotice}</AlertDescription>
         </Alert>
 
         <Card className="shadow-card border-0 mb-8">
@@ -147,58 +117,25 @@ const Program = () => {
         </Card>
 
         <Card className="shadow-card border-0 mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Layers className="h-5 w-5 text-primary" />
-              </div>
-              Sessions
-            </CardTitle>
+          <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 space-y-0">
+            <div className="space-y-1.5">
+              <CardTitle className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Clock className="h-5 w-5 text-primary" />
+                </div>
+                Programme
+              </CardTitle>
+              <CardDescription>Provisional — subject to change.</CardDescription>
+            </div>
+            <Button onClick={handlePdf} disabled={busy} variant="outline">
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              Download programme (PDF)
+            </Button>
           </CardHeader>
-          <CardContent>
-            <ul className="grid sm:grid-cols-2 gap-3">
-              {sessions.map((s) => (
-                <li
-                  key={s.id}
-                  className="flex items-start gap-3 rounded-lg border border-border p-3 bg-muted/20"
-                >
-                  <span className="font-mono text-sm font-semibold text-primary shrink-0">
-                    {s.id}
-                  </span>
-                  <div>
-                    <p className="font-medium text-foreground">{s.title}</p>
-                    <div className="mt-3 border-l-2 border-primary bg-primary/5 py-2 pl-3 pr-2">
-                      <span className="inline-block rounded-sm bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
-                        Expert talk
-                      </span>
-                      <p className="mt-2 text-sm font-semibold leading-snug text-primary">
-                        {s.talk}
-                      </p>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        <span className="font-semibold text-foreground">{s.speaker}</span>
-                        <span> · {s.affiliation}</span>
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-card border-0 mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Clock className="h-5 w-5 text-primary" />
-              </div>
-              Provisional timetable
-            </CardTitle>
-            <CardDescription>Subject to change.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-6">
-            <DayTable label="Day 1" rows={day1} />
-            <DayTable label="Day 2" rows={day2} />
+          <CardContent className="grid lg:grid-cols-2 gap-6">
+            {programDays.map((d) => (
+              <DaySchedule key={d.label} day={d} />
+            ))}
           </CardContent>
         </Card>
 
