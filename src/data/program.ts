@@ -3,6 +3,7 @@ import anaImg from "@/assets/organizers/ana-maria-barragan-montero.jpg";
 import hariniImg from "@/assets/speakers/harini-veeraraghavan.jpg";
 import yeImg from "@/assets/speakers/ye-zhang.jpg";
 import cecileImg from "@/assets/speakers/cecile-wolfs.jpg";
+import tomasImg from "@/assets/speakers/tomas-janssen.jpg";
 import keynoteManImg from "@/assets/keynotes/placeholder-man.svg";
 import keynoteWomanImg from "@/assets/keynotes/placeholder-woman.svg";
 
@@ -80,7 +81,7 @@ export const programDays: ProgramDay[] = [
       item("12:45–14:00", "Lunch"),
       {
         kind: "session", time: "14:00–15:30", id: "S6", title: "Implementation, QA & Ethics",
-        talk: { title: "State of the art: clinical implementation, QA and ethics of AI in radiotherapy", speaker: "Tomas Janssen", affiliation: "Netherlands Cancer Institute (NKI), Amsterdam", initials: "TJ" },
+        talk: { title: "State of the art: clinical implementation, QA and ethics of AI in radiotherapy", speaker: "Tomas Janssen", affiliation: "Netherlands Cancer Institute (NKI), Amsterdam", initials: "TJ", avatarUrl: tomasImg },
       },
       keynote("15:45–16:30", "Keynote 2", keynoteWomanImg),
       item("16:30–17:00", "Awards & closing"),
