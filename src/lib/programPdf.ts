@@ -93,7 +93,8 @@ export async function downloadProgramPdf() {
   };
   const timeW = 26, contentX = M + timeW, contentW = W - M - contentX;
 
-  for (const day of programDays) {
+  for (const [di, day] of programDays.entries()) {
+    if (di > 0) { doc.addPage(); y = M; }
     ensure(20);
     doc.setFont("helvetica", "bold").setFontSize(13).setTextColor(...primary);
     doc.text(`${day.label} — ${day.date}`, M, y + 5);
@@ -132,9 +133,9 @@ export async function downloadProgramPdf() {
         doc.text(r.talk.initials, ax + ad / 2, ay + ad / 2 + 1.5, { align: "center" });
       }
       let ty = by + 5;
-      doc.setFillColor(...primary); doc.roundedRect(textX, ty - 3.2, 18, 4.4, 0.8, 0.8, "F");
-      doc.setFont("helvetica", "bold").setFontSize(7).setTextColor(255, 255, 255);
-      doc.text("EXPERT TALK", textX + 9, ty, { align: "center" });
+      doc.setFillColor(...primary); doc.roundedRect(textX, ty - 3.2, 21, 4.4, 0.8, 0.8, "F");
+      doc.setFont("helvetica", "bold").setFontSize(6.5).setTextColor(255, 255, 255);
+      doc.text("EXPERT TALK", textX + 10.5, ty, { align: "center" });
       ty += 5;
       doc.setFont("helvetica", "bold").setFontSize(9.5).setTextColor(...primary);
       doc.text(titleLines, textX, ty); ty += titleLines.length * 4.2;
