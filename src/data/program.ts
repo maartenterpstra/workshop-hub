@@ -56,7 +56,7 @@ export const programDays: ProgramDay[] = [
       item("13:00–14:15", "Lunch"),
       {
         kind: "session", time: "14:15–15:45", id: "S3", title: "Foundation Models, Text, Explainability & Uncertainty",
-        talk: { title: "State of the art: foundation models, language and uncertainty in radiotherapy", speaker: "Harini Veeraraghavan", affiliation: "Memorial Sloan Kettering Cancer Center, USA", initials: "HV" },
+        talk: { title: "State of the art: foundation models, language and uncertainty in radiotherapy", speaker: "Harini Veeraraghavan", affiliation: "Memorial Sloan Kettering Cancer Center, USA", initials: "HV", avatarUrl: hariniImg },
       },
       item("16:00–16:45", "Keynote 1"),
       item("16:45–17:30", "Refreshments"),
@@ -70,12 +70,12 @@ export const programDays: ProgramDay[] = [
       item("08:30–09:15", "Morning coffee / re-registration"),
       {
         kind: "session", time: "09:15–10:45", id: "S4", title: "Dose & Adaptive Workflows",
-        talk: { title: "State of the art: AI for dose prediction and adaptive workflows", speaker: "Ye Zhang", affiliation: "Paul Scherrer Institute, Switzerland", initials: "YZ" },
+        talk: { title: "State of the art: AI for dose prediction and adaptive workflows", speaker: "Ye Zhang", affiliation: "Paul Scherrer Institute, Switzerland", initials: "YZ", avatarUrl: yeImg },
       },
       item("10:45–11:15", "Coffee break"),
       {
         kind: "session", time: "11:15–12:45", id: "S5", title: "Clinical Predictions & Outcomes",
-        talk: { title: "State of the art: AI for outcome modelling and clinical prediction", speaker: "Cécile Wolfs", affiliation: "MAASTRO Clinic, Maastricht, the Netherlands", initials: "CW" },
+        talk: { title: "State of the art: AI for outcome modelling and clinical prediction", speaker: "Cécile Wolfs", affiliation: "MAASTRO Clinic, Maastricht, the Netherlands", initials: "CW", avatarUrl: cecileImg },
       },
       item("12:45–14:00", "Lunch"),
       {
