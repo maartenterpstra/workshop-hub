@@ -65,7 +65,11 @@ export const programDays: ProgramDay[] = [
       },
       keynote("16:00–16:45", "Keynote 1", keynoteManImg),
       item("16:45–17:30", "Refreshments"),
-      item("from 19:00", "Optional: social dinner"),
+      item("from 19:00", "Optional: social dinner", {
+        location: "Humphrey's Restaurant Utrecht",
+        mapsUrl:
+          "https://www.google.com/maps/dir/?api=1&destination=Humphrey's%20Restaurant%2C%20Stadhuisbrug%203%2C%203511%20KP%20Utrecht",
+      }),
     ],
   },
   {
