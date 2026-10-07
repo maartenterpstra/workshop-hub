@@ -12,6 +12,13 @@ export const siteConfig = {
   abstractDecisionsOn: "17 December 2026",
   registrationOpensOn: "1 October 2026",
 
+  // Indicative prices shown before the external PMC registration platform confirms the fee
+  prices: {
+    academiaPerDay: 100,
+    vendorPerDay: 150,
+    dinnerPerPerson: 65,
+  },
+
   // Registration is handled on a separate site for 2027; leave empty until live.
   externalRegistrationUrl: "https://aiinrt2027.prinsesmaximacentrum-events.nl/",
 
