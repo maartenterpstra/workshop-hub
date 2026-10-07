@@ -75,7 +75,21 @@ const DaySchedule = ({ day }: { day: ProgramDay }) => (
         r.kind === "item" ? (
           <div key={r.time + i} className={`flex gap-3 px-3 py-2 text-sm ${i % 2 === 0 ? "bg-muted/30" : "bg-background"}`}>
             <span className="font-mono text-xs text-muted-foreground w-24 shrink-0 pt-0.5">{r.time}</span>
-            <span className="text-foreground">{r.label}</span>
+            <div className="min-w-0">
+              <span className="text-foreground">{r.label}</span>
+              {r.location && <span className="text-foreground"> — {r.location}</span>}
+              {r.mapsUrl && (
+                <a
+                  href={r.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  <MapPin className="h-3 w-3" />
+                  Google Maps directions
+                </a>
+              )}
+            </div>
           </div>
         ) : r.kind === "keynote" ? (
           <KeynoteRow key={r.label} time={r.time} label={r.label} k={r.keynote} />

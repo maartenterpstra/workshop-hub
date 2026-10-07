@@ -78,6 +78,21 @@ export async function downloadProgramPdf() {
     y += 9;
     day.rows.forEach((r, i) => {
       if (r.kind !== "session") {
+        if (r.kind === "item" && r.location) {
+          if (i % 2 === 0) { doc.setFillColor(...mutedBg); doc.rect(M, y, W - 2 * M, 12.5, "F"); }
+          doc.setFont("courier", "normal").setFontSize(8.5).setTextColor(...muted);
+          doc.text(r.time, M + 2, y + 4.7);
+          doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(...fg);
+          doc.text(r.label, contentX, y + 4.8);
+          doc.setFont("helvetica", "italic").setFontSize(8.5).setTextColor(...primary);
+          doc.text(`${r.location} — Stadhuisbrug 3, 3511 KP Utrecht`, contentX, y + 9.6);
+          if (r.mapsUrl) {
+            const locW = doc.setFontSize(8.5).getTextWidth(`${r.location} — Stadhuisbrug 3, 3511 KP Utrecht`);
+            doc.textWithLink(" · Google Maps directions", contentX + locW, y + 9.6, { url: r.mapsUrl });
+          }
+          y += 12.5;
+          return;
+        }
         if (i % 2 === 0) { doc.setFillColor(...mutedBg); doc.rect(M, y, W - 2 * M, 7, "F"); }
         doc.setFont("courier", "normal").setFontSize(8.5).setTextColor(...muted);
         doc.text(r.time, M + 2, y + 4.7);

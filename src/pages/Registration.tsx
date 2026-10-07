@@ -47,6 +47,29 @@ const Registration = () => {
               takes place on the Princess Máxima Center registration platform. You will be
               redirected to their website to complete your registration.
             </p>
+
+            <div className="rounded-md border border-border bg-muted/30 p-4">
+              <h4 className="font-semibold text-foreground mb-2">Indicative prices</h4>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>
+                  <strong className="text-foreground">€{siteConfig.prices.academiaPerDay}</strong> per
+                  day — academia / students
+                </li>
+                <li>
+                  <strong className="text-foreground">€{siteConfig.prices.vendorPerDay}</strong> per
+                  day — vendors / commercial parties
+                </li>
+                <li>
+                  <strong className="text-foreground">€{siteConfig.prices.dinnerPerPerson}</strong> per
+                  person — conference dinner
+                </li>
+              </ul>
+              <p className="mt-2 text-xs italic text-muted-foreground">
+                These are indicative prices so you can plan ahead — final fees, invoicing, and
+                payment are confirmed on the Princess Máxima Center platform.
+              </p>
+            </div>
+
             <ul className="list-disc list-inside space-y-1 text-sm">
               <li>Fees, cancellation policy, and receipts are managed by PMC.</li>
               <li>Abstract acceptance is independent from registration — you can register before or after submitting.</li>

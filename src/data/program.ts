@@ -26,13 +26,17 @@ export type Keynote = {
 };
 
 export type ProgramRow =
-  | { kind: "item"; time: string; label: string }
+  | { kind: "item"; time: string; label: string; location?: string; mapsUrl?: string }
   | { kind: "keynote"; time: string; label: string; keynote: Keynote }
   | { kind: "session"; time: string; id: string; title: string; talk: ExpertTalk };
 
 export type ProgramDay = { label: string; date: string; rows: ProgramRow[] };
 
-const item = (time: string, label: string): ProgramRow => ({ kind: "item", time, label });
+const item = (
+  time: string,
+  label: string,
+  extra?: { location?: string; mapsUrl?: string },
+): ProgramRow => ({ kind: "item", time, label, ...extra });
 const keynote = (time: string, label: string, avatarUrl: string): ProgramRow => ({
   kind: "keynote", time, label,
   keynote: { speaker: "Speaker to be announced", affiliation: "", title: "Title to be announced", bio: "", abstract: "", avatarUrl },
@@ -61,7 +65,11 @@ export const programDays: ProgramDay[] = [
       },
       keynote("16:00–16:45", "Keynote 1", keynoteManImg),
       item("16:45–17:30", "Refreshments"),
-      item("from 19:00", "Optional: social dinner"),
+      item("from 19:00", "Optional: social dinner", {
+        location: "Humphrey's Restaurant Utrecht",
+        mapsUrl:
+          "https://www.google.com/maps/dir/?api=1&destination=Humphrey's%20Restaurant%2C%20Stadhuisbrug%203%2C%203511%20KP%20Utrecht",
+      }),
     ],
   },
   {
