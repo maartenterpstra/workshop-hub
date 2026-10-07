@@ -26,13 +26,17 @@ export type Keynote = {
 };
 
 export type ProgramRow =
-  | { kind: "item"; time: string; label: string }
+  | { kind: "item"; time: string; label: string; location?: string; mapsUrl?: string }
   | { kind: "keynote"; time: string; label: string; keynote: Keynote }
   | { kind: "session"; time: string; id: string; title: string; talk: ExpertTalk };
 
 export type ProgramDay = { label: string; date: string; rows: ProgramRow[] };
 
-const item = (time: string, label: string): ProgramRow => ({ kind: "item", time, label });
+const item = (
+  time: string,
+  label: string,
+  extra?: { location?: string; mapsUrl?: string },
+): ProgramRow => ({ kind: "item", time, label, ...extra });
 const keynote = (time: string, label: string, avatarUrl: string): ProgramRow => ({
   kind: "keynote", time, label,
   keynote: { speaker: "Speaker to be announced", affiliation: "", title: "Title to be announced", bio: "", abstract: "", avatarUrl },
