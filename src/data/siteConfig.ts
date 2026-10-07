@@ -12,7 +12,7 @@ export const siteConfig = {
   abstractDecisionsOn: "17 December 2026",
   registrationOpensOn: "1 October 2026",
 
-  // Indicative prices shown before the external PMC registration platform confirms the fee
+  // Confirmed registration fees — final prices, they will not change
   prices: {
     academiaPerDay: 100,
     vendorPerDay: 150,
