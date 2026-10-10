@@ -84,8 +84,18 @@ export async function exportAbstractsExcel() {
   [18, 50, 22, 22, 40, 16, 9, 12, 12, 12, 14, 12, 13].forEach((w, i) => (sum.getColumn(i + 1).width = w));
   [38, 18, 50, 9, 11, 11, 11, 14, 11, 14, 16, 50, 50, 24].forEach((w, i) => (rev.getColumn(i + 1).width = w));
   rev.getColumn(revLastScore + 1).numFmt = "0.00";
+  const disc = wb.addWorksheet("Disclosures");
+  disc.addRow(["Session", "Title", "Submitted elsewhere", "Where", "Status elsewhere", "Funding / COI", "AI use"]);
+  const { data: dRows } = await supabase.from("abstract_disclosures").select("*");
+  const dMap = new Map((dRows ?? []).map((d: any) => [d.abstract_id, d]));
+  for (const a of abstracts) {
+    const d: any = dMap.get(a.id);
+    disc.addRow([a.topic?.name ?? "", a.title, d ? (d.prior_submission ? "Yes" : "No") : "", d?.prior_venue ?? "", d?.prior_status ?? "", d?.funding_coi ?? "", d?.ai_use ?? ""]);
+  }
+  [18, 50, 12, 30, 30, 40, 40].forEach((w, i) => (disc.getColumn(i + 1).width = w));
   styleHeader(sum);
   styleHeader(rev);
+  styleHeader(disc);
 
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
