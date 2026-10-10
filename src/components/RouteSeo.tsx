@@ -55,7 +55,7 @@ const meta: Record<
   "/submission": {
     title: "Abstract Submission — AIinRT2027",
     description:
-      "Submission rules, templates, word limits and review criteria for AIinRT2027 abstracts, including the APC waiver for the best-scoring paper.",
+      "Submission rules, templates, word limits and review criteria for AIinRT2027 abstracts, including the phiRO open access fee waiver for the best-scoring paper.",
   },
   "/registration": {
     title: "Registration — AIinRT2027",

@@ -175,18 +175,25 @@ const Submission = () => {
             </section>
 
             <section className="rounded-lg border border-secondary/40 bg-secondary/5 p-4">
-              <h3 className="font-semibold text-foreground mb-1">Best-paper award — free APC waiver</h3>
+              <h3 className="font-semibold text-foreground mb-1">
+                Best-paper award — open access fee waived in phiRO
+              </h3>
               <p className="text-sm">
-                The highest-scoring abstract (based on reviewer scores) will receive a
-                <strong className="text-foreground"> full Article Processing Charge (APC) waiver </strong>
-                toward a follow-up open-access publication in a dedicated issue. The specific journal will be
-                disclosed in December 2026. 
+                The best submission, selected according to the abstract score, will have the open access
+                submission fee for{" "}
+                <strong className="text-foreground">
+                  Physics in Imaging and Radiation Oncology (phiRO)
+                </strong>{" "}
+                waived, upon participation to the upcoming AI in RT special issue.
               </p>
             </section>
 
             <section>
               <h3 className="font-semibold text-foreground mb-2">Review criteria</h3>
-              <p>Each abstract is scored (1–5) by up to five reviewers on:</p>
+              <p>
+                Each abstract is scored (1–5) by at least three reviewers — up to five depending on the
+                number of submissions — on:
+              </p>
               <ul className="list-disc list-inside space-y-1 mt-2 text-sm">
                 <li>Technical soundness</li>
                 <li>Relevance to radiotherapy</li>
