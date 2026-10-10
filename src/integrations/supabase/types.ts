@@ -59,6 +59,51 @@ export type Database = {
           },
         ]
       }
+      abstract_disclosures: {
+        Row: {
+          abstract_id: string
+          ai_use: string
+          funding_coi: string | null
+          prior_status: string | null
+          prior_submission: boolean
+          prior_venue: string | null
+          updated_at: string
+        }
+        Insert: {
+          abstract_id: string
+          ai_use?: string
+          funding_coi?: string | null
+          prior_status?: string | null
+          prior_submission?: boolean
+          prior_venue?: string | null
+          updated_at?: string
+        }
+        Update: {
+          abstract_id?: string
+          ai_use?: string
+          funding_coi?: string | null
+          prior_status?: string | null
+          prior_submission?: boolean
+          prior_venue?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abstract_disclosures_abstract_id_fkey"
+            columns: ["abstract_id"]
+            isOneToOne: true
+            referencedRelation: "abstracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "abstract_disclosures_abstract_id_fkey"
+            columns: ["abstract_id"]
+            isOneToOne: true
+            referencedRelation: "reviewer_abstract_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       abstracts: {
         Row: {
           background: string | null
@@ -278,6 +323,35 @@ export type Database = {
             columns: ["topic_id"]
             isOneToOne: false
             referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviewer_notes: {
+        Row: {
+          assignment_id: string
+          notes: string | null
+          reviewer_id: string
+          updated_at: string
+        }
+        Insert: {
+          assignment_id: string
+          notes?: string | null
+          reviewer_id: string
+          updated_at?: string
+        }
+        Update: {
+          assignment_id?: string
+          notes?: string | null
+          reviewer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviewer_notes_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: true
+            referencedRelation: "review_assignments"
             referencedColumns: ["id"]
           },
         ]
