@@ -66,6 +66,11 @@ const Submit = () => {
   const [submitting, setSubmitting] = useState(false);
   const [loadingAbstract, setLoadingAbstract] = useState(editing);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [priorSubmission, setPriorSubmission] = useState(false);
+  const [priorVenue, setPriorVenue] = useState("");
+  const [priorStatus, setPriorStatus] = useState("");
+  const [fundingCoi, setFundingCoi] = useState("");
+  const [aiUse, setAiUse] = useState("None");
 
   const totalWords = countWords([background, methods, results, conclusion].join(" "));
   const overLimit = totalWords > WORD_LIMIT;
@@ -120,6 +125,15 @@ const Submit = () => {
           email: author.email ?? "",
           is_presenting: author.is_presenting,
         })));
+      }
+      const { data: disc } = await supabase
+        .from("abstract_disclosures").select("*").eq("abstract_id", abstractId).maybeSingle();
+      if (disc) {
+        setPriorSubmission(disc.prior_submission);
+        setPriorVenue(disc.prior_venue ?? "");
+        setPriorStatus(disc.prior_status ?? "");
+        setFundingCoi(disc.funding_coi ?? "");
+        setAiUse(disc.ai_use ?? "");
       }
       setLoadingAbstract(false);
     })();
@@ -185,6 +199,14 @@ const Submit = () => {
     }
     if (figures.length === 0 && existingFigurePaths.length === 0) {
       toast.error("Please attach at least one figure or table image.");
+      return;
+    }
+    if (priorSubmission && !priorVenue.trim()) {
+      toast.error("Please state where the work is also submitted or presented.");
+      return;
+    }
+    if (!aiUse.trim()) {
+      toast.error("Please complete the AI-use disclosure (\"None\" is acceptable).");
       return;
     }
     const parsed = formSchema.safeParse({
@@ -261,6 +283,17 @@ const Submit = () => {
       }
       const { error: authErr } = await supabase.from("abstract_authors").insert(authorRows);
       if (authErr) throw authErr;
+
+      const { error: discErr } = await supabase.from("abstract_disclosures").upsert({
+        abstract_id: abs.id,
+        prior_submission: priorSubmission,
+        prior_venue: priorSubmission ? priorVenue.trim() : null,
+        prior_status: priorSubmission ? priorStatus.trim() || null : null,
+        funding_coi: fundingCoi.trim() || null,
+        ai_use: aiUse.trim(),
+        updated_at: new Date().toISOString(),
+      });
+      if (discErr) throw discErr;
 
       toast.success(editing ? "Abstract changes saved." : "Abstract successfully submitted!");
       const { error: emailError } = await supabase.functions.invoke("send-confirmation-email", {
@@ -470,6 +503,46 @@ const Submit = () => {
                 {existingFigurePaths.length} existing image{existingFigurePaths.length === 1 ? "" : "s"} will be retained.
               </p>
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Disclosures</CardTitle>
+            <CardDescription>
+              Work submitted elsewhere is welcome provided it has not been presented by December 2026.
+              Disclosures do not affect scoring and are never shown to reviewers.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={priorSubmission} onChange={(e) => setPriorSubmission(e.target.checked)} />
+              This work is also submitted, accepted or presented elsewhere
+            </label>
+            {priorSubmission && (
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="space-y-1">
+                  <Label className="text-xs">Where (conference or journal) *</Label>
+                  <Input value={priorVenue} onChange={(e) => setPriorVenue(e.target.value)} maxLength={300} />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Status (e.g. submitted, accepted, presented on date)</Label>
+                  <Input value={priorStatus} onChange={(e) => setPriorStatus(e.target.value)} maxLength={300} />
+                </div>
+              </div>
+            )}
+            <div className="space-y-1">
+              <Label>Funding and conflicts of interest</Label>
+              <Textarea rows={2} value={fundingCoi} onChange={(e) => setFundingCoi(e.target.value)} maxLength={2000} />
+            </div>
+            <div className="space-y-1">
+              <Label>Use of AI tools in preparing the abstract * ("None" is acceptable)</Label>
+              <Textarea rows={2} value={aiUse} onChange={(e) => setAiUse(e.target.value)} maxLength={2000} />
+            </div>
+            <div className="rounded-md bg-muted p-3 text-xs text-muted-foreground space-y-1">
+              <p className="font-medium text-foreground">Before submitting, check double-blinding:</p>
+              <p>No names, affiliations, logos or watermarks in PDF/figures; cite own work in third person; anonymise links and in-house tool names; remove file metadata.</p>
+            </div>
           </CardContent>
         </Card>
 
