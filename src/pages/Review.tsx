@@ -64,6 +64,7 @@ const Review = () => {
   const [drafts, setDrafts] = useState<Record<string, ReviewRow>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!user || (!submissionClosed && !debug)) { setLoading(false); return; }
@@ -101,6 +102,9 @@ const Review = () => {
       }
       setAssignments(enriched);
       setDrafts(nextDrafts);
+      const { data: noteRows } = await supabase
+        .from("reviewer_notes").select("assignment_id, notes").eq("reviewer_id", user.id);
+      setNotes(Object.fromEntries((noteRows ?? []).map((n) => [n.assignment_id, n.notes ?? ""])));
       setLoading(false);
     })();
   }, [user, submissionClosed, debug]);
@@ -125,6 +129,14 @@ const Review = () => {
 
   const setField = (aid: string, patch: Partial<ReviewRow>) =>
     setDrafts((prev) => ({ ...prev, [aid]: { ...prev[aid], ...patch } }));
+
+  const saveNotes = async (aid: string) => {
+    if (!user) return;
+    const { error } = await supabase.from("reviewer_notes").upsert({
+      assignment_id: aid, reviewer_id: user.id, notes: notes[aid] ?? "", updated_at: new Date().toISOString(),
+    });
+    if (error) toast.error("Notes could not be saved.");
+  };
 
   const submitReview = async (a: Assignment) => {
     if (!reviewOpen) {
@@ -261,11 +273,23 @@ const Review = () => {
 
               <div className="space-y-1">
                 <Label>Comments to authors</Label>
+                <p className="text-xs text-muted-foreground">Shared with the authors (anonymously). Be constructive.</p>
                 <Textarea disabled={!reviewOpen} rows={3} value={d.comments_for_authors ?? ""} onChange={(e) => setField(a.id, { comments_for_authors: e.target.value })} />
               </div>
               <div className="space-y-1">
                 <Label>Confidential comments to chairs</Label>
+                <p className="text-xs text-muted-foreground">Only visible to the scientific committee.</p>
                 <Textarea disabled={!reviewOpen} rows={3} value={d.comments_for_soc ?? ""} onChange={(e) => setField(a.id, { comments_for_soc: e.target.value })} />
+              </div>
+              <div className="space-y-1">
+                <Label>Personal notes</Label>
+                <p className="text-xs text-muted-foreground">Private to you — not shared, not scored. Saved automatically when you leave the box.</p>
+                <Textarea
+                  rows={3}
+                  value={notes[a.id] ?? ""}
+                  onChange={(e) => setNotes((p) => ({ ...p, [a.id]: e.target.value }))}
+                  onBlur={() => saveNotes(a.id)}
+                />
               </div>
 
               <Button onClick={() => submitReview(a)} disabled={saving === a.id || !reviewOpen}>

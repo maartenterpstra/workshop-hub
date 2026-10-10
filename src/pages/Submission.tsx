@@ -191,8 +191,7 @@ const Submission = () => {
             <section>
               <h3 className="font-semibold text-foreground mb-2">Review criteria</h3>
               <p>
-                Each abstract is scored (1–5) by at least three reviewers — up to five depending on the
-                number of submissions — on:
+                Each abstract is scored (1–5) by <strong className="text-foreground">at least five reviewers</strong> on:
               </p>
               <ul className="list-disc list-inside space-y-1 mt-2 text-sm">
                 <li>Technical soundness</li>
@@ -204,15 +203,47 @@ const Submission = () => {
             </section>
 
             <section>
+              <h3 className="font-semibold text-foreground mb-2">Keeping the review double-blind</h3>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>No names, affiliations, emails or acknowledgements in the PDF, figures or abstract text.</li>
+                <li>No institution or hospital names, logos or watermarks in figures or screenshots.</li>
+                <li>Cite your own work in the third person ("Smith et al. showed"), not "our previous work".</li>
+                <li>Avoid in-house software, trial or cohort names that identify your group; anonymise links and code repositories.</li>
+                <li>Remove author information from the PDF and image file properties (metadata).</li>
+              </ul>
+            </section>
+
+            <section className="rounded-lg border border-primary/30 bg-primary/5 p-4">
+              <h3 className="font-semibold text-foreground mb-1">Language matters</h3>
+              <p className="text-sm mb-2">
+                We follow ESTRO's call to use balanced, patient-friendly wording. Please consider, for example:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Toxicity → side effects or adverse events</li>
+                <li>Dose constraints → dose guidance</li>
+                <li>Organs at risk → organs of interest</li>
+                <li>(Set-up) errors → (set-up) variations or misalignments</li>
+                <li>Report the overall benefit–risk balance, not adverse events alone.</li>
+              </ul>
+              <a
+                className="text-sm text-primary underline mt-2 inline-block"
+                href="https://www.estro.org/Congresses/ESTRO-2027-(1)/Language-matters-A-call-to-change-the-p"
+                target="_blank" rel="noopener noreferrer"
+              >
+                Read ESTRO's "Language matters" call
+              </a>
+            </section>
+
+            <section>
               <h3 className="font-semibold text-foreground mb-2">Originality & disclosure</h3>
               <p className="text-sm mb-2">
                 Our goal is a high-quality, science-focused meeting with a low threshold to
                 participate. We <strong className="text-foreground">encourage submissions of work
                 that is already submitted or under review elsewhere</strong>, as long as it has
-                not yet been presented at another conference.
+                not yet been presented by December 2026.
               </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>Please disclose any prior or concurrent submission on the form — this <strong className="text-foreground">will not impact scoring</strong>.</li>
+                <li>Disclose on the form where else the work is submitted, accepted or presented — this <strong className="text-foreground">will not impact scoring</strong> and is not shown to reviewers.</li>
                 <li>Studies involving patient data must state ethical approval and data governance.</li>
                 <li>Disclose funding and conflicts of interest.</li>
                 <li>AI-use disclosure is mandatory ("None" is acceptable).</li>
