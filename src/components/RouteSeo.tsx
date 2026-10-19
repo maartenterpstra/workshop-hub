@@ -44,7 +44,7 @@ const meta: Record<
   "/": {
     title: "AIinRT2027 — AI in Radiotherapy Symposium · Utrecht",
     description:
-      "AIinRT2027, 1–2 April 2027 in Utrecht: a scientific symposium on artificial intelligence in radiotherapy by UMC Utrecht with Princess Máxima Center and DLinRT.eu.",
+      "AIinRT2027, 1–2 April 2027 in Utrecht: a symposium on AI in radiotherapy by UMC Utrecht with Princess Máxima Center and DLinRT.eu, linked to a phiRO special issue.",
     jsonLd: eventJsonLd,
   },
   "/program": {

@@ -41,6 +41,14 @@ const Footer = () => {
                   <Linkedin className="h-4 w-4" />
                   LinkedIn
                 </a>
+              <a
+                href={siteConfig.specialIssueUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-primary hover:underline"
+              >
+                phiRO special issue
+              </a>
             </div>
           </div>
           <div>

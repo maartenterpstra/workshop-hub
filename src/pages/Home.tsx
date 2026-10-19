@@ -140,7 +140,7 @@ const Home = () => {
               <CardContent className="pt-8 pb-8 md:pl-10">
                 <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-secondary font-bold mb-3">
                   <span className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
-                  Opens {siteConfig.callForAbstractsOpens}
+                  Open now · deadline {siteConfig.abstractSubmissionDeadline}
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
                   Call for Abstracts
@@ -150,13 +150,19 @@ const Home = () => {
                   peer-reviewed abstract submissions evaluated through a double-blind review process. 
                   Authors, reviewers, and the scientific organising committee use this site throughout
                   the submission and review process.
-{/*                  The scientific programme will be built entirely from
-                  double-blinded, peer-reviewed abstract submissions. Authors, reviewers, and
-                  the scientific organising committee use this site throughout
-                  the submission and review process.
-*/}                </p>
+                </p>
                 <p className="text-sm text-muted-foreground mt-4">
-                  Attendee registration will be handled on a separate site — details to follow.
+                  Selected work can be developed into a full paper for the{" "}
+                  <a href={siteConfig.specialIssueUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                    phiRO virtual special issue on AI in radiotherapy
+                  </a>.
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Registration is open on the{" "}
+                  <a href={siteConfig.externalRegistrationUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                    Princess Máxima Center platform
+                  </a>{" "}
+                  (closes {siteConfig.registrationDeadline}).
                 </p>
               </CardContent>
               <div className="flex items-center justify-center bg-gradient-warm p-6 md:p-10">

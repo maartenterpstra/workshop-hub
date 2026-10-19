@@ -37,15 +37,14 @@ const Registration = () => {
               Register via the Princess Máxima Center
             </CardTitle>
             <CardDescription className="text-base">
-              Opens {siteConfig.registrationOpensOn} · Registration closes{" "}
-              {siteConfig.registrationDeadline}
+              Registration is open · closes {siteConfig.registrationDeadline}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
             <p>
               All attendee registration, invoicing, and payment for {siteConfig.subtitle}{" "}
-              takes place on the Princess Máxima Center registration platform. You will be
-              redirected to their website to complete your registration.
+              takes place on the Princess Máxima Center registration platform. The button
+              below takes you to their website to complete your registration.
             </p>
 
             <div className="rounded-md border border-border bg-muted/30 p-4">
