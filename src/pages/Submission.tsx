@@ -292,6 +292,12 @@ const Submission = () => {
               </Button>
             </div>
             <p className="text-sm">
+              After the workshop, all authors are invited to submit a full paper to the{" "}
+              <a href={siteConfig.specialIssueUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                phiRO virtual special issue
+              </a>.
+            </p>
+            <p className="text-sm">
               Questions? See the Contact section in the footer.
             </p>
           </CardContent>
