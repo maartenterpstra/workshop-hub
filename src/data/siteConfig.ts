@@ -40,6 +40,10 @@ export const siteConfig = {
   // Previous-edition archive
   previousEditionUrl: "/2026/index.html",
 
+  // Related phiRO virtual special issue
+  specialIssueUrl:
+    "https://www.sciencedirect.com/special-issue/338195/development-and-clinical-implementation-of-artificial-intelligence-in-radiotherapy",
+
   // Legacy fields (kept so old Registration.tsx logic keeps compiling until rewritten this turn)
   registrationFormUrl: "",
   registrationFormUrlNotify: "",

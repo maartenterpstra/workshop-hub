@@ -186,6 +186,17 @@ const Submission = () => {
                 </strong>{" "}
                 waived, upon participation to the upcoming AI in RT special issue.
               </p>
+              <p className="text-sm mt-2">
+                We warmly invite <strong className="text-foreground">all authors</strong> of accepted
+                abstracts to develop their work into a full paper and submit it to the same special issue.
+              </p>
+              <a
+                className="text-sm text-primary underline mt-2 inline-block"
+                href={siteConfig.specialIssueUrl}
+                target="_blank" rel="noopener noreferrer"
+              >
+                View the AI in RT special issue (phiRO)
+              </a>
             </section>
 
             <section>
