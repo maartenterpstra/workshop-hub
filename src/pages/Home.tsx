@@ -1,5 +1,5 @@
 import NewsletterSignup from "@/components/NewsletterSignup";
-import { Calendar, MapPin, FileText, Archive, ArrowRight, Sparkles } from "lucide-react";
+import { Calendar, MapPin, FileText, Archive, ArrowRight, Sparkles, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -94,6 +94,17 @@ const Home = () => {
                 <a href={siteConfig.previousEditionUrl}>
                   <Archive className="h-4 w-4" />
                   Previous edition (2026)
+                </a>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="bg-white/10 backdrop-blur-sm text-white border-white/40 hover:bg-white/20 hover:text-white"
+              >
+                <a href={siteConfig.specialIssueUrl} target="_blank" rel="noopener noreferrer">
+                  <BookOpen className="h-4 w-4" />
+                  Related special issue
                 </a>
               </Button>
             </div>
