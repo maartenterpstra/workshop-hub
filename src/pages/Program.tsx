@@ -152,7 +152,15 @@ const Program = () => {
 
         <Alert className="mb-8 border-primary/50 bg-primary/5">
           <AlertCircle className="h-4 w-4 text-primary" />
-          <AlertDescription className="text-base">{programNotice}</AlertDescription>
+          <AlertDescription className="text-base">
+            {programNotice}{" "}
+            <span className="block mt-1 text-sm">
+              Presented work can be developed into a full paper for the{" "}
+              <a href={siteConfig.specialIssueUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                phiRO virtual special issue on AI in radiotherapy
+              </a>.
+            </span>
+          </AlertDescription>
         </Alert>
 
         <Card className="shadow-card border-0 mb-8">

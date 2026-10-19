@@ -60,6 +60,12 @@ const Submission = () => {
               provided it has <strong>not yet been presented by December 2026</strong>. Please disclose it on
               submission — this does not affect scoring.
             </span>
+            <span className="block mt-2 text-foreground/90">
+              All authors are invited to submit a full paper to the{" "}
+              <a href={siteConfig.specialIssueUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                phiRO virtual special issue on AI in radiotherapy
+              </a>.
+            </span>
           </AlertDescription>
         </Alert>
 
