@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { proposeSchedule, paperTime } from "./proposeSchedule";
+import { proposeSchedule, paperTime } from "../src/lib/proposeSchedule";
 
 const oral = (id: string, score: number) => ({ abstractId: id, topic: "Segmentation & Registration", score, decision: "oral" as const });
 
