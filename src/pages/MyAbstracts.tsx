@@ -30,6 +30,16 @@ const MyAbstracts = () => {
   const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [decisions, setDecisions] = useState<Record<string, { decision: string; note: string | null; revision_due_at: string | null }>>({});
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("abstract_decisions").select("abstract_id, decision, note, revision_due_at")
+      .then(({ data }) => setDecisions(Object.fromEntries((data ?? []).map((d) => [d.abstract_id, d]))));
+  }, [user]);
+  const revisionOpen = (id: string) => {
+    const d = decisions[id];
+    return d?.decision === "revise" && !!d.revision_due_at && new Date(d.revision_due_at) > new Date();
+  };
 
   const toggleWithdraw = async (abstract: AbstractSummary, restore: boolean) => {
     setBusyId(abstract.id);
@@ -120,11 +130,24 @@ const MyAbstracts = () => {
               <Badge variant="outline">{abstract.status.replace(/_/g, " ")}</Badge>
             </div>
           </CardHeader>
+          {decisions[abstract.id] && (
+            <div className="mx-6 mb-3 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
+              <span className="font-semibold text-foreground">Committee decision: </span>
+              {({ oral: "accepted for an oral presentation", poster: "accepted for a poster presentation", revise: "minor revision requested", reject: "not accepted" } as Record<string, string>)[decisions[abstract.id].decision]}
+              {revisionOpen(abstract.id) && ` — please update your abstract before ${formatAmsterdam(new Date(decisions[abstract.id].revision_due_at!))}.`}
+              {decisions[abstract.id].note && <p className="mt-1 text-muted-foreground">{decisions[abstract.id].note}</p>}
+            </div>
+          )}
           <CardContent className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-muted-foreground">
               Last saved {formatAmsterdam(new Date(abstract.updated_at))}
             </p>
             <div className="flex flex-wrap gap-2">
+              {!submissionOpen && abstract.status === "submitted" && revisionOpen(abstract.id) && (
+                <Button asChild size="sm">
+                  <Link to={`/submit/${abstract.id}`}><FilePenLine />Revise abstract</Link>
+                </Button>
+              )}
               {submissionOpen && abstract.status === "submitted" && (
                 <>
                   <Button asChild variant="outline" size="sm">
