@@ -47,6 +47,7 @@ Deno.serve(async (req) => {
 
     let b: any;
     try { b = await req.json(); } catch { return json({ error: "Invalid JSON body." }, 400); }
+    if (b?.mode === "decision") return await sendDecisions(admin, uid, b, LOVABLE_API_KEY, RESEND_API_KEY);
     const subject = typeof b.subject === "string" ? b.subject.replace(/[\r\n]+/g, " ").trim() : "";
     const body = typeof b.body === "string" ? b.body.trim() : "";
     const abstractId = b.abstractId ?? null;
