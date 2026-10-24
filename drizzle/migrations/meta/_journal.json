@@ -29,6 +29,13 @@
       "when": 1791655980523,
       "tag": "0003_disclosures_and_reviewer_notes",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792864369095,
+      "tag": "0004_email_log",
+      "breakpoints": true
     }
   ]
 }

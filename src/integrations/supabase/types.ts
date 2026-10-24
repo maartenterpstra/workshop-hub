@@ -196,6 +196,57 @@ export type Database = {
         }
         Relationships: []
       }
+      email_log: {
+        Row: {
+          abstract_id: string | null
+          error: string | null
+          id: string
+          kind: string
+          recipient_email: string
+          sent_at: string
+          sent_by: string | null
+          status: string
+          subject: string
+        }
+        Insert: {
+          abstract_id?: string | null
+          error?: string | null
+          id?: string
+          kind?: string
+          recipient_email: string
+          sent_at?: string
+          sent_by?: string | null
+          status: string
+          subject: string
+        }
+        Update: {
+          abstract_id?: string | null
+          error?: string | null
+          id?: string
+          kind?: string
+          recipient_email?: string
+          sent_at?: string
+          sent_by?: string | null
+          status?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_log_abstract_id_fkey"
+            columns: ["abstract_id"]
+            isOneToOne: false
+            referencedRelation: "abstracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_log_abstract_id_fkey"
+            columns: ["abstract_id"]
+            isOneToOne: false
+            referencedRelation: "reviewer_abstract_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletter_subscribers: {
         Row: {
           consent_at: string
