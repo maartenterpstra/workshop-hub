@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://aiinrt.org/sitemap.xml
+Sitemap: https://workshop-spark-25.lovable.app/sitemap.xml
