@@ -2,9 +2,10 @@ import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Seo from "./Seo";
 
-const SITE_URL = "https://workshop-spark-25.lovable.app";
+const SITE_URL = "https://aiinrt.org";
 
-const eventJsonLd = {
+// Event JSON-LD is served statically in index.html so crawlers see it without JS.
+const _eventJsonLd = {
   "@context": "https://schema.org",
   "@type": "Event",
   name: "AIinRT2027 — Artificial Intelligence in Radiotherapy",
@@ -45,7 +46,6 @@ const meta: Record<
     title: "AIinRT2027 — AI in Radiotherapy Symposium · Utrecht",
     description:
       "AIinRT2027, 1–2 April 2027 in Utrecht: a symposium on AI in radiotherapy by UMC Utrecht with Princess Máxima Center and DLinRT.eu, linked to a phiRO special issue.",
-    jsonLd: eventJsonLd,
   },
   "/program": {
     title: "Programme — AIinRT2027 Utrecht",
