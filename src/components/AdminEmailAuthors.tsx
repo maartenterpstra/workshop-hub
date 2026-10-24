@@ -94,9 +94,8 @@ const AdminEmailAuthors = ({ abstracts }: Props) => {
   const shown = log.filter((l) => logFilter === ALL || l.abstract_id === logFilter);
 
   const exportLog = () => {
-    const csv = toCsv([
-      ["Sent at", "Type", "Abstract", "Recipient", "Subject", "Status", "Error"],
-      ...shown.map((l) => [
+    const csv = toCsv(["Sent at", "Type", "Abstract", "Recipient", "Subject", "Status", "Error"],
+      shown.map((l) => [
         l.sent_at,
         l.kind,
         l.abstract_id ? titleById.get(l.abstract_id) ?? l.abstract_id : "",
@@ -105,8 +104,8 @@ const AdminEmailAuthors = ({ abstracts }: Props) => {
         l.status,
         l.error ?? "",
       ]),
-    ]);
-    downloadCsv(csv, `aiinrt2027-sent-emails-${todayStamp()}.csv`);
+    );
+    downloadCsv(`aiinrt2027-sent-emails-${todayStamp()}.csv`, csv);
   };
 
   return (
