@@ -17,6 +17,7 @@ const Body = z.discriminatedUnion("action", [
     website: z.string().optional().default(""), // honeypot
   }),
   z.object({ action: z.literal("unsubscribe"), token: z.string().uuid() }),
+  z.object({ action: z.literal("resubscribe"), token: z.string().uuid() }),
 ]);
 
 const json = (b: unknown, status = 200) =>
@@ -72,16 +73,36 @@ serve(async (req) => {
       return json({ ok: true });
     }
 
+    if (input.action === "resubscribe") {
+      // Token proves control of the mailbox (it was emailed to that address).
+      const { data: row } = await db.from("newsletter_subscribers").select("id, email").eq("unsubscribe_token", input.token).maybeSingle();
+      if (!row) return json({ error: "Link not valid." }, 404);
+      await db.from("newsletter_subscribers").update({ unsubscribed_at: null, consent_at: new Date().toISOString() }).eq("id", row.id);
+      try {
+        const aid = await getAudienceId();
+        await resend(`/audiences/${aid}/contacts/${encodeURIComponent(row.email)}`, "PATCH", { unsubscribed: false });
+      } catch (e) { console.error("Resend resubscribe failed"); }
+      return json({ ok: true });
+    }
+
     if (input.website) return json({ ok: true }); // bot
 
     const { data: existing } = await db.from("newsletter_subscribers")
       .select("id, unsubscribed_at, unsubscribe_token").eq("email", input.email).maybeSingle();
     if (existing && !existing.unsubscribed_at) return json({ ok: true });
 
-    let row = existing;
     if (existing) {
-      await db.from("newsletter_subscribers").update({ unsubscribed_at: null, consent_at: new Date().toISOString(), name: input.name || null }).eq("id", existing.id);
-    } else {
+      // Previously unsubscribed: never reactivate directly. Email a confirmation link instead.
+      const link = `${SITE}/unsubscribe?resubscribe=1&token=${existing.unsubscribe_token}`;
+      const r = await resend("/emails", "POST", {
+        from: FROM_ADDRESS, to: [input.email], subject: "Confirm your AIinRT newsletter subscription",
+        html: `<p>Someone asked to resubscribe this address to the AIinRT newsletter.</p><p><a href="${link}">Confirm subscription</a></p><p>If this wasn't you, ignore this email.</p>`,
+      });
+      if (!r.ok) console.error("Resubscribe confirmation failed", r.status);
+      return json({ ok: true });
+    }
+    let row = existing;
+    {
       const { data, error } = await db.from("newsletter_subscribers")
         .insert({ email: input.email, name: input.name || null }).select("id, unsubscribed_at, unsubscribe_token").single();
       if (error) throw error;
