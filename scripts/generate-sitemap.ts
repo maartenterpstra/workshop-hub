@@ -3,7 +3,7 @@
 import { writeFileSync } from "fs";
 import { resolve } from "path";
 
-const BASE_URL = "https://aiinrt.org";
+const BASE_URL = "https://workshop-spark-25.lovable.app";
 
 interface SitemapEntry {
   path: string;
