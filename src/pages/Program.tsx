@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
 import { programDays, programNotice, type ExpertTalk, type Keynote, type ProgramDay } from "@/data/program";
 import { toast } from "sonner";
+import { usePublicSchedule, type PublicSlot } from "@/hooks/usePublicSchedule";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const KeynoteRow = ({ time, label, k }: { time: string; label: string; k: Keynote }) => (
@@ -65,7 +66,7 @@ const TalkAvatar = ({ t }: { t: ExpertTalk }) => (
   </div>
 );
 
-const DaySchedule = ({ day }: { day: ProgramDay }) => (
+const DaySchedule = ({ day, slots }: { day: ProgramDay; slots: PublicSlot[] }) => (
   <div>
     <h3 className="font-semibold text-foreground mb-3">
       {day.label} <span className="text-muted-foreground font-normal">— {day.date}</span>
@@ -113,7 +114,21 @@ const DaySchedule = ({ day }: { day: ProgramDay }) => (
                 <p className="text-xs text-muted-foreground">{r.talk.affiliation}</p>
               </div>
             </div>
-            <p className="mt-2 text-xs italic text-muted-foreground">+ 5 proffered papers (to be announced)</p>
+            {slots.some((x) => x.session_id === r.id && x.kind === "oral") ? (
+              <ul className="mt-2 divide-y divide-border">
+                {slots.filter((x) => x.session_id === r.id && x.kind === "oral").map((x) => (
+                  <li key={x.title} className="flex gap-3 py-1.5 text-sm">
+                    <span className="font-mono text-xs text-muted-foreground w-24 shrink-0 pt-0.5">{x.start_time}–{x.end_time}</span>
+                    <span className="min-w-0">
+                      <span className="text-foreground">{x.title}</span>
+                      {x.presenter && <span className="block text-xs text-muted-foreground">{x.presenter}</span>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-xs italic text-muted-foreground">+ 5 proffered papers (to be announced)</p>
+            )}
           </div>
         ),
       )}
@@ -124,6 +139,9 @@ const DaySchedule = ({ day }: { day: ProgramDay }) => (
 const Program = () => {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
+  const slots = usePublicSchedule();
+  const published = slots.length > 0;
+  const posters = slots.filter((x) => x.kind === "poster");
 
   const handlePdf = async () => {
     setBusy(true);
@@ -153,7 +171,7 @@ const Program = () => {
         <Alert className="mb-8 border-primary/50 bg-primary/5">
           <AlertCircle className="h-4 w-4 text-primary" />
           <AlertDescription className="text-base">
-            {programNotice}{" "}
+            {published ? "Final programme, including the accepted talks and posters." : programNotice}{" "}
             <span className="block mt-1 text-sm">
               Presented work can be developed into a full paper for the{" "}
               <a href={siteConfig.specialIssueUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
@@ -196,7 +214,7 @@ const Program = () => {
                 </div>
                 Programme
               </CardTitle>
-              <CardDescription>Provisional — subject to change.</CardDescription>
+              <CardDescription>{published ? "Final programme." : "Provisional — subject to change."}</CardDescription>
             </div>
             <Button onClick={handlePdf} disabled={busy} variant="outline">
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
@@ -205,10 +223,27 @@ const Program = () => {
           </CardHeader>
           <CardContent className="grid lg:grid-cols-2 gap-6">
             {programDays.map((d) => (
-              <DaySchedule key={d.label} day={d} />
+              <DaySchedule key={d.label} day={d} slots={slots} />
             ))}
           </CardContent>
         </Card>
+
+        {posters.length > 0 && (
+          <Card className="shadow-card border-0 mb-8">
+            <CardHeader><CardTitle>Posters</CardTitle></CardHeader>
+            <CardContent>
+              <ul className="divide-y divide-border">
+                {posters.map((x) => (
+                  <li key={x.title} className="py-2 text-sm">
+                    <span className="font-mono text-xs text-primary mr-2">{x.session_id}</span>
+                    <span className="text-foreground">{x.title}</span>
+                    {x.authors && <span className="block text-xs text-muted-foreground">{x.authors}</span>}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="mb-8">
           <Button onClick={() => navigate("/submission")}>See Call for Abstracts</Button>

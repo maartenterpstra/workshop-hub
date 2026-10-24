@@ -2,6 +2,7 @@ import { jsPDF } from "jspdf";
 import logoUrl from "@/assets/aiinrt2027-logo-horizontal.svg";
 import { programDays, programNotice } from "@/data/program";
 import { siteConfig } from "@/data/siteConfig";
+import { fetchPublicSchedule } from "@/hooks/usePublicSchedule";
 
 type RGB = [number, number, number];
 
@@ -45,6 +46,9 @@ export async function downloadProgramPdf() {
   const border = token("--border", [215, 224, 232]);
   const mutedBg = token("--muted", [243, 246, 247]);
 
+  const slots = await fetchPublicSchedule();
+  const published = slots.length > 0;
+  const notice = published ? "Final programme. Posters are listed on aiinrt.org/program." : programNotice;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const W = 210, H = 297, M = 15;
   let y = M;
@@ -61,7 +65,7 @@ export async function downloadProgramPdf() {
   y += 5;
 
   // notice
-  const noticeLines = doc.setFontSize(9.5).splitTextToSize(programNotice, W - 2 * M - 8);
+  const noticeLines = doc.setFontSize(9.5).splitTextToSize(notice, W - 2 * M - 8);
   const nh = noticeLines.length * 4.5 + 5;
   doc.setFillColor(...mutedBg).setDrawColor(...primary).setLineWidth(0.3);
   doc.roundedRect(M, y, W - 2 * M, nh, 2, 2, "FD");
@@ -109,7 +113,10 @@ export async function downloadProgramPdf() {
       const affFirst = doc.splitTextToSize(r.talk.affiliation, tw - spkW);
       const affLines = affFirst.length > 1 ? [affFirst[0], ...doc.splitTextToSize(affFirst.slice(1).join(" "), tw)] : affFirst;
       const bh = 4.3 + titleLines.length * 4 + affLines.length * 3.6 + 0.6;
-      const boxH = 7.5 + bh + 5;
+      const talks = slots.filter((x) => x.session_id === r.id && x.kind === "oral");
+      const talkLines = talks.map((x) => doc.setFont("helvetica", "normal").setFontSize(8).splitTextToSize(`${x.title}${x.presenter ? " — " + x.presenter : ""}`, contentW - 20));
+      const talksH = talks.length ? talkLines.reduce((n, l) => n + l.length * 3.4 + 0.8, 1) : 0;
+      const boxH = 7.5 + bh + 5 + talksH;
       doc.setDrawColor(...border).setLineWidth(0.3).setFillColor(255, 255, 255);
       doc.roundedRect(M, y, W - 2 * M, boxH, 2, 2, "FD");
       doc.setFont("courier", "bold").setFontSize(8.5).setTextColor(...muted);
@@ -131,7 +138,18 @@ export async function downloadProgramPdf() {
       doc.text(affLines[0], tx + spkW, sy);
       affLines.slice(1).forEach((l: string, k: number) => doc.text(l, tx, sy + (k + 1) * 3.6));
       doc.setFont("helvetica", "italic").setFontSize(8).setTextColor(...muted);
-      doc.text("+ 5 proffered papers (to be announced)", contentX, y + boxH - 1.5);
+      if (talks.length) {
+        let ty = by + bh + 4;
+        talks.forEach((x, k) => {
+          doc.setFont("courier", "normal").setFontSize(7.5).setTextColor(...muted);
+          doc.text(`${x.start_time}`, contentX, ty);
+          doc.setFont("helvetica", "normal").setFontSize(8).setTextColor(...fg);
+          doc.text(talkLines[k], contentX + 18, ty);
+          ty += talkLines[k].length * 3.4 + 0.8;
+        });
+      } else {
+        doc.text("+ 5 proffered papers (to be announced)", contentX, y + boxH - 1.5);
+      }
       y += boxH + 2;
     });
     y += 6;
