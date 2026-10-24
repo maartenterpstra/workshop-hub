@@ -164,13 +164,20 @@ serve(async (req) => {
         },
         body: JSON.stringify({ from: FROM_ADDRESS, to: [email], subject, html }),
       });
+      let errText: string | null = null;
       if (r.ok) {
         results.push({ email, ok: true });
       } else {
         const t = await r.text();
         console.error(`Resend failed [${r.status}] for ${email}: ${t}`);
-        results.push({ email, ok: false, error: `[${r.status}] ${t.slice(0, 200)}` });
+        errText = `[${r.status}] ${t.slice(0, 200)}`;
+        results.push({ email, ok: false, error: errText });
       }
+      const { error: logErr } = await admin.from("email_log").insert({
+        sent_by: userData.user.id, abstract_id: abstract.id, recipient_email: email, subject,
+        kind: "confirmation", status: r.ok ? "sent" : "failed", error: errText,
+      });
+      if (logErr) console.error("email_log insert failed:", logErr.message);
       // Stay under Resend's default ~2 req/s rate limit.
       await new Promise((res) => setTimeout(res, 600));
     }
