@@ -18,6 +18,7 @@ const html = (body: string) => `<!doctype html>
     </div>
     <div style="font-size:14px;color:#374151;line-height:1.6;margin-top:24px;white-space:pre-wrap;">${esc(body)}</div>
     <p style="font-size:12px;color:#6b7280;line-height:1.6;margin-top:24px;">
+      This message was sent by the AIinRT2027 organizers. Questions? Reply to m.maspero@umcutrecht.nl.<br/>
       You received this email because you are listed as an author of an abstract submitted to the AIinRT2027 workshop.
     </p>
   </div>
@@ -46,13 +47,13 @@ Deno.serve(async (req) => {
 
     let b: any;
     try { b = await req.json(); } catch { return json({ error: "Invalid JSON body." }, 400); }
-    const subject = typeof b.subject === "string" ? b.subject.trim() : "";
+    const subject = typeof b.subject === "string" ? b.subject.replace(/[\r\n]+/g, " ").trim() : "";
     const body = typeof b.body === "string" ? b.body.trim() : "";
     const abstractId = b.abstractId ?? null;
     const includeWithdrawn = b.includeWithdrawn === true;
     const dryRun = b.dryRun === true;
     if (!dryRun && (!subject || subject.length > 200)) return json({ error: "Subject is required (max 200 characters)." }, 400);
-    if (!dryRun && (!body || body.length > 10000)) return json({ error: "Message is required (max 10,000 characters)." }, 400);
+    if (!dryRun && (!body || body.length > 5000)) return json({ error: "Message is required (max 5,000 characters)." }, 400);
     if (abstractId !== null && (typeof abstractId !== "string" || !/^[0-9a-f-]{36}$/i.test(abstractId)))
       return json({ error: "abstractId must be a UUID." }, 400);
 
@@ -78,7 +79,8 @@ Deno.serve(async (req) => {
 
     let sent = 0;
     for (const j of jobs) {
-      const subj = subject.replaceAll("{title}", j.title);
+      const safeTitle = String(j.title).replace(/[\r\n]+/g, " ").slice(0, 300);
+      const subj = subject.replaceAll("{title}", safeTitle).slice(0, 300);
       const r = await fetch(`${GATEWAY_URL}/emails`, {
         method: "POST",
         headers: {
@@ -86,11 +88,11 @@ Deno.serve(async (req) => {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "X-Connection-Api-Key": RESEND_API_KEY,
         },
-        body: JSON.stringify({ from: FROM_ADDRESS, to: [j.email], subject: subj, html: html(body.replaceAll("{title}", j.title)) }),
+        body: JSON.stringify({ from: FROM_ADDRESS, to: [j.email], subject: subj, html: html(body.replaceAll("{title}", safeTitle)) }),
       });
       let error: string | null = null;
       if (r.ok) sent++;
-      else { error = `[${r.status}] ${(await r.text()).slice(0, 300)}`; console.error("Resend failed", j.email, error); }
+      else { error = `[${r.status}] ${(await r.text()).slice(0, 300)}`; console.error("Resend failed for a recipient", r.status); }
       await admin.from("email_log").insert({
         sent_by: uid, abstract_id: j.abstractId, recipient_email: j.email, subject: subj,
         kind: "manual", status: r.ok ? "sent" : "failed", error,

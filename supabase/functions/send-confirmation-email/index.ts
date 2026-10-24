@@ -169,7 +169,7 @@ serve(async (req) => {
         results.push({ email, ok: true });
       } else {
         const t = await r.text();
-        console.error(`Resend failed [${r.status}] for ${email}: ${t}`);
+        console.error(`Resend failed [${r.status}] for a recipient`);
         errText = `[${r.status}] ${t.slice(0, 200)}`;
         results.push({ email, ok: false, error: errText });
       }

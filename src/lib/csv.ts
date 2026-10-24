@@ -1,6 +1,8 @@
 const escapeCell = (value: unknown): string => {
   if (value === null || value === undefined) return "";
-  const s = String(value);
+  let s = String(value);
+  // Neutralize spreadsheet formulas (CSV injection).
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   return /[",\n\r;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 };
 
