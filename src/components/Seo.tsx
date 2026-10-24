@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE_URL = "https://workshop-spark-25.lovable.app";
+const SITE_URL = "https://aiinrt.org";
 
 interface SeoProps {
   title: string;

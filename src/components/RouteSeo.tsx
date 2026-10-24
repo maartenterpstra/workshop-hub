@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Seo from "./Seo";
 
-const SITE_URL = "https://workshop-spark-25.lovable.app";
+const SITE_URL = "https://aiinrt.org";
 
 const eventJsonLd = {
   "@context": "https://schema.org",
