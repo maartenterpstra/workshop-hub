@@ -43,6 +43,27 @@
       "when": 1792865285704,
       "tag": "0005_reviewer_files_exclude_withdrawn",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792866546041,
+      "tag": "0006_soc_decisions_schedule",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792866562866,
+      "tag": "0007_revision_disclosures",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792866660531,
+      "tag": "0008_decision_unlock_resets_email",
+      "breakpoints": true
     }
   ]
 }

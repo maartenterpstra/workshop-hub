@@ -47,6 +47,7 @@ Deno.serve(async (req) => {
 
     let b: any;
     try { b = await req.json(); } catch { return json({ error: "Invalid JSON body." }, 400); }
+    if (b?.mode === "decision") return await sendDecisions(admin, uid, b, LOVABLE_API_KEY, RESEND_API_KEY);
     const subject = typeof b.subject === "string" ? b.subject.replace(/[\r\n]+/g, " ").trim() : "";
     const body = typeof b.body === "string" ? b.body.trim() : "";
     const abstractId = b.abstractId ?? null;
@@ -105,3 +106,95 @@ Deno.serve(async (req) => {
     return json({ error: (err as Error).message }, 500);
   }
 });
+
+// ---------- SOC decision emails ----------
+const SESSIONS: Record<string, string> = {
+  S1: "S1 Segmentation & Registration (Day 1, 1 April 2027)",
+  S2: "S2 Reconstruction & Synthesis (Day 1, 1 April 2027)",
+  S3: "S3 Foundation Models, Text, Explainability & Uncertainty (Day 1, 1 April 2027)",
+  S4: "S4 Dose & Adaptive Workflows (Day 2, 2 April 2027)",
+  S5: "S5 Clinical Predictions & Outcomes (Day 2, 2 April 2027)",
+  S6: "S6 Implementation, QA & Ethics (Day 2, 2 April 2027)",
+};
+const STATUS: Record<string, string> = { oral: "accepted_oral", poster: "accepted_poster", reject: "rejected", revise: "submitted" };
+
+function decisionEmail(kind: string, title: string, slot: any, note: string | null, dueAt: string | null) {
+  const t = `"${title}"`;
+  const fmtDue = dueAt ? new Date(dueAt).toLocaleString("en-GB", { timeZone: "Europe/Amsterdam", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }) + " (Amsterdam time)" : "";
+  let subject = "", body = "";
+  if (kind === "oral") {
+    subject = `AIinRT2027: your abstract is accepted for an oral presentation`;
+    body = `Dear authors,\n\nWe are pleased to inform you that your abstract ${t} has been accepted for an ORAL presentation at AIinRT2027 (1–2 April 2027, Utrecht).\n\nSession: ${SESSIONS[slot?.session_id] ?? "to be confirmed"}\nTime: ${slot?.start_time ? `${slot.start_time}–${slot.end_time}` : "to be confirmed"}\nFormat: 9 minutes presentation + 3 minutes discussion.\n\nPlease make sure the presenting author registers for the workshop: https://aiinrt.org/registration`;
+  } else if (kind === "poster") {
+    subject = `AIinRT2027: your abstract is accepted for a poster presentation`;
+    body = `Dear authors,\n\nWe are pleased to inform you that your abstract ${t} has been accepted for a POSTER presentation at AIinRT2027 (1–2 April 2027, Utrecht).\n\nRelated session: ${SESSIONS[slot?.session_id] ?? "to be confirmed"}\n\nPlease make sure the presenting author registers for the workshop: https://aiinrt.org/registration`;
+  } else if (kind === "revise") {
+    subject = `AIinRT2027: minor revision requested for your abstract`;
+    body = `Dear authors,\n\nThe Scientific Organizing Committee would like to accept your abstract ${t} after minor revisions.\n\nPlease sign in at https://aiinrt.org/my-abstracts and update your abstract${fmtDue ? ` before ${fmtDue}` : ""}.`;
+  } else {
+    subject = `AIinRT2027: decision on your abstract`;
+    body = `Dear authors,\n\nThank you for submitting your abstract ${t} to AIinRT2027. After careful peer review, the Scientific Organizing Committee regrets that it could not be included in the programme this year.\n\nWe would be delighted to welcome you at the workshop: https://aiinrt.org/registration`;
+  }
+  if (note?.trim()) body += `\n\nNote from the committee:\n${note.trim()}`;
+  body += `\n\nReviewer feedback is available on request.\n\nKind regards,\nThe AIinRT2027 Scientific Organizing Committee`;
+  return { subject, body };
+}
+
+async function sendDecisions(admin: any, uid: string, b: any, lovKey: string, resendKey: string) {
+  const dryRun = b.dryRun === true;
+  const resend = b.resend === true;
+  const only = typeof b.abstractId === "string" && /^[0-9a-f-]{36}$/i.test(b.abstractId) ? b.abstractId : null;
+  if (resend && !only) return json({ error: "Resending requires one abstract." }, 400);
+
+  let q = admin.from("abstract_decisions")
+    .select("abstract_id, decision, note, revision_due_at, emailed_at, abstract:abstracts(id, title, status, submitted_by, authors:abstract_authors(email))")
+    .not("confirmed_at", "is", null);
+  if (only) q = q.eq("abstract_id", only);
+  if (!resend) q = q.is("emailed_at", null);
+  const { data: decs, error } = await q;
+  if (error) throw error;
+  const { data: slots } = await admin.from("schedule_slots").select("*");
+  const slotMap = new Map((slots ?? []).map((s: any) => [s.abstract_id, s]));
+
+  const items: any[] = [];
+  for (const d of (decs ?? []) as any[]) {
+    const a = d.abstract;
+    if (!a || a.status === "withdrawn") continue;
+    const slot = slotMap.get(d.abstract_id) as any;
+    const kind = (d.decision === "oral" || d.decision === "poster") && slot ? slot.kind : d.decision;
+    const set = new Set<string>();
+    const { data: sub } = await admin.auth.admin.getUserById(a.submitted_by);
+    if (sub?.user?.email) set.add(sub.user.email.toLowerCase());
+    for (const au of a.authors ?? []) { const e = (au?.email ?? "").trim().toLowerCase(); if (e && isEmail(e)) set.add(e); }
+    items.push({ d, a, kind, slot, recipients: [...set], mail: decisionEmail(kind, String(a.title).replace(/[\r\n]+/g, " "), slot, d.note, d.revision_due_at) });
+  }
+
+  if (dryRun) {
+    const byKind: Record<string, number> = {};
+    const samples: Record<string, { subject: string; body: string }> = {};
+    for (const it of items) { byKind[it.kind] = (byKind[it.kind] ?? 0) + 1; samples[it.kind] ??= it.mail; }
+    return json({ abstracts: items.length, recipients: items.reduce((n, it) => n + it.recipients.length, 0), byKind, samples });
+  }
+
+  let sent = 0, failed = 0;
+  for (const it of items) {
+    let ok = true;
+    for (const email of it.recipients) {
+      const r = await fetch(`${GATEWAY_URL}/emails`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${lovKey}`, "X-Connection-Api-Key": resendKey },
+        body: JSON.stringify({ from: FROM_ADDRESS, to: [email], subject: it.mail.subject, html: html(it.mail.body) }),
+      });
+      let err: string | null = null;
+      if (r.ok) sent++; else { ok = false; failed++; err = `[${r.status}] ${(await r.text()).slice(0, 300)}`; }
+      await admin.from("email_log").insert({ sent_by: uid, abstract_id: it.a.id, recipient_email: email, subject: it.mail.subject, kind: "decision", status: r.ok ? "sent" : "failed", error: err });
+      await new Promise((res) => setTimeout(res, 600));
+    }
+    if (ok && it.recipients.length) {
+      await admin.from("abstract_decisions").update({ emailed_at: new Date().toISOString() }).eq("abstract_id", it.a.id);
+      const status = it.kind === "oral" ? "accepted_oral" : it.kind === "poster" ? "accepted_poster" : STATUS[it.d.decision];
+      await admin.from("abstracts").update({ status }).eq("id", it.a.id);
+    }
+  }
+  return json({ sent, failed, abstracts: items.length });
+}
