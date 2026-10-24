@@ -59,6 +59,57 @@ export type Database = {
           },
         ]
       }
+      abstract_decisions: {
+        Row: {
+          abstract_id: string
+          confirmed_at: string | null
+          confirmed_by: string | null
+          decided_at: string
+          decided_by: string | null
+          decision: string
+          emailed_at: string | null
+          note: string | null
+          revision_due_at: string | null
+        }
+        Insert: {
+          abstract_id: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          decided_at?: string
+          decided_by?: string | null
+          decision: string
+          emailed_at?: string | null
+          note?: string | null
+          revision_due_at?: string | null
+        }
+        Update: {
+          abstract_id?: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          decided_at?: string
+          decided_by?: string | null
+          decision?: string
+          emailed_at?: string | null
+          note?: string | null
+          revision_due_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abstract_decisions_abstract_id_fkey"
+            columns: ["abstract_id"]
+            isOneToOne: true
+            referencedRelation: "abstracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "abstract_decisions_abstract_id_fkey"
+            columns: ["abstract_id"]
+            isOneToOne: true
+            referencedRelation: "reviewer_abstract_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       abstract_disclosures: {
         Row: {
           abstract_id: string
@@ -174,6 +225,7 @@ export type Database = {
           debug_mode: boolean
           id: boolean
           review_closes_at: string | null
+          schedule_published_at: string | null
           submission_closes_at: string | null
           submission_opens_at: string | null
           updated_at: string
@@ -182,6 +234,7 @@ export type Database = {
           debug_mode?: boolean
           id?: boolean
           review_closes_at?: string | null
+          schedule_published_at?: string | null
           submission_closes_at?: string | null
           submission_opens_at?: string | null
           updated_at?: string
@@ -190,6 +243,7 @@ export type Database = {
           debug_mode?: boolean
           id?: boolean
           review_closes_at?: string | null
+          schedule_published_at?: string | null
           submission_closes_at?: string | null
           submission_opens_at?: string | null
           updated_at?: string
@@ -466,6 +520,51 @@ export type Database = {
           },
         ]
       }
+      schedule_slots: {
+        Row: {
+          abstract_id: string
+          end_time: string | null
+          kind: string
+          position: number
+          session_id: string
+          start_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          abstract_id: string
+          end_time?: string | null
+          kind: string
+          position?: number
+          session_id: string
+          start_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          abstract_id?: string
+          end_time?: string | null
+          kind?: string
+          position?: number
+          session_id?: string
+          start_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedule_slots_abstract_id_fkey"
+            columns: ["abstract_id"]
+            isOneToOne: true
+            referencedRelation: "abstracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "schedule_slots_abstract_id_fkey"
+            columns: ["abstract_id"]
+            isOneToOne: true
+            referencedRelation: "reviewer_abstract_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       topics: {
         Row: {
           created_at: string
@@ -537,6 +636,19 @@ export type Database = {
       }
     }
     Functions: {
+      get_public_schedule: {
+        Args: never
+        Returns: {
+          authors: string
+          end_time: string
+          kind: string
+          presenter: string
+          session_id: string
+          slot_position: number
+          start_time: string
+          title: string
+        }[]
+      }
       withdraw_abstract: {
         Args: { _abstract_id: string; _restore?: boolean }
         Returns: string
