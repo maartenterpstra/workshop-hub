@@ -6,6 +6,7 @@ import { Download, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { exportAbstractsExcel } from "@/lib/excelExport";
 import SocScoreTable from "@/components/SocScoreTable";
+import SocDecisionsWorkflow from "@/components/SocDecisionsWorkflow";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ReviewRow {
@@ -137,6 +138,13 @@ const Soc = () => {
           ))}
         </div>
       </div>
+
+      {rows.length > 0 && (
+        <SocDecisionsWorkflow abstracts={rows.map((a) => ({
+          id: a.id, title: a.title, topic: a.topic?.name ?? null, avgScore: a.avgScore,
+          status: a.status, firstAuthor: a.firstAuthor, reviewCount: a.reviews.length,
+        }))} />
+      )}
 
       {sorted.length === 0 && (
         <Card><CardContent className="py-10 text-center text-muted-foreground">No submissions yet.</CardContent></Card>
