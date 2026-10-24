@@ -46,7 +46,20 @@ const Submit = () => {
   const navigate = useNavigate();
   const { abstractId } = useParams<{ abstractId: string }>();
   const editing = Boolean(abstractId);
-  const { submissionOpen, debug, opensAt, closesAt, loading: cfgLoading } = useAppConfig();
+  const { submissionOpen: windowOpen, debug, opensAt, closesAt, loading: windowLoading } = useAppConfig();
+  // SOC "revise" decisions reopen editing of one abstract until its revision deadline.
+  const [revisionOpen, setRevisionOpen] = useState(false);
+  const [revisionLoading, setRevisionLoading] = useState(Boolean(abstractId));
+  useEffect(() => {
+    if (!abstractId) return;
+    supabase.from("abstract_decisions").select("decision, revision_due_at").eq("abstract_id", abstractId).maybeSingle()
+      .then(({ data }) => {
+        setRevisionOpen(Boolean(data?.decision === "revise" && data.revision_due_at && new Date(data.revision_due_at) > new Date()));
+        setRevisionLoading(false);
+      });
+  }, [abstractId]);
+  const submissionOpen = windowOpen || revisionOpen;
+  const cfgLoading = windowLoading || revisionLoading;
 
   const [topics, setTopics] = useState<Topic[]>([]);
   const [title, setTitle] = useState("");
