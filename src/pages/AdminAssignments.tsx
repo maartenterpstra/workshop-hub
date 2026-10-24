@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { reviewerImportRoster } from "@/data/reviewerImport";
 import AdminExports from "@/components/AdminExports";
+import AdminEmailAuthors from "@/components/AdminEmailAuthors";
 
 interface ReviewerInfo {
   id: string;
@@ -238,6 +239,8 @@ const AdminAssignments = () => {
       </div>
 
       <AdminExports />
+
+      <AdminEmailAuthors abstracts={abstracts.map((a) => ({ id: a.id, title: a.title }))} />
 
       <Card>
         <CardHeader className="pb-3">
