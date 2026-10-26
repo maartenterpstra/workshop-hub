@@ -20,6 +20,7 @@ interface AbstractSummary {
   status: string;
   submitted_at: string;
   updated_at: string;
+  figure_paths: string[] | null;
   topic: { name: string } | null;
 }
 
@@ -64,7 +65,7 @@ const MyAbstracts = () => {
     let active = true;
     supabase
       .from("abstracts")
-      .select("id, title, status, submitted_at, updated_at, topic:topics(name)")
+      .select("id, title, status, submitted_at, updated_at, figure_paths, topic:topics(name)")
       .eq("submitted_by", user.id)
       .order("updated_at", { ascending: false })
       .then(({ data, error }) => {
@@ -130,6 +131,11 @@ const MyAbstracts = () => {
               <Badge variant="outline">{abstract.status.replace(/_/g, " ")}</Badge>
             </div>
           </CardHeader>
+          {abstract.status === "submitted" && !(abstract.figure_paths?.length) && (
+            <div className="mx-6 mb-3 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm">
+              This abstract has no figure or table image. At least one is required — please edit the abstract and add one{submissionOpen ? "" : " (contact the organizers)"}.
+            </div>
+          )}
           {decisions[abstract.id] && (
             <div className="mx-6 mb-3 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
               <span className="font-semibold text-foreground">Committee decision: </span>
