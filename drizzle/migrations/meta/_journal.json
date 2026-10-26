@@ -64,6 +64,13 @@
       "when": 1792866660531,
       "tag": "0008_decision_unlock_resets_email",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793054657472,
+      "tag": "0009_reviewers_read_figures",
+      "breakpoints": true
     }
   ]
 }
