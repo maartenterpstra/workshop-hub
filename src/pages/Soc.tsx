@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Download, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { exportAbstractsExcel } from "@/lib/excelExport";
+import AbstractFigures from "@/components/AbstractFigures";
 import SocScoreTable from "@/components/SocScoreTable";
 import SocDecisionsWorkflow from "@/components/SocDecisionsWorkflow";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +28,7 @@ interface AbstractRow {
   title: string;
   status: string;
   file_path: string | null;
+  figure_paths: string[] | null;
   background: string | null;
   methods: string | null;
   results: string | null;
@@ -61,7 +63,7 @@ const Soc = () => {
       const { data } = await supabase
         .from("abstracts")
         .select(`
-          id, title, status, file_path, background, methods, results, conclusion,
+          id, title, status, file_path, figure_paths, background, methods, results, conclusion,
           topic:topics(name),
           authors:abstract_authors(name, affiliation, email, is_presenting, author_order),
           assignments:review_assignments(id, reviewer_id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, comments_for_authors, comments_for_soc))
@@ -89,6 +91,7 @@ const Soc = () => {
             title: a.title,
             status: a.status,
             file_path: a.file_path,
+            figure_paths: a.figure_paths,
             background: a.background, methods: a.methods, results: a.results, conclusion: a.conclusion,
             topic: a.topic,
             authors: sortedAuthors,
@@ -179,6 +182,8 @@ const Soc = () => {
                 <FileText className="h-4 w-4" /> Open PDF
               </a>
             )}
+
+            <AbstractFigures paths={a.figure_paths} />
 
             <details className="text-sm">
               <summary className="cursor-pointer font-medium">Structured abstract</summary>

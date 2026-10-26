@@ -1,3 +1,4 @@
+import AbstractFigures from "@/components/AbstractFigures";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ interface Assignment {
     results: string | null;
     conclusion: string | null;
     file_path: string | null;
+    figure_paths: string[] | null;
     topic: { name: string } | null;
   };
   existingReview?: ReviewRow;
@@ -71,7 +73,7 @@ const Review = () => {
     (async () => {
       const { data: assigns } = await supabase
         .from("review_assignments")
-        .select(`id, abstract:abstracts(id, title, background, methods, results, conclusion, file_path, topic:topics(name))`)
+        .select(`id, abstract:abstracts(id, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics(name))`)
         .eq("reviewer_id", user.id);
 
       const rows = (assigns ?? []) as any[];
@@ -237,6 +239,8 @@ const Review = () => {
                   </Button>
                 </div>
               )}
+
+              <AbstractFigures paths={a.abstract.figure_paths} />
 
               <div className="grid gap-4 md:grid-cols-2">
                 {scoreFields.map((f) => (
