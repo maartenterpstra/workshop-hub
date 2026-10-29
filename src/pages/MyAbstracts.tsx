@@ -139,7 +139,7 @@ const MyAbstracts = () => {
           {decisions[abstract.id] && (
             <div className="mx-6 mb-3 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
               <span className="font-semibold text-foreground">Committee decision: </span>
-              {({ oral: "accepted for an oral presentation", poster: "accepted for a poster presentation", revise: "minor revision requested", reject: "not accepted" } as Record<string, string>)[decisions[abstract.id].decision]}
+              {({ oral: "accepted for an oral presentation", revise: "minor revision requested", reject: "not accepted" } as Record<string, string>)[decisions[abstract.id].decision]}
               {revisionOpen(abstract.id) && ` — please update your abstract before ${formatAmsterdam(new Date(decisions[abstract.id].revision_due_at!))}.`}
               {decisions[abstract.id].note && <p className="mt-1 text-muted-foreground">{decisions[abstract.id].note}</p>}
             </div>

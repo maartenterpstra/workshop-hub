@@ -13,18 +13,18 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { proposeSchedule, retime, sessions, type Slot } from "@/lib/proposeSchedule";
+import { proposeSchedule, retime, sessions, canPublish, PAPERS_PER_SESSION, type Slot } from "@/lib/proposeSchedule";
 
 export interface WorkflowAbstract {
   id: string; title: string; topic: string | null; avgScore: number | null; status: string; firstAuthor: string; reviewCount: number;
 }
-type Decision = "oral" | "poster" | "revise" | "reject";
+type Decision = "oral" | "revise" | "reject";
 interface DecisionRow {
   abstract_id: string; decision: Decision; note: string | null; confirmed_at: string | null;
   emailed_at: string | null; revision_due_at: string | null;
 }
 
-const LABEL: Record<Decision, string> = { oral: "Accept (oral)", poster: "Accept (poster)", revise: "Revise", reject: "Reject" };
+const LABEL: Record<Decision, string> = { oral: "Accept (talk)", revise: "Revise", reject: "Reject" };
 const DEFAULT_DUE = "2027-01-08T12:00";
 const selectCls = "h-9 rounded-md border border-input bg-background px-2 text-sm";
 
@@ -95,16 +95,16 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
   const propose = () => {
     const cands = active.flatMap((a) => {
       const d = decisions.get(a.id);
-      return d?.confirmed_at && (d.decision === "oral" || d.decision === "poster")
-        ? [{ abstractId: a.id, topic: a.topic, score: a.avgScore, decision: d.decision }] : [];
+      return d?.confirmed_at && d.decision === "oral"
+        ? [{ abstractId: a.id, topic: a.topic, score: a.avgScore, decision: "oral" as const }] : [];
     });
     setSlots(proposeSchedule(cands));
     toast.info("Schedule proposed — review it, then save.");
   };
   const move = (id: string, patch: Partial<Slot>) =>
-    setSlots((ss) => retime(ss.map((s) => (s.abstractId === id ? { ...s, ...patch, position: patch.position ?? (patch.sessionId || patch.kind ? 999 : s.position) } : s))));
+    setSlots((ss) => retime(ss.map((s) => (s.abstractId === id ? { ...s, ...patch, position: patch.position ?? (patch.sessionId ? 999 : s.position) } : s))));
   const shift = (s: Slot, dir: -1 | 1) => {
-    const peers = slots.filter((x) => x.sessionId === s.sessionId && x.kind === s.kind).sort((a, b) => a.position - b.position);
+    const peers = slots.filter((x) => x.sessionId === s.sessionId).sort((a, b) => a.position - b.position);
     const other = peers.find((x) => x.position === s.position + dir);
     if (!other) return;
     setSlots((ss) => retime(ss.map((x) => x.abstractId === s.abstractId ? { ...x, position: other.position } : x.abstractId === other.abstractId ? { ...x, position: s.position } : x)));
@@ -215,7 +215,7 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
               {isAdmin ? (
                 publishedAt
                   ? <Button variant="outline" onClick={() => setPublished(false)}>Hide from website</Button>
-                  : <Button onClick={() => setPublished(true)} disabled={!slots.length}>Publish schedule</Button>
+                  : <Button onClick={() => setPublished(true)} disabled={!canPublish(slots)}>Publish schedule</Button>
               ) : <span className="text-sm text-muted-foreground">An admin publishes the schedule.</span>}
               {publishedAt && <Badge>Live on the Program page</Badge>}
             </div>
@@ -225,29 +225,23 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
                 return (
                   <div key={s.id} className="rounded-lg border border-border p-3">
                     <div className="font-semibold text-primary text-sm mb-2"><span className="font-mono mr-1">{s.id}</span>{s.title} <span className="text-muted-foreground font-normal">· {s.time}</span></div>
-                    {(["oral", "poster"] as const).map((k) => (
-                      <div key={k} className="mb-2">
-                        <div className="text-xs uppercase font-semibold text-muted-foreground">{k === "oral" ? "Talks" : "Posters"}</div>
-                        {inS.filter((x) => x.kind === k).sort((a, b) => a.position - b.position).map((x) => (
-                          <div key={x.abstractId} className="flex items-center gap-2 py-1 text-sm border-t border-border first:border-0">
-                            <span className="font-mono text-xs w-20 shrink-0 text-muted-foreground">{x.startTime ? `${x.startTime}–${x.endTime}` : "poster"}</span>
-                            <span className="min-w-0 flex-1 truncate" title={byId.get(x.abstractId)?.title}>{byId.get(x.abstractId)?.title}</span>
-                            <span className="text-xs font-semibold">{byId.get(x.abstractId)?.avgScore?.toFixed(1) ?? "—"}</span>
-                            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => shift(x, -1)} aria-label="Move up"><ArrowUp className="h-3 w-3" /></Button>
-                            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => shift(x, 1)} aria-label="Move down"><ArrowDown className="h-3 w-3" /></Button>
-                            <select className={`${selectCls} h-7 text-xs`} value={x.sessionId} onChange={(e) => move(x.abstractId, { sessionId: e.target.value })} aria-label="Session">
-                              {sessions.map((o) => <option key={o.id} value={o.id}>{o.id}</option>)}
-                            </select>
-                            <select className={`${selectCls} h-7 text-xs`} value={x.kind} onChange={(e) => move(x.abstractId, { kind: e.target.value as Slot["kind"] })} aria-label="Format">
-                              <option value="oral">Oral</option><option value="poster">Poster</option>
-                            </select>
-                          </div>
-                        ))}
-                        {k === "oral" && inS.filter((x) => x.kind === "oral").length > 5 && (
-                          <p className="text-xs text-destructive">More than 5 talks — the session will overrun.</p>
-                        )}
-                      </div>
-                    ))}
+                    <div className="mb-2">
+                      {inS.sort((a, b) => a.position - b.position).map((x) => (
+                        <div key={x.abstractId} className="flex items-center gap-2 py-1 text-sm border-t border-border first:border-0">
+                          <span className={`font-mono text-xs w-20 shrink-0 ${x.overCapacity ? "text-destructive font-semibold" : "text-muted-foreground"}`}>{x.startTime ? `${x.startTime}–${x.endTime}` : "over capacity"}</span>
+                          <span className="min-w-0 flex-1 truncate" title={byId.get(x.abstractId)?.title}>{byId.get(x.abstractId)?.title}</span>
+                          <span className="text-xs font-semibold">{byId.get(x.abstractId)?.avgScore?.toFixed(1) ?? "—"}</span>
+                          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => shift(x, -1)} aria-label="Move up"><ArrowUp className="h-3 w-3" /></Button>
+                          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => shift(x, 1)} aria-label="Move down"><ArrowDown className="h-3 w-3" /></Button>
+                          <select className={`${selectCls} h-7 text-xs`} value={x.sessionId} onChange={(e) => move(x.abstractId, { sessionId: e.target.value })} aria-label="Session">
+                            {sessions.map((o) => <option key={o.id} value={o.id}>{o.id}</option>)}
+                          </select>
+                        </div>
+                      ))}
+                      {inS.length > PAPERS_PER_SESSION && (
+                        <p className="text-xs text-destructive">More than {PAPERS_PER_SESSION} talks — move the extra talk to another session or change its decision before publishing.</p>
+                      )}
+                    </div>
                   </div>
                 );
               })}

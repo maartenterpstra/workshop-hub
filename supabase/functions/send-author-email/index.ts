@@ -116,7 +116,7 @@ const SESSIONS: Record<string, string> = {
   S5: "S5 Clinical Predictions & Outcomes (Day 2, 2 April 2027)",
   S6: "S6 Implementation, QA & Ethics (Day 2, 2 April 2027)",
 };
-const STATUS: Record<string, string> = { oral: "accepted_oral", poster: "accepted_poster", reject: "rejected", revise: "submitted" };
+const STATUS: Record<string, string> = { oral: "accepted_oral", reject: "rejected", revise: "submitted" };
 
 function decisionEmail(kind: string, title: string, slot: any, note: string | null, dueAt: string | null) {
   const t = `"${title}"`;
@@ -125,9 +125,6 @@ function decisionEmail(kind: string, title: string, slot: any, note: string | nu
   if (kind === "oral") {
     subject = `AIinRT2027: your abstract is accepted for an oral presentation`;
     body = `Dear authors,\n\nWe are pleased to inform you that your abstract ${t} has been accepted for an ORAL presentation at AIinRT2027 (1–2 April 2027, Utrecht).\n\nSession: ${SESSIONS[slot?.session_id] ?? "to be confirmed"}\nTime: ${slot?.start_time ? `${slot.start_time}–${slot.end_time}` : "to be confirmed"}\nFormat: 9 minutes presentation + 3 minutes discussion.\n\nPlease make sure the presenting author registers for the workshop: https://aiinrt.org/registration`;
-  } else if (kind === "poster") {
-    subject = `AIinRT2027: your abstract is accepted for a poster presentation`;
-    body = `Dear authors,\n\nWe are pleased to inform you that your abstract ${t} has been accepted for a POSTER presentation at AIinRT2027 (1–2 April 2027, Utrecht).\n\nRelated session: ${SESSIONS[slot?.session_id] ?? "to be confirmed"}\n\nPlease make sure the presenting author registers for the workshop: https://aiinrt.org/registration`;
   } else if (kind === "revise") {
     subject = `AIinRT2027: minor revision requested for your abstract`;
     body = `Dear authors,\n\nThe Scientific Organizing Committee would like to accept your abstract ${t} after minor revisions.\n\nPlease sign in at https://aiinrt.org/my-abstracts and update your abstract${fmtDue ? ` before ${fmtDue}` : ""}.`;
@@ -161,7 +158,7 @@ async function sendDecisions(admin: any, uid: string, b: any, lovKey: string, re
     const a = d.abstract;
     if (!a || a.status === "withdrawn") continue;
     const slot = slotMap.get(d.abstract_id) as any;
-    const kind = (d.decision === "oral" || d.decision === "poster") && slot ? slot.kind : d.decision;
+    const kind = d.decision;
     const set = new Set<string>();
     const { data: sub } = await admin.auth.admin.getUserById(a.submitted_by);
     if (sub?.user?.email) set.add(sub.user.email.toLowerCase());
@@ -192,7 +189,7 @@ async function sendDecisions(admin: any, uid: string, b: any, lovKey: string, re
     }
     if (ok && it.recipients.length) {
       await admin.from("abstract_decisions").update({ emailed_at: new Date().toISOString() }).eq("abstract_id", it.a.id);
-      const status = it.kind === "oral" ? "accepted_oral" : it.kind === "poster" ? "accepted_poster" : STATUS[it.d.decision];
+      const status = STATUS[it.d.decision];
       await admin.from("abstracts").update({ status }).eq("id", it.a.id);
     }
   }
