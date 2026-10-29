@@ -35,7 +35,7 @@ interface ReviewRow {
   score_novelty: number | null;
   score_reproducibility: number | null;
   score_fit_session: number | null;
-  recommendation: "accept_oral" | "accept_poster" | "reject" | "revise" | null;
+  recommendation: "accept_oral" | "reject" | "revise" | null;
   comments_for_authors: string | null;
   comments_for_soc: string | null;
 }
@@ -268,7 +268,6 @@ const Review = () => {
                     <SelectTrigger><SelectValue placeholder="Choose…" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="accept_oral">Oral</SelectItem>
-                      <SelectItem value="accept_poster">Poster</SelectItem>
                       <SelectItem value="reject">Reject</SelectItem>
                     </SelectContent>
                   </Select>

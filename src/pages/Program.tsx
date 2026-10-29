@@ -148,7 +148,6 @@ const Program = () => {
   const [busy, setBusy] = useState(false);
   const slots = usePublicSchedule();
   const published = slots.length > 0;
-  const posters = slots.filter((x) => x.kind === "poster");
 
   const handlePdf = async () => {
     setBusy(true);
@@ -178,7 +177,7 @@ const Program = () => {
         <Alert className="mb-8 border-primary/50 bg-primary/5">
           <AlertCircle className="h-4 w-4 text-primary" />
           <AlertDescription className="text-base">
-            {published ? "Final programme, including the accepted talks and posters." : programNotice}{" "}
+            {published ? "Final programme, including the accepted talks." : programNotice}{" "}
             <span className="block mt-1 text-sm">
               Presented work can be developed into a full paper for the{" "}
               <a href={siteConfig.specialIssueUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
@@ -235,22 +234,6 @@ const Program = () => {
           </CardContent>
         </Card>
 
-        {posters.length > 0 && (
-          <Card className="shadow-card border-0 mb-8">
-            <CardHeader><CardTitle>Posters</CardTitle></CardHeader>
-            <CardContent>
-              <ul className="divide-y divide-border">
-                {posters.map((x) => (
-                  <li key={x.title} className="py-2 text-sm">
-                    <span className="font-mono text-xs text-primary mr-2">{x.session_id}</span>
-                    <span className="text-foreground">{x.title}</span>
-                    {x.authors && <span className="block text-xs text-muted-foreground">{x.authors}</span>}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        )}
 
         <div className="mb-8">
           <Button onClick={() => navigate("/submission")}>See Call for Abstracts</Button>

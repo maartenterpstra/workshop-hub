@@ -48,7 +48,7 @@ export async function downloadProgramPdf() {
 
   const slots = await fetchPublicSchedule();
   const published = slots.length > 0;
-  const notice = published ? "Final programme. Posters are listed on aiinrt.org/program." : programNotice;
+  const notice = published ? "Final programme, including the accepted talks." : programNotice;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const W = 210, H = 297, M = 15;
   let y = M;

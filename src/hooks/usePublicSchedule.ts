@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type PublicSlot = {
-  session_id: string; kind: "oral" | "poster"; slot_position: number;
+  session_id: string; kind: "oral"; slot_position: number;
   start_time: string | null; end_time: string | null; title: string; presenter: string | null; authors: string | null;
 };
 
@@ -12,7 +12,7 @@ export async function fetchPublicSchedule(): Promise<PublicSlot[]> {
   return (data ?? []) as PublicSlot[];
 }
 
-/** Accepted talks/posters; empty until the SOC publishes the schedule. */
+/** Accepted talks; empty until the SOC publishes the schedule. */
 export function usePublicSchedule() {
   const [slots, setSlots] = useState<PublicSlot[]>([]);
   useEffect(() => { fetchPublicSchedule().then(setSlots); }, []);
