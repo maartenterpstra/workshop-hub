@@ -11,8 +11,8 @@ export const sessions: SessionInfo[] = programDays.flatMap((d) =>
   d.rows.flatMap((r) => (r.kind === "session" ? [{ id: r.id, title: r.title, time: r.time }] : [])),
 );
 
-export type Candidate = { abstractId: string; topic: string | null; score: number | null; decision: "oral" | "poster" };
-export type Slot = { abstractId: string; sessionId: string; kind: "oral" | "poster"; position: number; startTime: string | null; endTime: string | null };
+export type Candidate = { abstractId: string; topic: string | null; score: number | null; decision: "oral" };
+export type Slot = { abstractId: string; sessionId: string; kind: "oral"; position: number; startTime: string | null; endTime: string | null; overCapacity?: boolean };
 
 const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
 const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
@@ -28,40 +28,29 @@ export function paperTime(sessionId: string, position: number): { start: string;
 export const sessionForTopic = (topic: string | null) =>
   sessions.find((s) => s.title === topic)?.id ?? sessions[0]?.id ?? "S1";
 
-/** Recompute positions and times for a list of slots (orals get times, posters don't). */
+/** Recompute positions and times; talks beyond PAPERS_PER_SESSION are flagged over capacity (no time). */
 export function retime(slots: Slot[]): Slot[] {
   const out: Slot[] = [];
   for (const s of sessions) {
-    const inS = slots.filter((x) => x.sessionId === s.id);
-    inS.filter((x) => x.kind === "oral").sort((a, b) => a.position - b.position).forEach((x, i) => {
-      const t = paperTime(s.id, i);
-      out.push({ ...x, position: i, startTime: t?.start ?? null, endTime: t?.end ?? null });
+    slots.filter((x) => x.sessionId === s.id).sort((a, b) => a.position - b.position).forEach((x, i) => {
+      const over = i >= PAPERS_PER_SESSION;
+      const t = over ? null : paperTime(s.id, i);
+      out.push({ ...x, kind: "oral", position: i, startTime: t?.start ?? null, endTime: t?.end ?? null, overCapacity: over });
     });
-    inS.filter((x) => x.kind === "poster").sort((a, b) => a.position - b.position).forEach((x, i) =>
-      out.push({ ...x, position: i, startTime: null, endTime: null }));
   }
   return out;
 }
 
-/**
- * Orals go into the session matching their topic, best score first; when a session has more
- * than PAPERS_PER_SESSION orals, the lowest-scoring ones are suggested as posters.
- */
+/** Sessions holding more accepted talks than PAPERS_PER_SESSION. */
+export const overfullSessions = (slots: Slot[]) =>
+  sessions.filter((s) => slots.filter((x) => x.sessionId === s.id).length > PAPERS_PER_SESSION).map((s) => s.id);
+
+/** A schedule can be published only when no session is over capacity. */
+export const canPublish = (slots: Slot[]) => slots.length > 0 && overfullSessions(slots).length === 0;
+
+/** Every accepted abstract becomes a talk in its topic's session, best score first. */
 export function proposeSchedule(cands: Candidate[]): Slot[] {
-  const slots: Slot[] = [];
-  const bySession = new Map<string, Candidate[]>();
-  for (const c of cands) {
-    const sid = sessionForTopic(c.topic);
-    bySession.set(sid, [...(bySession.get(sid) ?? []), c]);
-  }
-  for (const [sid, list] of bySession) {
-    const sorted = [...list].sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
-    let oralCount = 0, posterCount = 0;
-    for (const c of sorted) {
-      const oral = c.decision === "oral" && oralCount < PAPERS_PER_SESSION;
-      slots.push({ abstractId: c.abstractId, sessionId: sid, kind: oral ? "oral" : "poster",
-        position: oral ? oralCount++ : posterCount++, startTime: null, endTime: null });
-    }
-  }
-  return retime(slots);
+  const sorted = [...cands].sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+  return retime(sorted.map((c, i) => ({ abstractId: c.abstractId, sessionId: sessionForTopic(c.topic), kind: "oral" as const,
+    position: i, startTime: null, endTime: null })));
 }

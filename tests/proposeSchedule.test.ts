@@ -1,14 +1,19 @@
 import { describe, expect, test } from "bun:test";
-import { proposeSchedule, paperTime } from "../src/lib/proposeSchedule";
+import { proposeSchedule, paperTime, canPublish } from "../src/lib/proposeSchedule";
 
 const oral = (id: string, score: number) => ({ abstractId: id, topic: "Segmentation & Registration", score, decision: "oral" as const });
 
 describe("proposeSchedule", () => {
-  test("a session holds at most 5 orals; the lowest-scoring extras become posters", () => {
-    const slots = proposeSchedule([1, 2, 3, 4, 5, 6, 7].map((n) => oral(`a${n}`, n)));
-    const orals = slots.filter((s) => s.kind === "oral");
-    expect(orals.length).toBe(5);
-    expect(slots.filter((s) => s.kind === "poster").map((s) => s.abstractId).sort()).toEqual(["a1", "a2"]);
+  test("a 6th accepted talk in a session is flagged over capacity, never a poster", () => {
+    const slots = proposeSchedule([1, 2, 3, 4, 5, 6].map((n) => oral(`a${n}`, n)));
+    expect(slots.length).toBe(6);
+    expect(slots.every((s) => s.kind === "oral")).toBe(true);
+    expect(slots.filter((s) => s.overCapacity).map((s) => s.abstractId)).toEqual(["a1"]);
+  });
+
+  test("the schedule can't be published while a session is over capacity", () => {
+    expect(canPublish(proposeSchedule([1, 2, 3, 4, 5, 6].map((n) => oral(`a${n}`, n))))).toBe(false);
+    expect(canPublish(proposeSchedule([1, 2, 3, 4, 5].map((n) => oral(`a${n}`, n))))).toBe(true);
   });
 
   test("the best-scoring oral comes first, right after the 30-minute expert talk", () => {
@@ -23,8 +28,4 @@ describe("proposeSchedule", () => {
     expect(paperTime("S1", 4)).toEqual({ start: "10:48", end: "11:00" });
   });
 
-  test("poster decisions never get a time slot", () => {
-    const slots = proposeSchedule([{ abstractId: "p", topic: "Dose & Adaptive Workflows", score: 5, decision: "poster" }]);
-    expect(slots[0]).toMatchObject({ sessionId: "S4", kind: "poster", startTime: null });
-  });
 });
