@@ -13,7 +13,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { proposeSchedule, retime, sessions, type Slot } from "@/lib/proposeSchedule";
+import { proposeSchedule, retime, sessions, canPublish, PAPERS_PER_SESSION, type Slot } from "@/lib/proposeSchedule";
 
 export interface WorkflowAbstract {
   id: string; title: string; topic: string | null; avgScore: number | null; status: string; firstAuthor: string; reviewCount: number;
