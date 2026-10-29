@@ -97,10 +97,26 @@ export async function downloadProgramPdf() {
           y += 12.5;
           return;
         }
+        if (r.kind === "keynote") {
+          const k = r.keynote;
+          if (i % 2 === 0) { doc.setFillColor(...mutedBg); doc.rect(M, y, W - 2 * M, 12.5, "F"); }
+          doc.setFont("courier", "normal").setFontSize(8.5).setTextColor(...muted);
+          doc.text(r.time, M + 2, y + 4.7);
+          doc.setFont("helvetica", "bold").setFontSize(10).setTextColor(...fg);
+          const head = `${r.label}: `;
+          doc.text(head, contentX, y + 4.8);
+          const hw = doc.getTextWidth(head);
+          doc.setFont("helvetica", "normal").setFontSize(9.5);
+          doc.text(doc.splitTextToSize(k.title, contentW - hw)[0], contentX + hw, y + 4.8);
+          doc.setFont("helvetica", "italic").setFontSize(8.5).setTextColor(...primary);
+          doc.text(`${k.speaker} — ${k.affiliation}`, contentX, y + 9.6);
+          y += 12.5;
+          return;
+        }
         if (i % 2 === 0) { doc.setFillColor(...mutedBg); doc.rect(M, y, W - 2 * M, 7, "F"); }
         doc.setFont("courier", "normal").setFontSize(8.5).setTextColor(...muted);
         doc.text(r.time, M + 2, y + 4.7);
-        doc.setFont("helvetica", r.kind === "keynote" ? "bold" : "normal").setFontSize(10).setTextColor(...fg);
+        doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(...fg);
         doc.text(r.label, contentX, y + 4.8);
         y += 7;
         return;
