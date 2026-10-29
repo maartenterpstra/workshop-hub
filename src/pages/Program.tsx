@@ -19,19 +19,21 @@ const KeynoteRow = ({ time, label, k }: { time: string; label: string; k: Keynot
           <p className="font-semibold text-secondary">{label}</p>
         </div>
         <div className="mt-3 flex items-center gap-3 border-l-2 border-secondary p-3">
-          <img src={k.avatarUrl} alt="" className="h-16 w-16 shrink-0 rounded-full object-cover" />
+          <img src={k.avatarUrl} alt={k.speaker} loading="lazy" className="h-16 w-16 shrink-0 rounded-full object-cover object-top" />
           <div className="min-w-0">
             <span className="inline-block rounded-sm bg-secondary px-2 py-0.5 text-xs font-semibold text-secondary-foreground">Keynote</span>
             <p className="mt-1.5 text-sm font-semibold text-foreground">{k.speaker}</p>
-            <p className="text-xs text-muted-foreground">{k.title} · View bio & abstract</p>
+            <p className="text-xs text-muted-foreground">{k.affiliation}</p>
+            <p className="mt-1 text-sm text-foreground">{k.title}</p>
+            <p className="mt-0.5 text-xs font-medium text-secondary">View bio & abstract</p>
           </div>
         </div>
       </button>
     </DialogTrigger>
-    <DialogContent className="max-w-lg">
+    <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
       <DialogHeader>
         <div className="flex items-center gap-4">
-          <img src={k.avatarUrl} alt="" className="h-20 w-20 rounded-full object-cover" />
+          <img src={k.avatarUrl} alt={k.speaker} className="h-20 w-20 rounded-full object-cover object-top" />
           <div>
             <DialogTitle>{k.speaker}</DialogTitle>
             <DialogDescription>{label} · {time}{k.affiliation ? ` · ${k.affiliation}` : ""}</DialogDescription>
@@ -50,6 +52,11 @@ const KeynoteRow = ({ time, label, k }: { time: string; label: string; k: Keynot
           <h4 className="font-semibold text-foreground mb-1">Abstract</h4>
           <p className="text-muted-foreground">{k.abstract || "Coming soon."}</p>
         </div>
+        {k.profileUrl && (
+          <a href={k.profileUrl} target="_blank" rel="noopener noreferrer" className="inline-block text-sm font-medium text-primary underline underline-offset-2">
+            {k.profileLabel ?? "Profile"} ↗
+          </a>
+        )}
       </div>
     </DialogContent>
   </Dialog>
