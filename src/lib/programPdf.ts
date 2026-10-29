@@ -116,7 +116,7 @@ export async function downloadProgramPdf() {
         if (i % 2 === 0) { doc.setFillColor(...mutedBg); doc.rect(M, y, W - 2 * M, 7, "F"); }
         doc.setFont("courier", "normal").setFontSize(8.5).setTextColor(...muted);
         doc.text(r.time, M + 2, y + 4.7);
-        doc.setFont("helvetica", r.kind === "keynote" ? "bold" : "normal").setFontSize(10).setTextColor(...fg);
+        doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(...fg);
         doc.text(r.label, contentX, y + 4.8);
         y += 7;
         return;
