@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
+import DeadlineCountdown from "@/components/DeadlineCountdown";
 import PartnerLogos from "@/components/PartnerLogos";
 import EndorsementLogos from "@/components/EndorsementLogos";
 import utrechtHero from "@/assets/utrecht-hero.jpg";
@@ -108,6 +109,7 @@ const Home = () => {
                 </a>
               </Button>
             </div>
+            <DeadlineCountdown />
           </div>
         </div>
       </section>

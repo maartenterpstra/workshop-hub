@@ -9,6 +9,8 @@ export const siteConfig = {
   // Phase / status flags for 2027 — keep these in sync with the timeline
   callForAbstractsOpens: "1 September 2026",
   abstractSubmissionDeadline: "1 December 2026",
+  // Exact closing moment (matches the server-side submission_closes_at)
+  abstractSubmissionDeadlineIso: "2026-12-01T12:00:00+01:00",
   abstractDecisionsOn: "17 December 2026",
   registrationOpensOn: "1 October 2026",
 
