@@ -133,13 +133,50 @@ serve(async (req) => {
       }
     }
 
-    // Collect recipients: submitting account + every author with an email.
+    // Recipients: the verified submitting account always; listed co-authors are
+    // throttled because their addresses are user-supplied (anti-abuse):
+    //  - at most MAX_COAUTHORS per abstract,
+    //  - each co-author gets at most one confirmation per abstract per 24h,
+    //  - non-staff callers may trigger at most DAILY_COAUTHOR_CAP co-author emails per 24h.
+    const MAX_COAUTHORS = 15;
+    const DAILY_COAUTHOR_CAP = 30;
+    const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
     const recipients = new Set<string>();
     const { data: submitter } = await admin.auth.admin.getUserById(abstract.submitted_by);
-    if (submitter?.user?.email) recipients.add(submitter.user.email.toLowerCase());
+    const submitterEmail = submitter?.user?.email?.toLowerCase() ?? null;
+    if (submitterEmail) recipients.add(submitterEmail);
+    const coauthors: string[] = [];
     for (const a of (abstract as any).authors ?? []) {
       const e = (a?.email ?? "").trim().toLowerCase();
-      if (e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) recipients.add(e);
+      if (e && e.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e !== submitterEmail && !coauthors.includes(e)) {
+        coauthors.push(e);
+      }
+    }
+    if (coauthors.length) {
+      const { data: recent } = await admin
+        .from("email_log")
+        .select("recipient_email")
+        .eq("abstract_id", abstract.id)
+        .eq("kind", "confirmation")
+        .gte("sent_at", since);
+      const recentlySent = new Set((recent ?? []).map((r: any) => String(r.recipient_email).toLowerCase()));
+      let budget = MAX_COAUTHORS;
+      if (isOwner) {
+        const { count } = await admin
+          .from("email_log")
+          .select("id", { count: "exact", head: true })
+          .eq("sent_by", userData.user.id)
+          .eq("kind", "confirmation")
+          .neq("recipient_email", submitterEmail ?? "")
+          .gte("sent_at", since);
+        budget = Math.min(budget, Math.max(0, DAILY_COAUTHOR_CAP - (count ?? 0)));
+      }
+      for (const e of coauthors) {
+        if (budget <= 0) break;
+        if (recentlySent.has(e)) continue;
+        recipients.add(e);
+        budget--;
+      }
     }
     if (recipients.size === 0) {
       return new Response(JSON.stringify({ error: "No recipient email addresses." }), {
