@@ -13,7 +13,7 @@ export const aboutContent = {
       "Foundation models & language models",
       "Clinical implementation",
     ],
-    note: "All presentations in English. Accreditation status: TBC.",
+    note: "All presentations in English. Accredited by the NVKF (Dutch Society for Medical Physics).",
   },
 
   scientific: {

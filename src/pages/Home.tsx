@@ -126,7 +126,7 @@ const Home = () => {
           <div className="border-t border-border pt-5">
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Endorsed by
+                Endorsed & accredited by
               </span>
               <EndorsementLogos />
             </div>

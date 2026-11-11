@@ -2,6 +2,7 @@ import efompLogo from "@/assets/efomp-logo.png";
 import aapmLogo from "@/assets/aapm-endorsement.png";
 import miccaiLogo from "@/assets/miccai-logo.png";
 import estroLogo from "@/assets/estro.svg";
+import nvkfLogo from "@/assets/nvkf-logo.png";
 
 const endorsements = [
   {
@@ -27,6 +28,12 @@ const endorsements = [
     href: "https://www.estro.org/",
     src: estroLogo,
     imageClassName: "h-10 sm:h-12",
+  },
+  {
+    name: "NVKF (accreditation)",
+    href: "https://www.nvkf.nl/",
+    src: nvkfLogo,
+    imageClassName: "h-14 sm:h-16",
   },
 ];
 

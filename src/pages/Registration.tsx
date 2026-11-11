@@ -67,6 +67,9 @@ const Registration = () => {
                 These prices are confirmed and will not change — fees, invoicing, and payment are
                 completed on the Princess Máxima Center platform.
               </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                The workshop is accredited by the NVKF (Dutch Society for Medical Physics).
+              </p>
             </div>
 
             <ul className="list-disc list-inside space-y-1 text-sm">

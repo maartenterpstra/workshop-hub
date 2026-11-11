@@ -49,6 +49,14 @@ const Footer = () => {
               >
                 phiRO special issue
               </a>
+              <a
+                href="https://www.nvkf.nl/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-primary hover:underline"
+              >
+                Accredited by NVKF
+              </a>
             </div>
           </div>
           <div>
