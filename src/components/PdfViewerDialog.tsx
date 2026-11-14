@@ -38,7 +38,7 @@ const PdfViewerDialog = ({ path, title, number, onClose }: { path: string | null
         )}
         <div className="flex-1 min-h-0 rounded-md border bg-muted">
           {error ? <p className="p-4 text-sm text-destructive">{error}</p>
-            : url ? <iframe src={url} title={title ?? "Abstract PDF"} className="w-full h-full rounded-md" />
+            : url ? <iframe src={`${url}#toolbar=0&navpanes=0`} title={title ?? "Abstract PDF"} className="w-full h-full rounded-md" />
             : <div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}
         </div>
       </DialogContent>
