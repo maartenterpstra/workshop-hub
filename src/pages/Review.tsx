@@ -71,6 +71,9 @@ const scoreFields: { key: keyof ReviewRow; label: string }[] = [
   { key: "score_fit_session", label: "Fit to session" },
 ];
 
+// Test abstract used to preview the reviewer form before submissions close.
+const PREVIEW_ABSTRACT_ID = "00000000-0000-4000-a000-000000000001";
+
 const Review = () => {
   const { user } = useAuth();
   const { submissionClosed, reviewOpen, reviewClosed, reviewClosesAt, debug, loading: cfgLoading } = useAppConfig();
@@ -81,14 +84,15 @@ const Review = () => {
   const [notes, setNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (!user || (!submissionClosed && !debug)) { setLoading(false); return; }
+    if (!user) { setLoading(false); return; }
+    const previewOnly = !submissionClosed && !debug;
     (async () => {
       const { data: assigns } = await supabase
         .from("review_assignments")
         .select(`id, abstract:abstracts(id, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics(name))`)
         .eq("reviewer_id", user.id);
 
-      const rows = (assigns ?? []) as any[];
+      const rows = ((assigns ?? []) as any[]).filter((a) => !previewOnly || a.abstract?.id === PREVIEW_ABSTRACT_ID);
       const enriched: Assignment[] = [];
       const nextDrafts: Record<string, ReviewRow> = {};
 
@@ -207,7 +211,7 @@ const Review = () => {
     return <div className="container py-16 text-center text-muted-foreground">Loading…</div>;
   }
 
-  if (!submissionClosed && !debug) {
+  if (!submissionClosed && !debug && assignments.length === 0) {
     return (
       <div className="container max-w-2xl py-16 text-center space-y-4">
         <h1 className="text-3xl font-bold">Reviews open after submission closes</h1>
