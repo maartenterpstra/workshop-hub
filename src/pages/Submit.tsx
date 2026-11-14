@@ -1,5 +1,5 @@
 import { stripPdfMetadata } from "@/lib/pdfAnonymize";
-import { formatAbstractNumber } from "@/lib/abstractNumber";
+import { formatAbstractNumber, pdfVersionFromPath, versionedPdfName } from "@/lib/abstractNumber";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { z } from "zod";
@@ -285,8 +285,8 @@ const Submit = () => {
       if (absErr) throw absErr;
 
       if (cleanPdf) {
-        const numbered = `${user.id}/${abs.id}/${formatAbstractNumber(abs.abstract_number)}.pdf`;
-        const { error: nErr } = await supabase.storage.from("abstracts").upload(numbered, cleanPdf, { contentType: "application/pdf", upsert: true });
+        const numbered = `${user.id}/${abs.id}/${versionedPdfName(formatAbstractNumber(abs.abstract_number), pdfVersionFromPath(existingFilePath) + 1)}`;
+        const { error: nErr } = await supabase.storage.from("abstracts").upload(numbered, cleanPdf, { contentType: "application/pdf", upsert: false });
         if (!nErr) {
           const { error: pErr } = await supabase.from("abstracts").update({ file_path: numbered }).eq("id", abs.id).eq("submitted_by", user.id);
           if (!pErr) {

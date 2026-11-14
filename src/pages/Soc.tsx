@@ -9,7 +9,7 @@ import { exportAbstractsExcel } from "@/lib/excelExport";
 import AbstractFigures from "@/components/AbstractFigures";
 import SocScoreTable from "@/components/SocScoreTable";
 import PdfViewerDialog from "@/components/PdfViewerDialog";
-import { formatAbstractNumber } from "@/lib/abstractNumber";
+import { formatAbstractNumber, pdfVersionFromPath } from "@/lib/abstractNumber";
 import { reviewAverage, totalAverage } from "@/lib/scoring";
 import SocDecisionsWorkflow from "@/components/SocDecisionsWorkflow";
 import { supabase } from "@/integrations/supabase/client";
@@ -187,7 +187,7 @@ const Soc = () => {
             {a.fileUrl && (
               <button type="button" onClick={() => setPdf({ path: a.fileUrl!, title: a.title, number: formatAbstractNumber(a.abstract_number) })}
                 className="inline-flex items-center gap-1 text-sm text-primary underline">
-                <FileText className="h-4 w-4" /> Open PDF
+                <FileText className="h-4 w-4" /> Open PDF{pdfVersionFromPath(a.fileUrl) > 0 ? ` (version ${pdfVersionFromPath(a.fileUrl)})` : ""}
               </button>
             )}
             {a.fileUrl && (
