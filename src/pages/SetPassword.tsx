@@ -7,10 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import ForgotPasswordForm from "@/components/ForgotPasswordForm";
 
 const SetPassword = () => {
   const navigate = useNavigate();
-  const { user, mustChangePassword, refreshProfile } = useAuth();
+  const { user, mustChangePassword, refreshProfile, hasRole } = useAuth();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [saving, setSaving] = useState(false);
@@ -34,8 +35,7 @@ const SetPassword = () => {
           <CardHeader>
             <CardTitle>Set your password</CardTitle>
             <CardDescription>
-              Enter your email and the code from your password-reset email. No email yet?{" "}
-              <a href="/login" className="text-primary underline">Request one on the sign-in page</a>.
+              Enter your email and the code from your password-reset email. No email yet, or the link expired? Request a new one below.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -50,6 +50,18 @@ const SetPassword = () => {
               </div>
               <Button type="submit" className="w-full" disabled={verifying}>{verifying ? "Checking…" : "Continue"}</Button>
             </form>
+            <div className="mt-6 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground space-y-1">
+              <p className="font-medium text-foreground">Need a new email?</p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Use the email address your invitation was sent to.</li>
+                <li>Click the newest email only — older links stop working.</li>
+                <li>Work email may open links automatically; if the link fails, request a new one below.</li>
+              </ul>
+            </div>
+            <div className="mt-4"><ForgotPasswordForm initialEmail={email} /></div>
+            <p className="mt-4 text-xs text-muted-foreground">
+              Still stuck? Email <a className="text-primary underline" href="mailto:m.maspero@umcutrecht.nl">m.maspero@umcutrecht.nl</a>.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -80,7 +92,7 @@ const SetPassword = () => {
     await refreshProfile();
     setSaving(false);
     toast.success("Password updated.");
-    navigate("/review", { replace: true });
+    navigate(hasRole("reviewer") || hasRole("soc") || hasRole("admin") ? "/review" : "/my-abstracts", { replace: true });
   };
 
   return (
@@ -93,6 +105,7 @@ const SetPassword = () => {
               ? "Please choose a personal password to continue."
               : "Choose a new password for your account."}
           </CardDescription>
+          <p className="text-sm">Setting the password for <strong>{user.email}</strong></p>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
