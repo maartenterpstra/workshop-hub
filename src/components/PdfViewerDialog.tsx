@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, ExternalLink, Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { stripPdfMetadata } from "@/lib/pdfAnonymize";
 
@@ -32,7 +32,6 @@ const PdfViewerDialog = ({ path, title, number, onClose }: { path: string | null
         <DialogHeader><DialogTitle className="pr-8">{number ? `${number} · ` : ""}{title ?? "Abstract PDF"}</DialogTitle></DialogHeader>
         {url && (
           <div className="flex gap-2">
-            <Button asChild size="sm" variant="outline"><a href={url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /> Open in new tab</a></Button>
             <Button asChild size="sm" variant="outline"><a href={url} download={`${number ?? "abstract"}.pdf`}><Download className="h-4 w-4" /> Download</a></Button>
           </div>
         )}

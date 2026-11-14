@@ -1,3 +1,5 @@
+import { stripPdfMetadata } from "@/lib/pdfAnonymize";
+import { formatAbstractNumber } from "@/lib/abstractNumber";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { z } from "zod";
@@ -235,11 +237,13 @@ const Submit = () => {
     setSubmitting(true);
     try {
       const submissionId = abstractId ?? crypto.randomUUID();
-      const filePath = `${user.id}/${submissionId}/abstract.pdf`;
-      if (file) {
-        const { error: upErr } = await supabase.storage.from("abstracts").upload(filePath, file, {
+      // Uploaded under a temporary name first; renamed to the abstract number once the row exists.
+      const filePath = `${user.id}/${submissionId}/upload-${Date.now()}.pdf`;
+      const cleanPdf = file ? await stripPdfMetadata(await file.arrayBuffer(), "Abstract") : null;
+      if (cleanPdf) {
+        const { error: upErr } = await supabase.storage.from("abstracts").upload(filePath, cleanPdf, {
           contentType: "application/pdf",
-          upsert: editing,
+          upsert: true,
         });
         if (upErr) throw upErr;
       }
@@ -270,15 +274,27 @@ const Submit = () => {
           results: parsed.data.results,
           conclusion: parsed.data.conclusion,
           word_count: wordCount,
-          file_path: existingFilePath ?? filePath,
+          file_path: cleanPdf ? filePath : (existingFilePath ?? filePath),
           figure_paths: figurePaths,
           status: "submitted" as const,
         };
       const abstractMutation = editing && abstractId
         ? supabase.from("abstracts").update(abstractPayload).eq("id", abstractId).eq("submitted_by", user.id)
         : supabase.from("abstracts").insert(abstractPayload);
-      const { data: abs, error: absErr } = await abstractMutation.select("id").single();
+      const { data: abs, error: absErr } = await abstractMutation.select("id, abstract_number").single();
       if (absErr) throw absErr;
+
+      if (cleanPdf) {
+        const numbered = `${user.id}/${abs.id}/${formatAbstractNumber(abs.abstract_number)}.pdf`;
+        const { error: nErr } = await supabase.storage.from("abstracts").upload(numbered, cleanPdf, { contentType: "application/pdf", upsert: true });
+        if (!nErr) {
+          const { error: pErr } = await supabase.from("abstracts").update({ file_path: numbered }).eq("id", abs.id).eq("submitted_by", user.id);
+          if (!pErr) {
+            await supabase.storage.from("abstracts").remove([filePath]);
+            setExistingFilePath(numbered);
+          }
+        }
+      }
 
       const authorRows = parsed.data.authors.map((a, idx) => ({
         abstract_id: abs.id,
