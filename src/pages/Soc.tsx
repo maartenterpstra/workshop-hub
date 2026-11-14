@@ -1,3 +1,4 @@
+import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -67,7 +68,7 @@ const Soc = () => {
           topic:topics(name),
           authors:abstract_authors(name, affiliation, email, is_presenting, author_order),
           assignments:review_assignments(id, reviewer_id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, comments_for_authors, comments_for_soc))
-        `);
+        `).neq("id", DEMO_ABSTRACT_ID);
 
       const enriched: AbstractRow[] = await Promise.all(
         (data ?? []).map(async (a: any) => {

@@ -1,3 +1,4 @@
+import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,7 @@ const AdminAssignments = () => {
           .select(
             "id, title, topic_id, submitted_at, reviewers_confirmed_at, topic:topics(name), assignments:review_assignments(id, reviewer_id, status)",
           )
+          .neq("id", DEMO_ABSTRACT_ID)
           .order("submitted_at", { ascending: false }),
         supabase.from("user_roles").select("user_id").eq("role", "reviewer"),
         supabase.from("profiles").select("id, full_name, email, affiliation"),

@@ -71,8 +71,7 @@ const scoreFields: { key: keyof ReviewRow; label: string }[] = [
   { key: "score_fit_session", label: "Fit to session" },
 ];
 
-// Test abstract used to preview the reviewer form before submissions close.
-const PREVIEW_ABSTRACT_ID = "00000000-0000-4000-a000-000000000001";
+import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 
 const Review = () => {
   const { user } = useAuth();
@@ -82,6 +81,8 @@ const Review = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const isDemo = (a: Assignment) => a.abstract?.id === DEMO_ABSTRACT_ID;
 
   useEffect(() => {
     if (!user) { setLoading(false); return; }
@@ -92,7 +93,8 @@ const Review = () => {
         .select(`id, abstract:abstracts(id, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics(name))`)
         .eq("reviewer_id", user.id);
 
-      const rows = ((assigns ?? []) as any[]).filter((a) => !previewOnly || a.abstract?.id === PREVIEW_ABSTRACT_ID);
+      const rows = ((assigns ?? []) as any[]).filter((a) => !previewOnly || a.abstract?.id === DEMO_ABSTRACT_ID)
+        .sort((x, y) => Number(x.abstract?.id === DEMO_ABSTRACT_ID) - Number(y.abstract?.id === DEMO_ABSTRACT_ID));
       const enriched: Assignment[] = [];
       const nextDrafts: Record<string, ReviewRow> = {};
 
@@ -152,7 +154,7 @@ const Review = () => {
     setDrafts((prev) => ({ ...prev, [aid]: { ...prev[aid], ...patch } }));
 
   const saveNotes = async (aid: string) => {
-    if (!user) return;
+    if (!user || assignments.find((x) => x.id === aid && isDemo(x))) return;
     const { error } = await supabase.from("reviewer_notes").upsert({
       assignment_id: aid, reviewer_id: user.id, notes: notes[aid] ?? "", updated_at: new Date().toISOString(),
     });
@@ -160,7 +162,7 @@ const Review = () => {
   };
 
   const submitReview = async (a: Assignment) => {
-    if (!reviewOpen) {
+    if (!reviewOpen && !isDemo(a)) {
       toast.error("The review period is closed.");
       return;
     }
@@ -174,6 +176,10 @@ const Review = () => {
       if (!(d[f.key] ?? "").trim()) { toast.error(`Please answer: ${f.label}`); return; }
     }
 
+    if (isDemo(a)) {
+      toast.success("Looks good! This was the example abstract, so nothing was saved.");
+      return;
+    }
     setSaving(a.id);
     try {
       const payload = {
@@ -251,8 +257,24 @@ const Review = () => {
         <Card><CardContent className="py-10 text-center text-muted-foreground">No assignments.</CardContent></Card>
       )}
 
-      {assignments.map((a) => {
+      {assignments.length > 1 && (
+        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Assigned abstracts">
+          {assignments.map((a, i) => {
+            const active = (activeId ?? assignments[0].id) === a.id;
+            const done = !!drafts[a.id]?.id;
+            return (
+              <Button key={a.id} role="tab" aria-selected={active} size="sm" variant={active ? "default" : "outline"} onClick={() => setActiveId(a.id)} className="max-w-xs">
+                <span className="truncate">{isDemo(a) ? "Example" : `#${i + 1}`} · {a.abstract.title}</span>
+                <span className="ml-2 text-xs opacity-80">{isDemo(a) ? "practice" : done ? "submitted" : "to do"}</span>
+              </Button>
+            );
+          })}
+        </div>
+      )}
+
+      {assignments.filter((a) => (activeId ?? assignments[0]?.id) === a.id).map((a) => {
         const d = drafts[a.id];
+        const open = reviewOpen || isDemo(a);
         return (
           <Card key={a.id}>
             <CardHeader>
@@ -261,6 +283,11 @@ const Review = () => {
               </div>
               <CardTitle>{a.abstract.title}</CardTitle>
               <CardDescription>Assignment {a.id.slice(0, 8)}</CardDescription>
+              {isDemo(a) && (
+                <p className="mt-2 rounded-md border border-accent/40 bg-accent/10 p-3 text-sm text-foreground">
+                  <strong>Example – not scored.</strong> This fictional abstract lets you try the review form. Nothing you enter here is saved or sent.
+                </p>
+              )}
             </CardHeader>
             <CardContent className="space-y-6">
               {a.abstract.file_path && (
@@ -286,7 +313,7 @@ const Review = () => {
                     <Select
                       value={d[f.key] ? String(d[f.key]) : ""}
                       onValueChange={(v) => setField(a.id, { [f.key]: Number(v) } as any)}
-                      disabled={!reviewOpen}
+                      disabled={!open}
                     >
                       <SelectTrigger><SelectValue placeholder="Score…" /></SelectTrigger>
                       <SelectContent>
@@ -300,7 +327,7 @@ const Review = () => {
                   <Select
                     value={d.recommendation ?? ""}
                     onValueChange={(v) => setField(a.id, { recommendation: v as any })}
-                    disabled={!reviewOpen}
+                    disabled={!open}
                   >
                     <SelectTrigger><SelectValue placeholder="Choose…" /></SelectTrigger>
                     <SelectContent>
@@ -320,14 +347,14 @@ const Review = () => {
                   <div key={f.key} className="space-y-1">
                     <Label>{f.label}</Label>
                     <p className="text-xs text-muted-foreground">{f.hint}</p>
-                    <Textarea disabled={!reviewOpen} rows={2} maxLength={2000} value={d[f.key] ?? ""} onChange={(e) => setField(a.id, { [f.key]: e.target.value } as any)} />
+                    <Textarea disabled={!open} rows={2} maxLength={2000} value={d[f.key] ?? ""} onChange={(e) => setField(a.id, { [f.key]: e.target.value } as any)} />
                   </div>
                 ))}
               </div>
               <div className="space-y-1">
                 <Label>Confidential comments to chairs</Label>
                 <p className="text-xs text-muted-foreground">Only visible to the scientific committee.</p>
-                <Textarea disabled={!reviewOpen} rows={3} value={d.comments_for_soc ?? ""} onChange={(e) => setField(a.id, { comments_for_soc: e.target.value })} />
+                <Textarea disabled={!open} rows={3} value={d.comments_for_soc ?? ""} onChange={(e) => setField(a.id, { comments_for_soc: e.target.value })} />
               </div>
               <div className="space-y-1">
                 <Label>Personal notes</Label>
@@ -340,8 +367,8 @@ const Review = () => {
                 />
               </div>
 
-              <Button onClick={() => submitReview(a)} disabled={saving === a.id || !reviewOpen}>
-                {saving === a.id ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving…</> : d.id ? "Update review" : "Submit review"}
+              <Button onClick={() => submitReview(a)} disabled={saving === a.id || !open}>
+                {saving === a.id ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving…</> : isDemo(a) ? "Try it (not saved)" : d.id ? "Update review" : "Submit review"}
               </Button>
             </CardContent>
           </Card>

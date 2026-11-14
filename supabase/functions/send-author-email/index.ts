@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
     if (abstractId !== null && (typeof abstractId !== "string" || !/^[0-9a-f-]{36}$/i.test(abstractId)))
       return json({ error: "abstractId must be a UUID." }, 400);
 
-    let q = admin.from("abstracts").select("id, title, status, submitted_by, authors:abstract_authors(email)");
+    let q = admin.from("abstracts").select("id, title, status, submitted_by, authors:abstract_authors(email)").neq("id", "00000000-0000-4000-a000-000000000001");
     if (abstractId) q = q.eq("id", abstractId);
     else if (!includeWithdrawn) q = q.neq("status", "withdrawn");
     const { data: abstracts, error: aErr } = await q;

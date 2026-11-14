@@ -1,3 +1,4 @@
+import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 import ExcelJS from "exceljs";
 import { supabase } from "@/integrations/supabase/client";
 import { todayStamp } from "@/lib/csv";
@@ -27,7 +28,7 @@ export async function exportAbstractsExcel() {
     `id, title, status, topic:topics(name),
      authors:abstract_authors(name, email, is_presenting, author_order),
      assignments:review_assignments(id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, feedback_value, feedback_improve, feedback_tips, comments_for_authors, comments_for_soc, submitted_at))`,
-  );
+  ).neq("id", DEMO_ABSTRACT_ID);
   if (error) throw error;
   const abstracts = ((data ?? []) as any[]).sort((a, b) =>
     (a.topic?.name ?? "").localeCompare(b.topic?.name ?? "") || a.title.localeCompare(b.title),

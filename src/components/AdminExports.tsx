@@ -1,3 +1,4 @@
+import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,7 @@ const AdminExports = () => {
           `id, title, status, topic:topics(name),
            assignments:review_assignments(id, reviewer_id, status,
              reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, feedback_value, feedback_improve, feedback_tips, comments_for_authors, comments_for_soc, submitted_at))`,
-        ),
+        ).neq("id", DEMO_ABSTRACT_ID),
         supabase.from("profiles").select("id, full_name, email"),
       ]);
       if (aErr) throw aErr;
@@ -124,6 +125,7 @@ const AdminExports = () => {
             `id, title, status, submitted_by, submitted_at, topic:topics(name),
              authors:abstract_authors(name, affiliation, email, is_presenting, author_order)`,
           )
+          .neq("id", DEMO_ABSTRACT_ID)
           .order("submitted_at", { ascending: true }),
         supabase.from("profiles").select("id, full_name, email"),
       ]);
