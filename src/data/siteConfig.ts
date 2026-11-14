@@ -43,6 +43,8 @@ export const siteConfig = {
   previousEditionUrl: "/2026/index.html",
 
   // Related phiRO virtual special issue
+  /** Public address used in all sign-in / password-reset email links. */
+  authSiteUrl: "https://aiinrt.org",
   specialIssueUrl:
     "https://www.sciencedirect.com/special-issue/338195/development-and-clinical-implementation-of-artificial-intelligence-in-radiotherapy",
 

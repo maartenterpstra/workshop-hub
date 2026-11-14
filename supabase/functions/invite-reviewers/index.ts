@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     for (const u of targets) {
       const email = u.email!.toLowerCase();
       let error: string | null = null;
-      const { error: rErr } = await pub.auth.resetPasswordForEmail(email, { redirectTo: "https://workshop-spark-25.lovable.app/set-password" });
+      const { error: rErr } = await pub.auth.resetPasswordForEmail(email, { redirectTo: "https://aiinrt.org/set-password" });
       if (rErr) error = "Password email could not be sent";
       const r = await fetch(`${GATEWAY_URL}/emails`, {
         method: "POST",

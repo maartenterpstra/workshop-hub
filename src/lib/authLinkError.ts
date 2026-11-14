@@ -13,4 +13,5 @@ export function parseAuthLinkError(hash: string, search = ""): AuthLinkError | n
   return null;
 }
 
-export const passwordResetRedirect = () => `${window.location.origin}/set-password`;
+import { siteConfig } from "@/data/siteConfig";
+export const passwordResetRedirect = () => `${siteConfig.authSiteUrl}/set-password`;

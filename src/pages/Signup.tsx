@@ -1,3 +1,4 @@
+import { siteConfig } from "@/data/siteConfig";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +24,7 @@ const Signup = () => {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: siteConfig.authSiteUrl,
         data: { full_name: fullName, affiliation },
       },
     });
