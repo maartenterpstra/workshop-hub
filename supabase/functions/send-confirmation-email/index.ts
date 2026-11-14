@@ -152,19 +152,10 @@ serve(async (req) => {
         coauthors.push(e);
       }
     }
-    // Anti-abuse: when an author (not staff) triggers the email, co-authors are
-    // only notified if their address belongs to a registered account with a
-    // confirmed email, so arbitrary third-party inboxes are never contacted.
-    if (coauthors.length && isOwner) {
-      const verified = new Set<string>();
-      for (let page = 1; page <= 10; page++) {
-        const { data: list } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
-        const users = list?.users ?? [];
-        for (const u of users) if (u.email && u.email_confirmed_at) verified.add(u.email.toLowerCase());
-        if (users.length < 1000) break;
-      }
-      for (let i = coauthors.length - 1; i >= 0; i--) if (!verified.has(coauthors[i])) coauthors.splice(i, 1);
-    }
+    // Anti-abuse: author-triggered confirmations go ONLY to the submitting
+    // account. Co-author addresses are user-supplied and account confirmation
+    // does not prove inbox control, so they are only emailed when staff send.
+    if (isOwner) coauthors.length = 0;
     if (coauthors.length) {
       const { data: recent } = await admin
         .from("email_log")
