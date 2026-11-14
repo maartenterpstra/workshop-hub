@@ -14,6 +14,47 @@ const SetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [saving, setSaving] = useState(false);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
+
+  const verifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setVerifying(true);
+    const { error } = await supabase.auth.verifyOtp({ email: email.trim(), token: code.trim(), type: "recovery" });
+    setVerifying(false);
+    if (error) { toast.error("That code is invalid or expired. Request a new email from the sign-in page."); return; }
+    toast.success("Code accepted — now choose your password.");
+  };
+
+  if (!user) {
+    return (
+      <div className="container max-w-md py-16">
+        <Card>
+          <CardHeader>
+            <CardTitle>Set your password</CardTitle>
+            <CardDescription>
+              Enter your email and the code from your password-reset email. No email yet?{" "}
+              <a href="/login" className="text-primary underline">Request one on the sign-in page</a>.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={verifyCode} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="sp-email">Email</Label>
+                <Input id="sp-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="sp-code">Code from the email</Label>
+                <Input id="sp-code" inputMode="numeric" required value={code} onChange={(e) => setCode(e.target.value)} />
+              </div>
+              <Button type="submit" className="w-full" disabled={verifying}>{verifying ? "Checking…" : "Continue"}</Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

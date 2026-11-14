@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import ForgotPasswordForm from "@/components/ForgotPasswordForm";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [forgot, setForgot] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +50,11 @@ const Login = () => {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing in…" : "Sign in"}
             </Button>
+            <p className="text-sm text-center">
+              <button type="button" className="text-primary hover:underline" onClick={() => setForgot((f) => !f)}>
+                Forgot your password? / First time as a reviewer?
+              </button>
+            </p>
             <p className="text-sm text-muted-foreground text-center">
               No account?{" "}
               <Link to="/signup" className="text-primary hover:underline">
@@ -55,6 +62,11 @@ const Login = () => {
               </Link>
             </p>
           </form>
+          {forgot && (
+            <div className="mt-6 border-t pt-6">
+              <ForgotPasswordForm initialEmail={email} />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

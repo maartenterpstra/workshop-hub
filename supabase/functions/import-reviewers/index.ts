@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
         email,
         {
           data: { full_name: fullName, affiliation: r.affiliation },
-          redirectTo: "https://aiinrt.org/set-password",
+          redirectTo: "https://workshop-spark-25.lovable.app/set-password",
         },
       );
 
@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
           continue;
         }
         const { error: recoveryErr } = await asCaller.auth.resetPasswordForEmail(email, {
-          redirectTo: "https://aiinrt.org/set-password",
+          redirectTo: "https://workshop-spark-25.lovable.app/set-password",
         });
         if (recoveryErr) errors.push(`${email}: password reset email could not be sent`);
         updated++;

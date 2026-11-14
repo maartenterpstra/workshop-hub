@@ -30,7 +30,15 @@ const Signup = () => {
 
     if (error || !data.user) {
       setLoading(false);
-      toast({ title: "Sign-up failed", description: error?.message ?? "Unknown error", variant: "destructive" });
+      const exists = /already (been )?registered|already exists/i.test(error?.message ?? "");
+      toast({
+        title: exists ? "You already have an account" : "Sign-up failed",
+        description: exists
+          ? "Reviewers and earlier authors already have an account. Use 'Forgot your password?' on the sign-in page to set a password."
+          : error?.message ?? "Unknown error",
+        variant: "destructive",
+      });
+      if (exists) navigate("/login");
       return;
     }
 

@@ -27,6 +27,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import RouteSeo from "./components/RouteSeo";
+import AuthLinkErrorNotice from "./components/AuthLinkErrorNotice";
 
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <RouteSeo />
+          <AuthLinkErrorNotice />
           <div className="flex flex-col min-h-screen">
             <Header />
 
@@ -106,11 +108,7 @@ const App = () => (
                 />
                 <Route
                   path="/set-password"
-                  element={
-                    <ProtectedRoute allowPasswordChange>
-                      <SetPassword />
-                    </ProtectedRoute>
-                  }
+                  element={<SetPassword />}
                 />
                 <Route path="*" element={<NotFound />} />
               </Routes>
