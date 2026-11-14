@@ -118,7 +118,7 @@ const SESSIONS: Record<string, string> = {
 };
 const STATUS: Record<string, string> = { oral: "accepted_oral", reject: "rejected", revise: "submitted" };
 
-function decisionEmail(kind: string, title: string, slot: any, note: string | null, dueAt: string | null) {
+function decisionEmail(kind: string, title: string, slot: any, note: string | null, dueAt: string | null, feedback: any[] = []) {
   const t = `"${title}"`;
   const fmtDue = dueAt ? new Date(dueAt).toLocaleString("en-GB", { timeZone: "Europe/Amsterdam", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }) + " (Amsterdam time)" : "";
   let subject = "", body = "";
@@ -133,7 +133,14 @@ function decisionEmail(kind: string, title: string, slot: any, note: string | nu
     body = `Dear authors,\n\nThank you for submitting your abstract ${t} to AIinRT2027. After careful peer review, the Scientific Organizing Committee regrets that it could not be included in the programme this year.\n\nWe would be delighted to welcome you at the workshop: https://aiinrt.org/registration`;
   }
   if (note?.trim()) body += `\n\nNote from the committee:\n${note.trim()}`;
-  body += `\n\nReviewer feedback is available on request.\n\nKind regards,\nThe AIinRT2027 Scientific Organizing Committee`;
+  if (feedback.length) {
+    body += `\n\nReviewer feedback (anonymous):`;
+    feedback.forEach((f, i) => {
+      body += `\n\nReviewer ${i + 1}\n- Where is the value? ${f.feedback_value}\n- What could be done better? ${f.feedback_improve}\n- Tips: ${f.feedback_tips}`;
+    });
+    body += `\n\nYou can also read this feedback at https://aiinrt.org/my-abstracts.`;
+  }
+  body += `\n\nKind regards,\nThe AIinRT2027 Scientific Organizing Committee`;
   return { subject, body };
 }
 
@@ -163,7 +170,10 @@ async function sendDecisions(admin: any, uid: string, b: any, lovKey: string, re
     const { data: sub } = await admin.auth.admin.getUserById(a.submitted_by);
     if (sub?.user?.email) set.add(sub.user.email.toLowerCase());
     for (const au of a.authors ?? []) { const e = (au?.email ?? "").trim().toLowerCase(); if (e && isEmail(e)) set.add(e); }
-    items.push({ d, a, kind, slot, recipients: [...set], mail: decisionEmail(kind, String(a.title).replace(/[\r\n]+/g, " "), slot, d.note, d.revision_due_at) });
+    const { data: asg } = await admin.from("review_assignments").select("reviews(feedback_value, feedback_improve, feedback_tips, submitted_at)").eq("abstract_id", a.id);
+    const feedback = (asg ?? []).flatMap((x: any) => x.reviews ?? []).filter((r: any) => r.feedback_value)
+      .sort((x: any, y: any) => String(x.submitted_at).localeCompare(String(y.submitted_at)));
+    items.push({ d, a, kind, slot, recipients: [...set], mail: decisionEmail(kind, String(a.title).replace(/[\r\n]+/g, " "), slot, d.note, d.revision_due_at, feedback) });
   }
 
   if (dryRun) {

@@ -38,7 +38,16 @@ interface ReviewRow {
   recommendation: "accept_oral" | "accept_poster" | "reject" | "revise" | null; // poster blocked by DB constraint
   comments_for_authors: string | null;
   comments_for_soc: string | null;
+  feedback_value: string | null;
+  feedback_improve: string | null;
+  feedback_tips: string | null;
 }
+
+const feedbackFields: { key: "feedback_value" | "feedback_improve" | "feedback_tips"; label: string; hint: string }[] = [
+  { key: "feedback_value", label: "1. Where is the value?", hint: "What is the strongest part of this work?" },
+  { key: "feedback_improve", label: "2. What could be done better to increase the impact?", hint: "Concrete, actionable suggestions." },
+  { key: "feedback_tips", label: "3. Any tips?", hint: "E.g. references, analyses, or presentation advice." },
+];
 
 const emptyReview: ReviewRow = {
   score_technical: null,
@@ -49,6 +58,9 @@ const emptyReview: ReviewRow = {
   recommendation: null,
   comments_for_authors: "",
   comments_for_soc: "",
+  feedback_value: "",
+  feedback_improve: "",
+  feedback_tips: "",
 };
 
 const scoreFields: { key: keyof ReviewRow; label: string }[] = [
@@ -99,6 +111,9 @@ const Review = () => {
               recommendation: existing.recommendation,
               comments_for_authors: existing.comments_for_authors,
               comments_for_soc: existing.comments_for_soc,
+              feedback_value: existing.feedback_value ?? "",
+              feedback_improve: existing.feedback_improve ?? "",
+              feedback_tips: existing.feedback_tips ?? "",
             }
           : { ...emptyReview };
       }
@@ -151,6 +166,9 @@ const Review = () => {
       if (!d[f.key]) { toast.error(`Please score: ${f.label}`); return; }
     }
     if (!d.recommendation) { toast.error("Please pick a recommendation."); return; }
+    for (const f of feedbackFields) {
+      if (!(d[f.key] ?? "").trim()) { toast.error(`Please answer: ${f.label}`); return; }
+    }
 
     setSaving(a.id);
     try {
@@ -162,7 +180,14 @@ const Review = () => {
         score_reproducibility: d.score_reproducibility,
         score_fit_session: d.score_fit_session,
         recommendation: d.recommendation,
-        comments_for_authors: d.comments_for_authors,
+        feedback_value: d.feedback_value!.trim(),
+        feedback_improve: d.feedback_improve!.trim(),
+        feedback_tips: d.feedback_tips!.trim(),
+        comments_for_authors: [
+          `Where is the value? ${d.feedback_value!.trim()}`,
+          `What could be done better? ${d.feedback_improve!.trim()}`,
+          `Tips: ${d.feedback_tips!.trim()}`,
+        ].join("\n"),
         comments_for_soc: d.comments_for_soc,
       };
       const { error } = d.id
@@ -209,6 +234,14 @@ const Review = () => {
           <p className="mt-2 text-sm text-destructive">The review period has closed. Saved reviews are read-only.</p>
         )}
       </div>
+
+      <Card className="border-secondary/40 bg-secondary/5">
+        <CardHeader><CardTitle className="text-lg">Reviewer guide</CardTitle></CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <p>Besides the five scores, please answer three short questions for the authors: <strong>Where is the value?</strong>, <strong>What could be done better to increase the impact?</strong> and <strong>Any tips?</strong></p>
+          <p>Be specific, constructive and respectful — write as you would like to receive feedback. Never try to identify the authors, and don't reveal your own identity. Use "Confidential comments to chairs" for anything only the committee should see.</p>
+        </CardContent>
+      </Card>
 
       {assignments.length === 0 && (
         <Card><CardContent className="py-10 text-center text-muted-foreground">No assignments.</CardContent></Card>
@@ -274,10 +307,18 @@ const Review = () => {
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <Label>Comments to authors</Label>
-                <p className="text-xs text-muted-foreground">Shared with the authors (anonymously). Be constructive.</p>
-                <Textarea disabled={!reviewOpen} rows={3} value={d.comments_for_authors ?? ""} onChange={(e) => setField(a.id, { comments_for_authors: e.target.value })} />
+              <div className="space-y-3 rounded-md border p-4">
+                <div>
+                  <div className="font-semibold">Constructive feedback for the authors</div>
+                  <p className="text-xs text-muted-foreground">Required. 1–3 sentences each. Shared anonymously with the authors with their decision.</p>
+                </div>
+                {feedbackFields.map((f) => (
+                  <div key={f.key} className="space-y-1">
+                    <Label>{f.label}</Label>
+                    <p className="text-xs text-muted-foreground">{f.hint}</p>
+                    <Textarea disabled={!reviewOpen} rows={2} maxLength={2000} value={d[f.key] ?? ""} onChange={(e) => setField(a.id, { [f.key]: e.target.value } as any)} />
+                  </div>
+                ))}
               </div>
               <div className="space-y-1">
                 <Label>Confidential comments to chairs</Label>

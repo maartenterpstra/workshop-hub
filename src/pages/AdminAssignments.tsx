@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { reviewerImportRoster } from "@/data/reviewerImport";
 import AdminExports from "@/components/AdminExports";
+import AdminReviewerStatus from "@/components/AdminReviewerStatus";
 import AdminEmailAuthors from "@/components/AdminEmailAuthors";
 
 interface ReviewerInfo {
@@ -237,6 +238,8 @@ const AdminAssignments = () => {
           </Button>
         </div>
       </div>
+
+      <AdminReviewerStatus />
 
       <AdminExports />
 

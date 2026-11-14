@@ -26,7 +26,7 @@ export async function exportAbstractsExcel() {
   const { data, error } = await supabase.from("abstracts").select(
     `id, title, status, topic:topics(name),
      authors:abstract_authors(name, email, is_presenting, author_order),
-     assignments:review_assignments(id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, comments_for_authors, comments_for_soc, submitted_at))`,
+     assignments:review_assignments(id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, feedback_value, feedback_improve, feedback_tips, comments_for_authors, comments_for_soc, submitted_at))`,
   );
   if (error) throw error;
   const abstracts = ((data ?? []) as any[]).sort((a, b) =>
@@ -37,7 +37,7 @@ export async function exportAbstractsExcel() {
   const sum = wb.addWorksheet("Abstracts");
   const rev = wb.addWorksheet("Reviews");
 
-  rev.addRow(["Abstract ID", "Session", "Title", "Review #", ...crit.map((c) => c[1]), "Review average", "Recommendation", "Comments for authors", "Comments for chairs", "Submitted at"]);
+  rev.addRow(["Abstract ID", "Session", "Title", "Review #", ...crit.map((c) => c[1]), "Review average", "Recommendation", "Where is the value?", "What could be done better?", "Tips", "Comments for chairs", "Submitted at"]);
   const revFirstScore = 5;
   const revLastScore = revFirstScore + crit.length - 1;
   let rr = 2;
@@ -47,7 +47,7 @@ export async function exportAbstractsExcel() {
     const reviews = (a.assignments ?? []).flatMap((x: any) => x.reviews ?? []);
     const start = rr;
     reviews.forEach((r: any, i: number) => {
-      rev.addRow([a.id, a.topic?.name ?? "", a.title, i + 1, ...crit.map(([k]) => r[k] ?? null), null, r.recommendation ?? "", r.comments_for_authors ?? "", r.comments_for_soc ?? "", r.submitted_at ?? ""]);
+      rev.addRow([a.id, a.topic?.name ?? "", a.title, i + 1, ...crit.map(([k]) => r[k] ?? null), null, r.recommendation ?? "", r.feedback_value ?? r.comments_for_authors ?? "", r.feedback_improve ?? "", r.feedback_tips ?? "", r.comments_for_soc ?? "", r.submitted_at ?? ""]);
       const range = `${colL(revFirstScore)}${rr}:${colL(revLastScore)}${rr}`;
       rev.getCell(rr, revLastScore + 1).value = { formula: `IF(COUNT(${range})=0,"",AVERAGE(${range}))` };
       rr++;

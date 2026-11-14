@@ -466,6 +466,9 @@ export type Database = {
           assignment_id: string
           comments_for_authors: string | null
           comments_for_soc: string | null
+          feedback_improve: string | null
+          feedback_tips: string | null
+          feedback_value: string | null
           id: string
           recommendation:
             | Database["public"]["Enums"]["review_recommendation"]
@@ -482,6 +485,9 @@ export type Database = {
           assignment_id: string
           comments_for_authors?: string | null
           comments_for_soc?: string | null
+          feedback_improve?: string | null
+          feedback_tips?: string | null
+          feedback_value?: string | null
           id?: string
           recommendation?:
             | Database["public"]["Enums"]["review_recommendation"]
@@ -498,6 +504,9 @@ export type Database = {
           assignment_id?: string
           comments_for_authors?: string | null
           comments_for_soc?: string | null
+          feedback_improve?: string | null
+          feedback_tips?: string | null
+          feedback_value?: string | null
           id?: string
           recommendation?:
             | Database["public"]["Enums"]["review_recommendation"]
@@ -636,6 +645,26 @@ export type Database = {
       }
     }
     Functions: {
+      admin_reviewer_status: {
+        Args: never
+        Returns: {
+          assigned: number
+          email: string
+          full_name: string
+          last_sign_in_at: string
+          must_change_password: boolean
+          reviewed: number
+          reviewer_id: string
+        }[]
+      }
+      get_my_review_feedback: {
+        Args: { _abstract_id: string }
+        Returns: {
+          feedback_improve: string
+          feedback_tips: string
+          feedback_value: string
+        }[]
+      }
       get_public_schedule: {
         Args: never
         Returns: {

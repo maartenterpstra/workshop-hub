@@ -25,7 +25,7 @@ const AdminExports = () => {
         supabase.from("abstracts").select(
           `id, title, status, topic:topics(name),
            assignments:review_assignments(id, reviewer_id, status,
-             reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, comments_for_authors, comments_for_soc, submitted_at))`,
+             reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, feedback_value, feedback_improve, feedback_tips, comments_for_authors, comments_for_soc, submitted_at))`,
         ),
         supabase.from("profiles").select("id, full_name, email"),
       ]);
@@ -72,7 +72,9 @@ const AdminExports = () => {
               r.score_fit_session ?? "",
               avg,
               r.recommendation ?? "",
-              r.comments_for_authors ?? "",
+              r.feedback_value ?? r.comments_for_authors ?? "",
+              r.feedback_improve ?? "",
+              r.feedback_tips ?? "",
               r.comments_for_soc ?? "",
               r.submitted_at ?? "",
             ]);
@@ -97,7 +99,7 @@ const AdminExports = () => {
             "Session fit",
             "Average",
             "Recommendation",
-            "Comments for authors",
+            "Where is the value?", "What could be done better?", "Tips",
             "Comments for chairs",
             "Review submitted at",
           ],

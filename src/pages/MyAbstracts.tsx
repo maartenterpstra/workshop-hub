@@ -1,3 +1,4 @@
+import ReviewFeedback from "@/components/ReviewFeedback";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FilePenLine, FilePlus2, LockKeyhole, Undo2, XCircle } from "lucide-react";
@@ -142,6 +143,7 @@ const MyAbstracts = () => {
               {({ oral: "accepted for an oral presentation", revise: "minor revision requested", reject: "not accepted" } as Record<string, string>)[decisions[abstract.id].decision]}
               {revisionOpen(abstract.id) && ` — please update your abstract before ${formatAmsterdam(new Date(decisions[abstract.id].revision_due_at!))}.`}
               {decisions[abstract.id].note && <p className="mt-1 text-muted-foreground">{decisions[abstract.id].note}</p>}
+              <ReviewFeedback abstractId={abstract.id} />
             </div>
           )}
           <CardContent className="flex flex-wrap items-center justify-between gap-3">
