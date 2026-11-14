@@ -81,9 +81,8 @@ const Soc = () => {
           const firstAuthor = sortedAuthors[0]?.name ?? "";
 
           let fileUrl: string | undefined;
-          if (a.file_path) {
-            const { data: signed } = await supabase.storage.from("abstracts").createSignedUrl(a.file_path, 3600);
-            fileUrl = signed?.signedUrl;
+          if (a.file_path && a.status !== "withdrawn") {
+            fileUrl = a.file_path;
           }
 
           return {
@@ -178,7 +177,12 @@ const Soc = () => {
           <CardContent className="space-y-4">
             <SocScoreTable reviews={a.reviews} />
             {a.fileUrl && (
-              <a href={a.fileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm text-primary underline">
+              <a href="#" onClick={async (e) => {
+                e.preventDefault();
+                const win = window.open("", "_blank");
+                const { data: signed } = await supabase.storage.from("abstracts").createSignedUrl(a.fileUrl!, 60);
+                if (win && signed?.signedUrl) win.location.href = signed.signedUrl; else win?.close();
+              }} className="inline-flex items-center gap-1 text-sm text-primary underline">
                 <FileText className="h-4 w-4" /> Open PDF
               </a>
             )}
