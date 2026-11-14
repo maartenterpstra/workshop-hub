@@ -8,13 +8,15 @@ const json = (b: unknown, status = 200) =>
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const SUBJECT = "AIinRT2027: set up your reviewer account (reviews 1–15 December)";
-const html = (name: string) => `<!doctype html><html><body style="margin:0;padding:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;">
+const html = (name: string, link: string) => `<!doctype html><html><body style="margin:0;padding:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;">
 <div style="max-width:600px;margin:0 auto;padding:24px;">
   <div style="border-bottom:3px solid #005EB8;padding-bottom:12px;"><span style="font-size:20px;font-weight:bold;color:#005EB8;">AIinRT2027</span></div>
   <div style="font-size:14px;color:#374151;line-height:1.6;margin-top:24px;">
     <p>Dear ${esc(name || "reviewer")},</p>
     <p>Thank you for reviewing for AIinRT2027. Abstract submission closes on <strong>1 December 2026, 12:00</strong> (Amsterdam time). Your assigned abstracts will appear on the website shortly after, and reviews can be submitted and updated until <strong>15 December 2026, 12:00</strong>.</p>
-    <p><strong>Set your password now:</strong> we have sent you a separate email titled "Reset your password" with a personal link. If you can't find it, use "Forgot password" at <a href="https://aiinrt.org/login">aiinrt.org/login</a> with this email address.</p>
+    <p><strong>Set your password now</strong> with your personal link:</p>
+    <p style="margin:20px 0;"><a href="${esc(link)}" style="background:#005EB8;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:bold;">Set your password</a></p>
+    <p style="font-size:12px;color:#6b7280;">The link works once. If it has expired, use "Forgot your password?" at <a href="https://aiinrt.org/login">aiinrt.org/login</a> with this email address.</p>
     <p><strong>Short guide</strong></p>
     <ul>
       <li>Score each abstract (1–5) on technical rigor, relevance, novelty, reproducibility and session fit.</li>
@@ -48,32 +50,47 @@ Deno.serve(async (req) => {
     let b: any = {};
     try { b = await req.json(); } catch { /* empty body ok */ }
     const dryRun = b?.dryRun === true;
+    const mode: "all" | "failed" | "single" = ["failed", "single"].includes(b?.mode) ? b.mode : "all";
+    const single = typeof b?.email === "string" ? b.email.trim().toLowerCase().slice(0, 254) : "";
+    if (mode === "single" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(single)) return json({ error: "Enter a valid email." }, 400);
 
     const { data: rr } = await admin.from("user_roles").select("user_id").eq("role", "reviewer");
     const ids = new Set((rr ?? []).map((r: any) => r.user_id));
     const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
     const { data: profiles } = await admin.from("profiles").select("id, full_name");
     const names = new Map((profiles ?? []).map((p: any) => [p.id, p.full_name ?? ""]));
-    const targets = (list?.users ?? []).filter((u) => ids.has(u.id) && u.email && !u.last_sign_in_at);
+    const { data: logs } = await admin.from("email_log").select("recipient_email, status, sent_at").eq("subject", SUBJECT).order("sent_at", { ascending: true });
+    const last = new Map<string, { status: string; sent_at: string }>();
+    for (const l of logs ?? []) last.set(String(l.recipient_email).toLowerCase(), l as any);
+    const dayAgo = Date.now() - 24 * 3600 * 1000;
+    const reviewers = (list?.users ?? []).filter((u) => ids.has(u.id) && u.email);
+    let targets = reviewers.filter((u) => !u.last_sign_in_at);
+    if (mode === "single") targets = reviewers.filter((u) => u.email!.toLowerCase() === single);
+    else if (mode === "failed") targets = targets.filter((u) => last.get(u.email!.toLowerCase())?.status === "failed");
+    else targets = targets.filter((u) => { const l = last.get(u.email!.toLowerCase()); return !(l?.status === "sent" && Date.parse(l.sent_at) > dayAgo); });
+    if (mode === "single" && !targets.length) return json({ error: "No reviewer account with that email." }, 404);
+    const failedCount = reviewers.filter((u) => !u.last_sign_in_at && last.get(u.email!.toLowerCase())?.status === "failed").length;
 
-    if (dryRun) return json({ count: targets.length, subject: SUBJECT });
+    if (dryRun) return json({ count: targets.length, failedCount, subject: SUBJECT });
 
-    const pub = createClient(url, anonKey);
     let sent = 0, failed = 0;
     for (const u of targets) {
       const email = u.email!.toLowerCase();
       let error: string | null = null;
-      const { error: rErr } = await pub.auth.resetPasswordForEmail(email, { redirectTo: "https://aiinrt.org/set-password" });
-      if (rErr) error = "Password email could not be sent";
-      const r = await fetch(`${GATEWAY_URL}/emails`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${LOVABLE_API_KEY}`, "X-Connection-Api-Key": RESEND_API_KEY },
-        body: JSON.stringify({ from: FROM_ADDRESS, to: [email], subject: SUBJECT, html: html(names.get(u.id) ?? "") }),
-      });
-      if (!r.ok) { error = `[${r.status}] ${(await r.text()).slice(0, 300)}`; console.error("Resend failed for a reviewer", r.status); }
+      const { data: link, error: lErr } = await admin.auth.admin.generateLink({ type: "recovery", email, options: { redirectTo: "https://aiinrt.org/set-password" } });
+      const actionLink = link?.properties?.action_link;
+      if (lErr || !actionLink) error = `Password link could not be created: ${lErr?.message ?? "no link returned"}`.slice(0, 300);
+      else {
+        const r = await fetch(`${GATEWAY_URL}/emails`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${LOVABLE_API_KEY}`, "X-Connection-Api-Key": RESEND_API_KEY },
+          body: JSON.stringify({ from: FROM_ADDRESS, to: [email], subject: SUBJECT, html: html(names.get(u.id) ?? "", actionLink) }),
+        });
+        if (!r.ok) { error = `[${r.status}] ${(await r.text()).slice(0, 300)}`; console.error("Resend failed for a reviewer", r.status); }
+      }
       if (error) failed++; else sent++;
       await admin.from("email_log").insert({ sent_by: uid, abstract_id: null, recipient_email: email, subject: SUBJECT, kind: "manual", status: error ? "failed" : "sent", error });
-      await new Promise((res) => setTimeout(res, 1500));
+      await new Promise((res) => setTimeout(res, 600));
     }
     return json({ sent, failed });
   } catch (e) {

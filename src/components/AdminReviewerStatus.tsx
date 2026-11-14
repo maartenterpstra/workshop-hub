@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
@@ -11,22 +12,29 @@ type Row = { reviewer_id: string; email: string; full_name: string | null; last_
 const AdminReviewerStatus = () => {
   const [rows, setRows] = useState<Row[]>([]);
   const [preview, setPreview] = useState<number | null>(null);
+  const [mode, setMode] = useState<"all" | "failed" | "single">("all");
+  const [email, setEmail] = useState("");
+  const [failedCount, setFailedCount] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
 
   const load = () => supabase.rpc("admin_reviewer_status").then(({ data, error }) => {
     if (error) toast.error("Reviewer status could not be loaded.");
     setRows((data as Row[]) ?? []);
   });
-  useEffect(() => { load(); }, []);
+  const refreshFailed = () => supabase.functions.invoke("invite-reviewers", { body: { dryRun: true, mode: "failed" } })
+    .then(({ data }) => setFailedCount(typeof data?.failedCount === "number" ? data.failedCount : null));
+  useEffect(() => { load(); refreshFailed(); }, []);
 
-  const call = async (dryRun: boolean) => {
+  const call = async (dryRun: boolean, m = mode) => {
+    setMode(m);
     setBusy(true);
-    const { data, error } = await supabase.functions.invoke("invite-reviewers", { body: { dryRun } });
+    const { data, error } = await supabase.functions.invoke("invite-reviewers", { body: { dryRun, mode: m, email: m === "single" ? email : undefined } });
     setBusy(false);
     if (error || data?.error) { toast.error(data?.error ?? "Request failed."); return; }
     if (dryRun) setPreview(data.count);
-    else { toast.success(`Sent ${data.sent} invitation(s)${data.failed ? `, ${data.failed} failed` : ""}.`); setPreview(null); load(); }
+    else { toast.success(`Sent ${data.sent} invitation(s)${data.failed ? `, ${data.failed} failed` : ""}.`); setPreview(null); load(); refreshFailed(); }
   };
+  const label = mode === "failed" ? "whose last invitation failed" : mode === "single" ? `(${email})` : "who haven't signed in and weren't invited in the last 24 hours";
 
   const signedIn = rows.filter((r) => r.last_sign_in_at).length;
   return (
@@ -38,12 +46,19 @@ const AdminReviewerStatus = () => {
       <CardContent className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           {preview === null ? (
-            <Button onClick={() => call(true)} disabled={busy}>
-              {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}Send reviewer invitations
-            </Button>
+            <>
+              <Button onClick={() => call(true, "all")} disabled={busy}>
+                {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}Send reviewer invitations
+              </Button>
+              <Button variant="secondary" onClick={() => call(true, "failed")} disabled={busy || !failedCount}>
+                Resend to failed only{failedCount !== null ? ` (${failedCount})` : ""}
+              </Button>
+              <Input className="w-64" type="email" placeholder="reviewer@email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Button variant="outline" onClick={() => call(true, "single")} disabled={busy || !email.includes("@")}>Send to one reviewer</Button>
+            </>
           ) : (
             <>
-              <span className="text-sm">Invite {preview} reviewer(s) who haven't signed in yet (password link, deadline, guide)?</span>
+              <span className="text-sm">Invite {preview} reviewer(s) {label} (password link, deadline, guide)?</span>
               <Button onClick={() => call(false)} disabled={busy || preview === 0}>{busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Confirm and send</Button>
               <Button variant="outline" onClick={() => setPreview(null)} disabled={busy}>Cancel</Button>
             </>
