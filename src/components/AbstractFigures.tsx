@@ -3,10 +3,12 @@ import { ImageOff, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
+// Download through the authenticated client (access re-checked on every load) and
+// show a local in-memory link, so no shareable bearer URL is ever issued.
 const sign = async (path: string) => {
-  const { data, error } = await supabase.storage.from("abstracts").createSignedUrl(path, 3600);
-  if (error) console.error("Figure link failed", path, error.message);
-  return data?.signedUrl ?? null;
+  const { data, error } = await supabase.storage.from("abstracts").download(path);
+  if (error || !data) { console.error("Figure load failed"); return null; }
+  return URL.createObjectURL(data);
 };
 
 /** One figure: private short-lived link, re-signed once on load error, then a visible retry state. */
@@ -23,6 +25,7 @@ const Figure = ({ path, index }: { path: string; index: number }) => {
   }, [path]);
 
   useEffect(() => { load(); }, [load]);
+  useEffect(() => () => { if (url) URL.revokeObjectURL(url); }, [url]);
 
   const onError = () => {
     if (!retried) { setRetried(true); load(); }
