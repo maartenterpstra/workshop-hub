@@ -1,4 +1,5 @@
 import { Mail, Linkedin } from "lucide-react";
+import { Link } from "react-router-dom";
 import { siteConfig } from "@/data/siteConfig";
 import NewsletterSignup from "@/components/NewsletterSignup";
 
@@ -64,6 +65,9 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground mb-3">Get AIinRT news, deadlines and programme updates.</p>
             <NewsletterSignup compact />
           </div>
+        </div>
+        <div className="mt-8 pt-6 border-t text-sm text-muted-foreground">
+          <Link to="/privacy" className="text-primary hover:underline">Privacy policy</Link>
         </div>
       </div>
     </footer>

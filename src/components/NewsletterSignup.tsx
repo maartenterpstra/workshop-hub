@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { CheckCircle2, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +53,7 @@ const NewsletterSignup = ({ compact = false }: { compact?: boolean }) => {
         <Checkbox checked={consent} onCheckedChange={(v) => setConsent(v === true)} className="mt-0.5" />
         I agree to receive AIinRT news by email. I can unsubscribe at any time.
       </label>
+      <p className="text-xs text-muted-foreground">See our <Link to="/privacy" className="text-primary hover:underline">Privacy policy</Link>.</p>
       {error && <p className="text-xs text-destructive">{error}</p>}
     </form>
   );

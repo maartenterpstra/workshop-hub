@@ -72,6 +72,11 @@ const meta: Record<
     description:
       "How to reach the AIinRT2027 venue in Utrecht Science Park: public transport to the PMC stop, parking, airport connections and suggested hotels.",
   },
+  "/privacy": {
+    title: "Privacy policy — AIinRT2027",
+    description:
+      "How AIinRT2027 handles personal data of authors, reviewers, newsletter subscribers and website visitors, and how to exercise your rights.",
+  },
   "/reviewers": {
     title: "Reviewers — AIinRT2027",
     description:

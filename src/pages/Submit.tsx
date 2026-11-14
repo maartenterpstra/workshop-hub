@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -564,6 +564,9 @@ const Submit = () => {
             <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{editing ? "Saving…" : "Submitting…"}</>
           ) : editing ? "Save changes" : "Submit abstract"}
         </Button>
+        <p className="text-xs text-muted-foreground text-center">
+          See our <Link to="/privacy" className="text-primary hover:underline">Privacy policy</Link> for how we handle submissions.
+        </p>
       </form>
     </div>
   );

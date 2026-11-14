@@ -101,6 +101,9 @@ const Signup = () => {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account…" : "Create account"}
             </Button>
+            <p className="text-xs text-muted-foreground text-center">
+              See our <Link to="/privacy" className="text-primary hover:underline">Privacy policy</Link> for how we use your data.
+            </p>
             <p className="text-sm text-muted-foreground text-center">
               Already have an account?{" "}
               <Link to="/login" className="text-primary hover:underline">
