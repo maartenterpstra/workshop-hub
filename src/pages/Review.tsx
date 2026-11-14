@@ -72,6 +72,7 @@ const scoreFields: { key: keyof ReviewRow; label: string }[] = [
 ];
 
 import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
+import PdfViewerDialog from "@/components/PdfViewerDialog";
 
 const Review = () => {
   const { user } = useAuth();
@@ -132,23 +133,8 @@ const Review = () => {
     })();
   }, [user, submissionClosed, debug]);
 
-  const openAbstractPdf = async (filePath: string) => {
-    const popup = window.open("about:blank", "_blank");
-    if (popup) popup.opener = null;
-
-    const { data, error } = await supabase.storage
-      .from("abstracts")
-      .createSignedUrl(filePath, 30);
-
-    if (error || !data?.signedUrl) {
-      popup?.close();
-      toast.error("The abstract PDF could not be opened.");
-      return;
-    }
-
-    if (popup) popup.location.replace(data.signedUrl);
-    else window.open(data.signedUrl, "_blank", "noopener,noreferrer");
-  };
+  const [pdf, setPdf] = useState<{ path: string; title: string } | null>(null);
+  const openAbstractPdf = (filePath: string, title: string) => setPdf({ path: filePath, title });
 
   const setField = (aid: string, patch: Partial<ReviewRow>) =>
     setDrafts((prev) => ({ ...prev, [aid]: { ...prev[aid], ...patch } }));
@@ -297,7 +283,7 @@ const Review = () => {
                     type="button"
                     variant="link"
                     className="ml-auto h-auto p-0"
-                    onClick={() => openAbstractPdf(a.abstract.file_path!)}
+                    onClick={() => openAbstractPdf(a.abstract.file_path!, a.abstract.title)}
                   >
                     Open securely
                   </Button>
@@ -374,6 +360,7 @@ const Review = () => {
           </Card>
         );
       })}
+      <PdfViewerDialog path={pdf?.path ?? null} title={pdf?.title} onClose={() => setPdf(null)} />
     </div>
   );
 };

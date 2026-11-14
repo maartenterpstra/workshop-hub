@@ -230,7 +230,7 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
                         <div key={x.abstractId} className="flex items-center gap-2 py-1 text-sm border-t border-border first:border-0">
                           <span className={`font-mono text-xs w-20 shrink-0 ${x.overCapacity ? "text-destructive font-semibold" : "text-muted-foreground"}`}>{x.startTime ? `${x.startTime}–${x.endTime}` : "over capacity"}</span>
                           <span className="min-w-0 flex-1 truncate" title={byId.get(x.abstractId)?.title}>{byId.get(x.abstractId)?.title}</span>
-                          <span className="text-xs font-semibold">{byId.get(x.abstractId)?.avgScore?.toFixed(1) ?? "—"}</span>
+                          <span className="text-xs font-semibold">{byId.get(x.abstractId)?.avgScore?.toFixed(2) ?? "—"}</span>
                           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => shift(x, -1)} aria-label="Move up"><ArrowUp className="h-3 w-3" /></Button>
                           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => shift(x, 1)} aria-label="Move down"><ArrowDown className="h-3 w-3" /></Button>
                           <select className={`${selectCls} h-7 text-xs`} value={x.sessionId} onChange={(e) => move(x.abstractId, { sessionId: e.target.value })} aria-label="Session">

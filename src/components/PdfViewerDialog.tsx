@@ -1,0 +1,45 @@
+import { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Download, ExternalLink, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+/** Opens a private abstract PDF in-page via the signed-in user's own access (no shareable link). */
+const PdfViewerDialog = ({ path, title, onClose }: { path: string | null; title?: string; onClose: () => void }) => {
+  const [url, setUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!path) return;
+    let objectUrl: string | null = null;
+    let cancelled = false;
+    setUrl(null); setError(null);
+    supabase.storage.from("abstracts").download(path).then(({ data, error }) => {
+      if (cancelled) return;
+      if (error || !data) { setError("The PDF could not be loaded. Please refresh the page and try again, or contact the organizers."); return; }
+      objectUrl = URL.createObjectURL(new Blob([data], { type: "application/pdf" }));
+      setUrl(objectUrl);
+    });
+    return () => { cancelled = true; if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [path]);
+
+  return (
+    <Dialog open={!!path} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-5xl w-[95vw] h-[90vh] flex flex-col">
+        <DialogHeader><DialogTitle className="pr-8">{title ?? "Abstract PDF"}</DialogTitle></DialogHeader>
+        {url && (
+          <div className="flex gap-2">
+            <Button asChild size="sm" variant="outline"><a href={url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /> Open in new tab</a></Button>
+            <Button asChild size="sm" variant="outline"><a href={url} download="abstract.pdf"><Download className="h-4 w-4" /> Download</a></Button>
+          </div>
+        )}
+        <div className="flex-1 min-h-0 rounded-md border bg-muted">
+          {error ? <p className="p-4 text-sm text-destructive">{error}</p>
+            : url ? <iframe src={url} title={title ?? "Abstract PDF"} className="w-full h-full rounded-md" />
+            : <div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+export default PdfViewerDialog;

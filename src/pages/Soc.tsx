@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { exportAbstractsExcel } from "@/lib/excelExport";
 import AbstractFigures from "@/components/AbstractFigures";
 import SocScoreTable from "@/components/SocScoreTable";
+import PdfViewerDialog from "@/components/PdfViewerDialog";
+import { reviewAverage, totalAverage } from "@/lib/scoring";
 import SocDecisionsWorkflow from "@/components/SocDecisionsWorkflow";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -52,6 +54,7 @@ const Soc = () => {
   const [sortKey, setSortKey] = useState<SortKey>("avgScore");
   const [asc, setAsc] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [pdf, setPdf] = useState<{ path: string; title: string } | null>(null);
   const doExport = async () => {
     setExporting(true);
     try { const n = await exportAbstractsExcel(); toast.success(`Exported ${n} abstracts.`); }
@@ -75,8 +78,7 @@ const Soc = () => {
           const reviews: ReviewRow[] = (a.assignments ?? []).flatMap((asn: any) =>
             (asn.reviews ?? []).map((r: any) => ({ ...r, assignment: { reviewer_id: asn.reviewer_id } }))
           );
-          const allScores = reviews.flatMap((r) => scoreKeys.map((k) => r[k]).filter((n): n is number => n != null));
-          const avg = allScores.length ? allScores.reduce((s, n) => s + n, 0) / allScores.length : null;
+          const avg = totalAverage(reviews as any);
 
           const sortedAuthors = [...(a.authors ?? [])].sort((x, y) => x.author_order - y.author_order);
           const firstAuthor = sortedAuthors[0]?.name ?? "";
@@ -178,14 +180,10 @@ const Soc = () => {
           <CardContent className="space-y-4">
             <SocScoreTable reviews={a.reviews} />
             {a.fileUrl && (
-              <a href="#" onClick={async (e) => {
-                e.preventDefault();
-                const win = window.open("", "_blank");
-                const { data: signed } = await supabase.storage.from("abstracts").createSignedUrl(a.fileUrl!, 60);
-                if (win && signed?.signedUrl) win.location.href = signed.signedUrl; else win?.close();
-              }} className="inline-flex items-center gap-1 text-sm text-primary underline">
+              <button type="button" onClick={() => setPdf({ path: a.fileUrl!, title: a.title })}
+                className="inline-flex items-center gap-1 text-sm text-primary underline">
                 <FileText className="h-4 w-4" /> Open PDF
-              </a>
+              </button>
             )}
 
             <AbstractFigures paths={a.figure_paths} />
@@ -207,8 +205,7 @@ const Soc = () => {
               {a.reviews.length === 0 && <div className="text-sm text-muted-foreground">No reviews submitted.</div>}
               <div className="space-y-2">
                 {a.reviews.map((r) => {
-                  const scores = scoreKeys.map((k) => r[k]).filter((n): n is number => n != null);
-                  const avg = scores.length ? scores.reduce((s, n) => s + n, 0) / scores.length : null;
+                  const avg = reviewAverage(r as any);
                   return (
                     <div key={r.id} className="border rounded-md p-3 text-sm space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -233,6 +230,7 @@ const Soc = () => {
           </CardContent>
         </Card>
       ))}
+      <PdfViewerDialog path={pdf?.path ?? null} title={pdf?.title} onClose={() => setPdf(null)} />
     </div>
   );
 };

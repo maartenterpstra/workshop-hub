@@ -75,7 +75,7 @@ export async function exportAbstractsExcel() {
     });
     const t = sum.getCell(row, firstAvg + crit.length);
     if (rg) {
-      const r = `Reviews!${colL(revFirstScore)}${rg[0]}:${colL(revLastScore)}${rg[1]}`;
+      const r = `Reviews!${colL(revLastScore + 1)}${rg[0]}:${colL(revLastScore + 1)}${rg[1]}`;
       t.value = { formula: `IF(COUNT(${r})=0,"",AVERAGE(${r}))` };
     }
     t.numFmt = "0.00";
