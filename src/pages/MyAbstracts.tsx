@@ -1,3 +1,4 @@
+import { formatAbstractNumber } from "@/lib/abstractNumber";
 import ReviewFeedback from "@/components/ReviewFeedback";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -18,6 +19,7 @@ import { formatAmsterdam } from "@/lib/formatDate";
 interface AbstractSummary {
   id: string;
   title: string;
+  abstract_number: number | null;
   status: string;
   submitted_at: string;
   updated_at: string;
@@ -66,7 +68,7 @@ const MyAbstracts = () => {
     let active = true;
     supabase
       .from("abstracts")
-      .select("id, title, status, submitted_at, updated_at, figure_paths, topic:topics(name)")
+      .select("id, abstract_number, title, status, submitted_at, updated_at, figure_paths, topic:topics(name)")
       .eq("submitted_by", user.id)
       .order("updated_at", { ascending: false })
       .then(({ data, error }) => {
@@ -127,7 +129,7 @@ const MyAbstracts = () => {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase text-secondary">{abstract.topic?.name ?? "No topic"}</p>
-                <CardTitle className="mt-1">{abstract.title}</CardTitle>
+                <CardTitle className="mt-1"><span className="mr-2 font-mono text-sm text-muted-foreground">{formatAbstractNumber(abstract.abstract_number)}</span>{abstract.title}</CardTitle>
               </div>
               <Badge variant="outline">{abstract.status.replace(/_/g, " ")}</Badge>
             </div>

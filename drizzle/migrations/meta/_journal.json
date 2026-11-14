@@ -85,6 +85,13 @@
       "when": 1794637062649,
       "tag": "0011_review_feedback_and_reviewer_status",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1794699156466,
+      "tag": "0012_abstract_numbers",
+      "breakpoints": true
     }
   ]
 }

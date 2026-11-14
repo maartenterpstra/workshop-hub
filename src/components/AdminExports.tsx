@@ -1,3 +1,4 @@
+import { formatAbstractNumber } from "@/lib/abstractNumber";
 import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +25,7 @@ const AdminExports = () => {
     try {
       const [{ data: abstracts, error: aErr }, { data: profiles, error: pErr }] = await Promise.all([
         supabase.from("abstracts").select(
-          `id, title, status, topic:topics(name),
+          `id, abstract_number, title, status, topic:topics(name),
            assignments:review_assignments(id, reviewer_id, status,
              reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, feedback_value, feedback_improve, feedback_tips, comments_for_authors, comments_for_soc, submitted_at))`,
         ).neq("id", DEMO_ABSTRACT_ID),
@@ -42,7 +43,7 @@ const AdminExports = () => {
           const reviews = asn.reviews ?? [];
           if (reviews.length === 0) {
             rows.push([
-              a.title,
+              `${formatAbstractNumber(a.abstract_number)} · ${a.title}`,
               a.topic?.name ?? "",
               a.status,
               reviewer?.full_name ?? "",
@@ -60,7 +61,7 @@ const AdminExports = () => {
               ? (scores.reduce((s: number, n: number) => s + n, 0) / scores.length).toFixed(2)
               : "";
             rows.push([
-              a.title,
+              `${formatAbstractNumber(a.abstract_number)} · ${a.title}`,
               a.topic?.name ?? "",
               a.status,
               reviewer?.full_name ?? "",
@@ -122,7 +123,7 @@ const AdminExports = () => {
         supabase
           .from("abstracts")
           .select(
-            `id, title, status, submitted_by, submitted_at, topic:topics(name),
+            `id, abstract_number, title, status, submitted_by, submitted_at, topic:topics(name),
              authors:abstract_authors(name, affiliation, email, is_presenting, author_order)`,
           )
           .neq("id", DEMO_ABSTRACT_ID)
@@ -142,7 +143,7 @@ const AdminExports = () => {
         );
         if (authors.length === 0) {
           rows.push([
-            a.title,
+            `${formatAbstractNumber(a.abstract_number)} · ${a.title}`,
             a.topic?.name ?? "",
             a.status,
             submitter?.email ?? "",
@@ -154,7 +155,7 @@ const AdminExports = () => {
         }
         for (const au of authors as any[]) {
           rows.push([
-            a.title,
+            `${formatAbstractNumber(a.abstract_number)} · ${a.title}`,
             a.topic?.name ?? "",
             a.status,
             submitter?.email ?? "",

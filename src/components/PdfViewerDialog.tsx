@@ -3,9 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { stripPdfMetadata } from "@/lib/pdfAnonymize";
 
 /** Opens a private abstract PDF in-page via the signed-in user's own access (no shareable link). */
-const PdfViewerDialog = ({ path, title, onClose }: { path: string | null; title?: string; onClose: () => void }) => {
+const PdfViewerDialog = ({ path, title, number, onClose }: { path: string | null; title?: string; number?: string; onClose: () => void }) => {
   const [url, setUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,23 +15,25 @@ const PdfViewerDialog = ({ path, title, onClose }: { path: string | null; title?
     let objectUrl: string | null = null;
     let cancelled = false;
     setUrl(null); setError(null);
-    supabase.storage.from("abstracts").download(path).then(({ data, error }) => {
+    supabase.storage.from("abstracts").download(path).then(async ({ data, error }) => {
       if (cancelled) return;
       if (error || !data) { setError("The PDF could not be loaded. Please refresh the page and try again, or contact the organizers."); return; }
-      objectUrl = URL.createObjectURL(new Blob([data], { type: "application/pdf" }));
+      const clean = await stripPdfMetadata(await data.arrayBuffer(), number ?? "Abstract");
+      if (cancelled) return;
+      objectUrl = URL.createObjectURL(clean);
       setUrl(objectUrl);
     });
     return () => { cancelled = true; if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [path]);
+  }, [path, number]);
 
   return (
     <Dialog open={!!path} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-5xl w-[95vw] h-[90vh] flex flex-col">
-        <DialogHeader><DialogTitle className="pr-8">{title ?? "Abstract PDF"}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle className="pr-8">{number ? `${number} · ` : ""}{title ?? "Abstract PDF"}</DialogTitle></DialogHeader>
         {url && (
           <div className="flex gap-2">
             <Button asChild size="sm" variant="outline"><a href={url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /> Open in new tab</a></Button>
-            <Button asChild size="sm" variant="outline"><a href={url} download="abstract.pdf"><Download className="h-4 w-4" /> Download</a></Button>
+            <Button asChild size="sm" variant="outline"><a href={url} download={`${number ?? "abstract"}.pdf`}><Download className="h-4 w-4" /> Download</a></Button>
           </div>
         )}
         <div className="flex-1 min-h-0 rounded-md border bg-muted">

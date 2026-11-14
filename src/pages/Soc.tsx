@@ -9,6 +9,7 @@ import { exportAbstractsExcel } from "@/lib/excelExport";
 import AbstractFigures from "@/components/AbstractFigures";
 import SocScoreTable from "@/components/SocScoreTable";
 import PdfViewerDialog from "@/components/PdfViewerDialog";
+import { formatAbstractNumber } from "@/lib/abstractNumber";
 import { reviewAverage, totalAverage } from "@/lib/scoring";
 import SocDecisionsWorkflow from "@/components/SocDecisionsWorkflow";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,8 @@ interface AbstractRow {
   title: string;
   status: string;
   file_path: string | null;
+  abstract_number: number | null;
+  pdf_anon_checked_at: string | null;
   figure_paths: string[] | null;
   background: string | null;
   methods: string | null;
@@ -54,7 +57,7 @@ const Soc = () => {
   const [sortKey, setSortKey] = useState<SortKey>("avgScore");
   const [asc, setAsc] = useState(false);
   const [exporting, setExporting] = useState(false);
-  const [pdf, setPdf] = useState<{ path: string; title: string } | null>(null);
+  const [pdf, setPdf] = useState<{ path: string; title: string; number?: string } | null>(null);
   const doExport = async () => {
     setExporting(true);
     try { const n = await exportAbstractsExcel(); toast.success(`Exported ${n} abstracts.`); }
@@ -67,7 +70,7 @@ const Soc = () => {
       const { data } = await supabase
         .from("abstracts")
         .select(`
-          id, title, status, file_path, figure_paths, background, methods, results, conclusion,
+          id, abstract_number, pdf_anon_checked_at, title, status, file_path, figure_paths, background, methods, results, conclusion,
           topic:topics(name),
           authors:abstract_authors(name, affiliation, email, is_presenting, author_order),
           assignments:review_assignments(id, reviewer_id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, comments_for_authors, comments_for_soc))
@@ -91,6 +94,8 @@ const Soc = () => {
           return {
             id: a.id,
             title: a.title,
+            abstract_number: a.abstract_number,
+            pdf_anon_checked_at: a.pdf_anon_checked_at,
             status: a.status,
             file_path: a.file_path,
             figure_paths: a.figure_paths,
@@ -161,7 +166,7 @@ const Soc = () => {
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <CardTitle>{a.title}</CardTitle>
+                  <CardTitle><span className="mr-2 font-mono text-sm text-muted-foreground">{formatAbstractNumber(a.abstract_number)}</span>{a.title}</CardTitle>
                   <Badge variant="secondary">{a.topic?.name ?? "No session"}</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -180,10 +185,22 @@ const Soc = () => {
           <CardContent className="space-y-4">
             <SocScoreTable reviews={a.reviews} />
             {a.fileUrl && (
-              <button type="button" onClick={() => setPdf({ path: a.fileUrl!, title: a.title })}
+              <button type="button" onClick={() => setPdf({ path: a.fileUrl!, title: a.title, number: formatAbstractNumber(a.abstract_number) })}
                 className="inline-flex items-center gap-1 text-sm text-primary underline">
                 <FileText className="h-4 w-4" /> Open PDF
               </button>
+            )}
+            {a.fileUrl && (
+              <label className="ml-4 inline-flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={!!a.pdf_anon_checked_at}
+                  onChange={async (e) => {
+                    const val = e.target.checked ? new Date().toISOString() : null;
+                    const { error } = await supabase.from("abstracts").update({ pdf_anon_checked_at: val }).eq("id", a.id);
+                    if (!error) a.pdf_anon_checked_at = val;
+                    e.target.checked = !!a.pdf_anon_checked_at;
+                  }} />
+                PDF anonymity checked (no author names)
+              </label>
             )}
 
             <AbstractFigures paths={a.figure_paths} />
@@ -230,7 +247,7 @@ const Soc = () => {
           </CardContent>
         </Card>
       ))}
-      <PdfViewerDialog path={pdf?.path ?? null} title={pdf?.title} onClose={() => setPdf(null)} />
+      <PdfViewerDialog path={pdf?.path ?? null} title={pdf?.title} number={pdf?.number} onClose={() => setPdf(null)} />
     </div>
   );
 };

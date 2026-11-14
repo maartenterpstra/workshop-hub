@@ -1,3 +1,4 @@
+import { formatAbstractNumber } from "@/lib/abstractNumber";
 import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 import ExcelJS from "exceljs";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,7 +26,7 @@ const styleHeader = (ws: ExcelJS.Worksheet) => {
 
 export async function exportAbstractsExcel() {
   const { data, error } = await supabase.from("abstracts").select(
-    `id, title, status, topic:topics(name),
+    `id, abstract_number, title, status, topic:topics(name),
      authors:abstract_authors(name, email, is_presenting, author_order),
      assignments:review_assignments(id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, feedback_value, feedback_improve, feedback_tips, comments_for_authors, comments_for_soc, submitted_at))`,
   ).neq("id", DEMO_ABSTRACT_ID);
@@ -48,7 +49,7 @@ export async function exportAbstractsExcel() {
     const reviews = (a.assignments ?? []).flatMap((x: any) => x.reviews ?? []);
     const start = rr;
     reviews.forEach((r: any, i: number) => {
-      rev.addRow([a.id, a.topic?.name ?? "", a.title, i + 1, ...crit.map(([k]) => r[k] ?? null), null, r.recommendation ?? "", r.feedback_value ?? r.comments_for_authors ?? "", r.feedback_improve ?? "", r.feedback_tips ?? "", r.comments_for_soc ?? "", r.submitted_at ?? ""]);
+      rev.addRow([a.id, a.topic?.name ?? "", `${formatAbstractNumber(a.abstract_number)} · ${a.title}`, i + 1, ...crit.map(([k]) => r[k] ?? null), null, r.recommendation ?? "", r.feedback_value ?? r.comments_for_authors ?? "", r.feedback_improve ?? "", r.feedback_tips ?? "", r.comments_for_soc ?? "", r.submitted_at ?? ""]);
       const range = `${colL(revFirstScore)}${rr}:${colL(revLastScore)}${rr}`;
       rev.getCell(rr, revLastScore + 1).value = { formula: `IF(COUNT(${range})=0,"",AVERAGE(${range}))` };
       rr++;
@@ -64,7 +65,7 @@ export async function exportAbstractsExcel() {
     const presenting = authors.find((x: any) => x.is_presenting)?.name ?? "";
     const emails = authors.map((x: any) => x.email).filter(Boolean).join("; ");
     const rg = revRange[a.id];
-    sum.addRow([a.topic?.name ?? "", a.title, authors[0]?.name ?? "", presenting, emails, a.status.replace(/_/g, " "), rg ? rg[1] - rg[0] + 1 : 0]);
+    sum.addRow([a.topic?.name ?? "", `${formatAbstractNumber(a.abstract_number)} · ${a.title}`, authors[0]?.name ?? "", presenting, emails, a.status.replace(/_/g, " "), rg ? rg[1] - rg[0] + 1 : 0]);
     crit.forEach((_, j) => {
       const c = sum.getCell(row, firstAvg + j);
       if (rg) {
@@ -91,7 +92,7 @@ export async function exportAbstractsExcel() {
   const dMap = new Map((dRows ?? []).map((d: any) => [d.abstract_id, d]));
   for (const a of abstracts) {
     const d: any = dMap.get(a.id);
-    disc.addRow([a.topic?.name ?? "", a.title, d ? (d.prior_submission ? "Yes" : "No") : "", d?.prior_venue ?? "", d?.prior_status ?? "", d?.funding_coi ?? "", d?.ai_use ?? ""]);
+    disc.addRow([a.topic?.name ?? "", `${formatAbstractNumber(a.abstract_number)} · ${a.title}`, d ? (d.prior_submission ? "Yes" : "No") : "", d?.prior_venue ?? "", d?.prior_status ?? "", d?.funding_coi ?? "", d?.ai_use ?? ""]);
   }
   [18, 50, 12, 30, 30, 40, 40].forEach((w, i) => (disc.getColumn(i + 1).width = w));
   styleHeader(sum);

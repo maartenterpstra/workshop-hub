@@ -157,12 +157,14 @@ export type Database = {
       }
       abstracts: {
         Row: {
+          abstract_number: number | null
           background: string | null
           conclusion: string | null
           figure_paths: string[] | null
           file_path: string | null
           id: string
           methods: string | null
+          pdf_anon_checked_at: string | null
           results: string | null
           reviewers_confirmed_at: string | null
           reviewers_confirmed_by: string | null
@@ -175,12 +177,14 @@ export type Database = {
           word_count: number | null
         }
         Insert: {
+          abstract_number?: number | null
           background?: string | null
           conclusion?: string | null
           figure_paths?: string[] | null
           file_path?: string | null
           id?: string
           methods?: string | null
+          pdf_anon_checked_at?: string | null
           results?: string | null
           reviewers_confirmed_at?: string | null
           reviewers_confirmed_by?: string | null
@@ -193,12 +197,14 @@ export type Database = {
           word_count?: number | null
         }
         Update: {
+          abstract_number?: number | null
           background?: string | null
           conclusion?: string | null
           figure_paths?: string[] | null
           file_path?: string | null
           id?: string
           methods?: string | null
+          pdf_anon_checked_at?: string | null
           results?: string | null
           reviewers_confirmed_at?: string | null
           reviewers_confirmed_by?: string | null

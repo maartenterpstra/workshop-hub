@@ -77,6 +77,7 @@ const Submit = () => {
   const [existingFigurePaths, setExistingFigurePaths] = useState<string[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [anonConfirmed, setAnonConfirmed] = useState(false);
   const [loadingAbstract, setLoadingAbstract] = useState(editing);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [priorSubmission, setPriorSubmission] = useState(false);
@@ -556,10 +557,14 @@ const Submit = () => {
               <p className="font-medium text-foreground">Before submitting, check double-blinding:</p>
               <p>No names, affiliations, logos or watermarks in PDF/figures; cite own work in third person; anonymise links and in-house tool names; remove file metadata.</p>
             </div>
+            <label className="flex items-start gap-2 text-sm">
+              <input type="checkbox" className="mt-1" required checked={anonConfirmed} onChange={(e) => setAnonConfirmed(e.target.checked)} />
+              <span>My PDF contains no author names, affiliations or acknowledgements. *</span>
+            </label>
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" className="w-full" disabled={submitting || overLimit}>
+        <Button type="submit" size="lg" className="w-full" disabled={submitting || overLimit || !anonConfirmed}>
           {submitting ? (
             <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{editing ? "Saving…" : "Submitting…"}</>
           ) : editing ? "Save changes" : "Submit abstract"}

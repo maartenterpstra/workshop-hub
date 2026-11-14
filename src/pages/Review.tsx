@@ -22,6 +22,7 @@ interface Assignment {
     results: string | null;
     conclusion: string | null;
     file_path: string | null;
+    abstract_number: number | null;
     figure_paths: string[] | null;
     topic: { name: string } | null;
   };
@@ -73,6 +74,7 @@ const scoreFields: { key: keyof ReviewRow; label: string }[] = [
 
 import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 import PdfViewerDialog from "@/components/PdfViewerDialog";
+import { formatAbstractNumber } from "@/lib/abstractNumber";
 
 const Review = () => {
   const { user } = useAuth();
@@ -91,7 +93,7 @@ const Review = () => {
     (async () => {
       const { data: assigns } = await supabase
         .from("review_assignments")
-        .select(`id, abstract:abstracts(id, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics(name))`)
+        .select(`id, abstract:abstracts(id, abstract_number, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics(name))`)
         .eq("reviewer_id", user.id);
 
       const rows = ((assigns ?? []) as any[]).filter((a) => !previewOnly || a.abstract?.id === DEMO_ABSTRACT_ID)
@@ -133,8 +135,8 @@ const Review = () => {
     })();
   }, [user, submissionClosed, debug]);
 
-  const [pdf, setPdf] = useState<{ path: string; title: string } | null>(null);
-  const openAbstractPdf = (filePath: string, title: string) => setPdf({ path: filePath, title });
+  const [pdf, setPdf] = useState<{ path: string; title: string; number?: string } | null>(null);
+  const openAbstractPdf = (filePath: string, title: string, number?: string) => setPdf({ path: filePath, title, number });
 
   const setField = (aid: string, patch: Partial<ReviewRow>) =>
     setDrafts((prev) => ({ ...prev, [aid]: { ...prev[aid], ...patch } }));
@@ -250,7 +252,7 @@ const Review = () => {
             const done = !!drafts[a.id]?.id;
             return (
               <Button key={a.id} role="tab" aria-selected={active} size="sm" variant={active ? "default" : "outline"} onClick={() => setActiveId(a.id)} className="max-w-xs">
-                <span className="truncate">{isDemo(a) ? "Example" : `#${i + 1}`} · {a.abstract.title}</span>
+                <span className="truncate">{formatAbstractNumber(a.abstract.abstract_number, a.abstract.id)} · {a.abstract.title}</span>
                 <span className="ml-2 text-xs opacity-80">{isDemo(a) ? "practice" : done ? "submitted" : "to do"}</span>
               </Button>
             );
@@ -267,7 +269,7 @@ const Review = () => {
               <div className="text-xs uppercase tracking-wide text-secondary font-semibold">
                 {a.abstract.topic?.name ?? "—"}
               </div>
-              <CardTitle>{a.abstract.title}</CardTitle>
+              <CardTitle><span className="mr-2 font-mono text-sm text-muted-foreground">{formatAbstractNumber(a.abstract.abstract_number, a.abstract.id)}</span>{a.abstract.title}</CardTitle>
               <CardDescription>Assignment {a.id.slice(0, 8)}</CardDescription>
               {isDemo(a) && (
                 <p className="mt-2 rounded-md border border-accent/40 bg-accent/10 p-3 text-sm text-foreground">
@@ -283,7 +285,7 @@ const Review = () => {
                     type="button"
                     variant="link"
                     className="ml-auto h-auto p-0"
-                    onClick={() => openAbstractPdf(a.abstract.file_path!, a.abstract.title)}
+                    onClick={() => openAbstractPdf(a.abstract.file_path!, a.abstract.title, formatAbstractNumber(a.abstract.abstract_number, a.abstract.id))}
                   >
                     Open securely
                   </Button>
@@ -360,7 +362,7 @@ const Review = () => {
           </Card>
         );
       })}
-      <PdfViewerDialog path={pdf?.path ?? null} title={pdf?.title} onClose={() => setPdf(null)} />
+      <PdfViewerDialog path={pdf?.path ?? null} title={pdf?.title} number={pdf?.number} onClose={() => setPdf(null)} />
     </div>
   );
 };

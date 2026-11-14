@@ -108,7 +108,7 @@ serve(async (req) => {
     const admin = createClient(supabaseUrl, serviceKey);
     const { data: abstract, error: abstractError } = await admin
       .from("abstracts")
-      .select("id, title, submitted_by, authors:abstract_authors(email)")
+      .select("id, abstract_number, title, submitted_by, authors:abstract_authors(email)")
       .eq("id", abstractId)
       .maybeSingle();
     if (abstractError || !abstract) {
@@ -190,7 +190,7 @@ serve(async (req) => {
     }
 
     const to = Array.from(recipients);
-    const subject = `AIinRT2027: abstract ${HEAD[event as Ev]} — ${abstract.title}`;
+    const subject = `AIinRT2027: abstract ${HEAD[event as Ev]} — AIinRT27-${String(abstract.abstract_number ?? 0).padStart(3, "0")} ${abstract.title}`;
     const html = buildHtml(abstract.title, event as Ev);
 
     // Send one email per recipient so each address is a direct "to:", not cc/bcc.
