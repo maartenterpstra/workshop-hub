@@ -99,6 +99,13 @@
       "when": 1794699695366,
       "tag": "0013_fix_guard_abstract_number",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1794832908977,
+      "tag": "0014_edit_authors_and_decline_review",
+      "breakpoints": true
     }
   ]
 }

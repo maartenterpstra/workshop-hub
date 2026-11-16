@@ -1,4 +1,5 @@
 import { formatAbstractNumber } from "@/lib/abstractNumber";
+import EditAuthorsDialog from "@/components/EditAuthorsDialog";
 import ReviewFeedback from "@/components/ReviewFeedback";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -153,6 +154,7 @@ const MyAbstracts = () => {
               Last saved {formatAmsterdam(new Date(abstract.updated_at))}
             </p>
             <div className="flex flex-wrap gap-2">
+              {abstract.status !== "withdrawn" && <EditAuthorsDialog abstractId={abstract.id} title={abstract.title} />}
               {!submissionOpen && abstract.status === "submitted" && revisionOpen(abstract.id) && (
                 <Button asChild size="sm">
                   <Link to={`/submit/${abstract.id}`}><FilePenLine />Revise abstract</Link>

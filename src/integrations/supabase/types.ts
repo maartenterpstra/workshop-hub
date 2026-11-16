@@ -374,6 +374,7 @@ export type Database = {
         Row: {
           abstract_id: string
           assigned_at: string
+          decline_reason: string | null
           id: string
           reviewer_id: string
           status: Database["public"]["Enums"]["assignment_status"]
@@ -381,6 +382,7 @@ export type Database = {
         Insert: {
           abstract_id: string
           assigned_at?: string
+          decline_reason?: string | null
           id?: string
           reviewer_id: string
           status?: Database["public"]["Enums"]["assignment_status"]
@@ -388,6 +390,7 @@ export type Database = {
         Update: {
           abstract_id?: string
           assigned_at?: string
+          decline_reason?: string | null
           id?: string
           reviewer_id?: string
           status?: Database["public"]["Enums"]["assignment_status"]
@@ -651,6 +654,19 @@ export type Database = {
       }
     }
     Functions: {
+      admin_declined_reviews: {
+        Args: never
+        Returns: {
+          abstract_id: string
+          abstract_number: number
+          active_reviewers: number
+          assignment_id: string
+          decline_reason: string
+          reviewer_email: string
+          reviewer_name: string
+          title: string
+        }[]
+      }
       admin_reviewer_status: {
         Args: never
         Returns: {
@@ -662,6 +678,10 @@ export type Database = {
           reviewed: number
           reviewer_id: string
         }[]
+      }
+      decline_review: {
+        Args: { _assignment_id: string; _reason?: string }
+        Returns: undefined
       }
       get_my_review_feedback: {
         Args: { _abstract_id: string }
@@ -683,6 +703,14 @@ export type Database = {
           start_time: string
           title: string
         }[]
+      }
+      reassign_review: {
+        Args: { _assignment_id: string; _reviewer_id?: string }
+        Returns: string
+      }
+      replace_abstract_authors: {
+        Args: { _abstract_id: string; _authors: Json }
+        Returns: undefined
       }
       withdraw_abstract: {
         Args: { _abstract_id: string; _restore?: boolean }

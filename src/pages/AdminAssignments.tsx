@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { reviewerImportRoster } from "@/data/reviewerImport";
 import AdminExports from "@/components/AdminExports";
 import AdminReviewerStatus from "@/components/AdminReviewerStatus";
+import AdminDeclinedReviews from "@/components/AdminDeclinedReviews";
 import AdminEmailAuthors from "@/components/AdminEmailAuthors";
 
 interface ReviewerInfo {
@@ -242,6 +243,7 @@ const AdminAssignments = () => {
       </div>
 
       <AdminReviewerStatus />
+      <AdminDeclinedReviews />
 
       <AdminExports />
 

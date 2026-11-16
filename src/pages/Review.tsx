@@ -93,10 +93,10 @@ const Review = () => {
     (async () => {
       const { data: assigns } = await supabase
         .from("review_assignments")
-        .select(`id, abstract:abstracts(id, abstract_number, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics(name))`)
+        .select(`id, status, abstract:abstracts(id, abstract_number, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics(name))`)
         .eq("reviewer_id", user.id);
 
-      const rows = ((assigns ?? []) as any[]).filter((a) => !previewOnly || a.abstract?.id === DEMO_ABSTRACT_ID)
+      const rows = ((assigns ?? []) as any[]).filter((a) => a.status !== "declined_coi").filter((a) => !previewOnly || a.abstract?.id === DEMO_ABSTRACT_ID)
         .sort((x, y) => Number(x.abstract?.id === DEMO_ABSTRACT_ID) - Number(y.abstract?.id === DEMO_ABSTRACT_ID));
       const enriched: Assignment[] = [];
       const nextDrafts: Record<string, ReviewRow> = {};
@@ -201,6 +201,16 @@ const Review = () => {
     }
   };
 
+  const declineReview = async (a: Assignment) => {
+    const reason = window.prompt("Decline this review? It will be passed to another reviewer.\nOptional reason (only visible to organisers), e.g. 'my own abstract' or 'conflict of interest':", "");
+    if (reason === null) return;
+    const { error } = await supabase.rpc("decline_review", { _assignment_id: a.id, _reason: reason });
+    if (error) { toast.error(error.message); return; }
+    setAssignments((xs) => xs.filter((x) => x.id !== a.id));
+    setActiveId(null);
+    toast.success("Review declined. The organisers will reassign it.");
+  };
+
   if (cfgLoading || loading) {
     return <div className="container py-16 text-center text-muted-foreground">Loading…</div>;
   }
@@ -238,6 +248,7 @@ const Review = () => {
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <p>Besides the five scores, please answer three short questions for the authors: <strong>Where is the value?</strong>, <strong>What could be done better to increase the impact?</strong> and <strong>Any tips?</strong></p>
           <p>Be specific, constructive and respectful — write as you would like to receive feedback. Never try to identify the authors, and don't reveal your own identity. Use "Confidential comments to chairs" for anything only the committee should see.</p>
+          <p>If you recognise an abstract as your own (e.g. submitted with another email) or have a conflict of interest, use <strong>Decline review</strong> — it will be passed to another reviewer.</p>
         </CardContent>
       </Card>
 
@@ -358,6 +369,11 @@ const Review = () => {
               <Button onClick={() => submitReview(a)} disabled={saving === a.id || !open}>
                 {saving === a.id ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving…</> : isDemo(a) ? "Try it (not saved)" : d.id ? "Update review" : "Submit review"}
               </Button>
+              {!isDemo(a) && !d.id && (
+                <Button variant="outline" className="ml-2" onClick={() => declineReview(a)}>
+                  Decline review (conflict of interest / my own abstract)
+                </Button>
+              )}
             </CardContent>
           </Card>
         );
