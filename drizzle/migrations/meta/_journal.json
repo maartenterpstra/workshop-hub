@@ -113,6 +113,13 @@
       "when": 1794833285608,
       "tag": "0015_protect_must_change_password",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1794833324647,
+      "tag": "0016_password_change_proof",
+      "breakpoints": true
     }
   ]
 }
