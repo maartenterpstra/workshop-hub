@@ -679,6 +679,7 @@ export type Database = {
           reviewer_id: string
         }[]
       }
+      complete_password_change: { Args: never; Returns: undefined }
       decline_review: {
         Args: { _assignment_id: string; _reason?: string }
         Returns: undefined

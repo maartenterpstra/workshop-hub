@@ -87,7 +87,7 @@ const SetPassword = () => {
       return;
     }
     if (user) {
-      await supabase.from("profiles").update({ must_change_password: false }).eq("id", user.id);
+      await supabase.rpc("complete_password_change");
     }
     await refreshProfile();
     setSaving(false);
