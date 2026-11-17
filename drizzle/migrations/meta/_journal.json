@@ -120,6 +120,13 @@
       "when": 1794833324647,
       "tag": "0016_password_change_proof",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794947645134,
+      "tag": "0017_declined_reviewers_lose_access",
+      "breakpoints": true
     }
   ]
 }
