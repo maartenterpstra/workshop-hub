@@ -79,7 +79,7 @@ const Submission = () => {
             </CardTitle>
             <CardDescription className="text-base">
               Use either the Word or LaTeX template — they define the required layout
-              (one A4 page, ~500 words, up to 2 display items, double-blind).
+              (max. two A4 pages — the second page for figures, tables and references — ~500 words, 1–2 display items, double-blind).
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
@@ -155,7 +155,7 @@ const Submission = () => {
                   <strong className="text-foreground">600 words</strong> as a small margin.
                 </li>
                  <li><strong className="text-foreground">1–2 display items are required</strong> (figures and/or tables combined).</li>
-                <li>Compiled PDF: A4, single page, using the provided template. No Word or LaTeX source is required.</li>
+                <li>Compiled PDF: max. two A4 pages using the provided template (second page for figures, tables and references). No Word or LaTeX source is required.</li>
                 <li>
                   <strong className="text-foreground">Double-blind:</strong> no author names, affiliations or
                   acknowledgements anywhere in the PDF. Author details are entered in the form only.

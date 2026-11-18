@@ -461,7 +461,7 @@ const Submit = () => {
           <CardHeader>
             <CardTitle>Abstract PDF *</CardTitle>
             <CardDescription>
-              Compiled from the provided Word or LaTeX template. One A4 page, double-blind
+              Compiled from the provided Word or LaTeX template. Max. two A4 pages, double-blind
               (no author names in the PDF). Max 20 MB.
             </CardDescription>
           </CardHeader>
