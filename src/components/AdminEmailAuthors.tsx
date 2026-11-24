@@ -73,13 +73,15 @@ const AdminEmailAuthors = ({ abstracts }: Props) => {
         body: { ...payload(), dryRun: true },
       });
       if (pErr) throw new Error(await errMsg(pErr));
-      const n = (preview as any).recipients as number;
+      const { recipients: n, emails: e, remaining } = preview as any;
       if (n === 0) return toast.info("No recipients found.");
-      if (!window.confirm(`Send this email to ${n} recipient${n === 1 ? "" : "s"}?`)) return;
+      const extra = e > remaining ? ` Only ${remaining} fit today's limit; the rest will be skipped.` : "";
+      if (!window.confirm(`Send ${e} email${e === 1 ? "" : "s"} (one per abstract) to ${n} recipient${n === 1 ? "" : "s"}? ${remaining} emails left today.${extra}`)) return;
       const { data, error } = await supabase.functions.invoke("send-author-email", { body: payload() });
       if (error) throw new Error(await errMsg(error));
-      const r = data as { sent: number; total: number };
-      if (r.sent === r.total) toast.success(`Sent to ${r.sent} recipients.`);
+      const r = data as { sent: number; total: number; skipped: number };
+      if (r.skipped) toast.warning(`Sent ${r.sent} emails. ${r.skipped} skipped because of the daily limit — send again tomorrow.`);
+      else if (r.sent === r.total) toast.success(`Sent ${r.sent} emails.`);
       else toast.warning(`Sent ${r.sent} of ${r.total}. See the log for failures.`);
       setSubject("");
       setBody("");

@@ -17,6 +17,7 @@ const AdminReviewerStatus = () => {
   const [failedCount, setFailedCount] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const [remaining, setRemaining] = useState<number | null>(null);
   const load = () => supabase.rpc("admin_reviewer_status").then(({ data, error }) => {
     if (error) toast.error("Reviewer status could not be loaded.");
     setRows((data as Row[]) ?? []);
@@ -31,8 +32,8 @@ const AdminReviewerStatus = () => {
     const { data, error } = await supabase.functions.invoke("invite-reviewers", { body: { dryRun, mode: m, email: m === "single" ? email : undefined } });
     setBusy(false);
     if (error || data?.error) { toast.error(data?.error ?? "Request failed."); return; }
-    if (dryRun) setPreview(data.count);
-    else { toast.success(`Sent ${data.sent} invitation(s)${data.failed ? `, ${data.failed} failed` : ""}.`); setPreview(null); load(); refreshFailed(); }
+    if (dryRun) { setPreview(data.count); setRemaining(data.remaining ?? null); }
+    else { toast.success(`Sent ${data.sent} invitation(s)${data.failed ? `, ${data.failed} failed` : ""}${data.skipped ? `, ${data.skipped} held back by the daily limit (send again tomorrow)` : ""}.`); setPreview(null); load(); refreshFailed(); }
   };
   const label = mode === "failed" ? "whose last invitation failed" : mode === "single" ? `(${email})` : "who haven't signed in and weren't invited in the last 24 hours";
 
@@ -58,7 +59,7 @@ const AdminReviewerStatus = () => {
             </>
           ) : (
             <>
-              <span className="text-sm">Invite {preview} reviewer(s) {label} (password link, deadline, guide)?</span>
+              <span className="text-sm">Invite {preview} reviewer(s) {label} (password link, deadline, guide)?{remaining !== null && ` ${remaining} emails left today${preview > remaining ? `; only ${remaining} will be sent now` : ""}.`}</span>
               <Button onClick={() => call(false)} disabled={busy || preview === 0}>{busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Confirm and send</Button>
               <Button variant="outline" onClick={() => setPreview(null)} disabled={busy}>Cancel</Button>
             </>

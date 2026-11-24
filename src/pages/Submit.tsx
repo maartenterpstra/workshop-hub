@@ -326,12 +326,14 @@ const Submit = () => {
       if (discErr) throw discErr;
 
       toast.success(editing ? "Abstract changes saved." : "Abstract successfully submitted!");
-      const { error: emailError } = await supabase.functions.invoke("send-confirmation-email", {
+      const { data: emailData, error: emailError } = await supabase.functions.invoke("send-confirmation-email", {
         body: { abstractId: abs.id, event: editing ? "updated" : "submitted" },
       });
       if (emailError) {
         console.error("Confirmation email failed:", emailError);
         toast.warning("Saved, but the confirmation email could not be sent.");
+      } else if (emailData?.skipped) {
+        toast.info("Saved. No new confirmation email was sent, because you already got one in the last 24 hours.");
       }
       navigate("/my-abstracts");
     } catch (err: any) {

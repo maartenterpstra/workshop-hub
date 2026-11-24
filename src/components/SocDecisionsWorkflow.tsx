@@ -136,7 +136,7 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
     setBusy(false);
     if (error) return toast.error(await errText(error));
     if (dryRun) setPreview(data);
-    else { setPreview(null); toast.success(`Sent ${data.sent} emails${data.failed ? `, ${data.failed} failed` : ""}.`); load(); }
+    else { setPreview(null); toast.success(`Sent ${data.sent} emails${data.failed ? `, ${data.failed} failed` : ""}${data.skipped ? `. ${data.skipped} abstracts held back by the daily limit — send again tomorrow` : ""}.`); load(); }
   };
 
   const unsent = active.filter((a) => decisions.get(a.id)?.confirmed_at && !decisions.get(a.id)?.emailed_at).length;
@@ -265,8 +265,9 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
       <AlertDialog open={Boolean(preview)} onOpenChange={(o) => !o && setPreview(null)}>
         <AlertDialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <AlertDialogHeader>
-            <AlertDialogTitle>Send {preview?.recipients} emails for {preview?.abstracts} abstracts?</AlertDialogTitle>
+            <AlertDialogTitle>Send {preview?.emails} emails ({preview?.recipients} recipients) for {preview?.abstracts} abstracts?</AlertDialogTitle>
             <AlertDialogDescription>
+              {preview?.remaining} emails left today{preview && preview.emails > preview.remaining ? " — some abstracts will be held back until tomorrow" : ""}. 
               {Object.entries(preview?.byKind ?? {}).map(([k, n]) => `${LABEL[k as Decision] ?? k}: ${n}`).join(" · ")}
             </AlertDialogDescription>
           </AlertDialogHeader>

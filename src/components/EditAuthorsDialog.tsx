@@ -36,7 +36,9 @@ const EditAuthorsDialog = ({ abstractId, title }: { abstractId: string; title: s
     if (error) { toast.error(error.message); return; }
     toast.success("Authors updated.");
     setOpen(false);
-    supabase.functions.invoke("send-confirmation-email", { body: { abstractId, event: "updated" } }).catch(() => {});
+    supabase.functions.invoke("send-confirmation-email", { body: { abstractId, event: "updated" } })
+      .then(({ data }) => { if (data?.skipped) toast.info("No new confirmation email was sent, because one went out in the last 24 hours."); })
+      .catch(() => {});
   };
 
   return (

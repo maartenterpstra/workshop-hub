@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { remainingBudget, sentLast24h } from "../_shared/emailBudget.ts";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 // Sender address on the verified aiinrt.org Resend domain.
@@ -189,6 +190,16 @@ serve(async (req) => {
       });
     }
 
+    const okJson = (b: unknown) => new Response(JSON.stringify(b), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    // Save on daily quota: at most one "updated"/"withdrawn"/"restored" notice per abstract per 24h.
+    if (event !== "submitted") {
+      const { count: recentCount } = await admin.from("email_log").select("id", { count: "exact", head: true })
+        .eq("abstract_id", abstract.id).eq("kind", "confirmation").eq("status", "sent").gte("sent_at", since);
+      if ((recentCount ?? 0) > 0) return okJson({ sent: 0, skipped: true, reason: "recent" });
+    }
+    if (remainingBudget(await sentLast24h(admin), "confirmation") < recipients.size) {
+      return okJson({ sent: 0, skipped: true, reason: "daily_limit" });
+    }
     const to = Array.from(recipients);
     const subject = `AIinRT2027: abstract ${HEAD[event as Ev]} — AIinRT27-${String(abstract.abstract_number ?? 0).padStart(3, "0")} ${abstract.title}`;
     const html = buildHtml(abstract.title, event as Ev);

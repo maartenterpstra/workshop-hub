@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { groupRecipients, remainingBudget, sentLast24h } from "../_shared/emailBudget.ts";
 
 const FROM_ADDRESS = "AIinRT2027 <abstracts@aiinrt.org>";
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
@@ -64,43 +65,40 @@ Deno.serve(async (req) => {
     const { data: abstracts, error: aErr } = await q;
     if (aErr) throw aErr;
 
-    // Build recipient list: one entry per (abstract, email).
-    const jobs: { abstractId: string; title: string; email: string }[] = [];
+    // One email per abstract with all its authors in "To".
+    const jobs: { abstractId: string; title: string; to: string[] }[] = [];
+    let recipients = 0;
     for (const a of (abstracts ?? []) as any[]) {
-      const set = new Set<string>();
       const { data: sub } = await admin.auth.admin.getUserById(a.submitted_by);
-      if (sub?.user?.email) set.add(sub.user.email.toLowerCase());
-      for (const au of a.authors ?? []) {
-        const e = (au?.email ?? "").trim().toLowerCase();
-        if (e && isEmail(e)) set.add(e);
+      for (const to of groupRecipients([sub?.user?.email, ...(a.authors ?? []).map((x: any) => x?.email)])) {
+        jobs.push({ abstractId: a.id, title: a.title, to }); recipients += to.length;
       }
-      for (const email of set) jobs.push({ abstractId: a.id, title: a.title, email });
     }
-    if (dryRun) return json({ abstracts: abstracts?.length ?? 0, recipients: jobs.length });
+    const remaining = remainingBudget(await sentLast24h(admin), "bulk");
+    if (dryRun) return json({ abstracts: abstracts?.length ?? 0, recipients, emails: jobs.length, remaining });
 
-    let sent = 0;
+    let sent = 0, skipped = 0;
+    let budget = remaining;
     for (const j of jobs) {
+      if (budget <= 0) { skipped++; continue; }
+      budget--;
       const safeTitle = String(j.title).replace(/[\r\n]+/g, " ").slice(0, 300);
       const subj = subject.replaceAll("{title}", safeTitle).slice(0, 300);
       const r = await fetch(`${GATEWAY_URL}/emails`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "X-Connection-Api-Key": RESEND_API_KEY,
-        },
-        body: JSON.stringify({ from: FROM_ADDRESS, to: [j.email], subject: subj, html: html(body.replaceAll("{title}", safeTitle)) }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${LOVABLE_API_KEY}`, "X-Connection-Api-Key": RESEND_API_KEY },
+        body: JSON.stringify({ from: FROM_ADDRESS, to: j.to, subject: subj, html: html(body.replaceAll("{title}", safeTitle)) }),
       });
       let error: string | null = null;
       if (r.ok) sent++;
-      else { error = `[${r.status}] ${(await r.text()).slice(0, 300)}`; console.error("Resend failed for a recipient", r.status); }
+      else { error = `[${r.status}] ${(await r.text()).slice(0, 300)}`; console.error("Resend failed", r.status); }
       await admin.from("email_log").insert({
-        sent_by: uid, abstract_id: j.abstractId, recipient_email: j.email, subject: subj,
+        sent_by: uid, abstract_id: j.abstractId, recipient_email: j.to.join("; "), subject: subj,
         kind: "manual", status: r.ok ? "sent" : "failed", error,
       });
       await new Promise((res) => setTimeout(res, 600));
     }
-    return json({ sent, total: jobs.length });
+    return json({ sent, total: jobs.length, skipped, remaining: budget });
   } catch (err) {
     console.error("send-author-email failed:", err);
     return json({ error: (err as Error).message }, 500);
@@ -166,35 +164,36 @@ async function sendDecisions(admin: any, uid: string, b: any, lovKey: string, re
     if (!a || a.status === "withdrawn") continue;
     const slot = slotMap.get(d.abstract_id) as any;
     const kind = d.decision;
-    const set = new Set<string>();
     const { data: sub } = await admin.auth.admin.getUserById(a.submitted_by);
-    if (sub?.user?.email) set.add(sub.user.email.toLowerCase());
-    for (const au of a.authors ?? []) { const e = (au?.email ?? "").trim().toLowerCase(); if (e && isEmail(e)) set.add(e); }
+    const groups = groupRecipients([sub?.user?.email, ...(a.authors ?? []).map((x: any) => x?.email)]);
     const { data: asg } = await admin.from("review_assignments").select("reviews(feedback_value, feedback_improve, feedback_tips, submitted_at)").eq("abstract_id", a.id);
     const feedback = (asg ?? []).flatMap((x: any) => x.reviews ?? []).filter((r: any) => r.feedback_value)
       .sort((x: any, y: any) => String(x.submitted_at).localeCompare(String(y.submitted_at)));
-    items.push({ d, a, kind, slot, recipients: [...set], mail: decisionEmail(kind, String(a.title).replace(/[\r\n]+/g, " "), slot, d.note, d.revision_due_at, feedback) });
+    items.push({ d, a, kind, slot, groups, recipients: groups.flat(), mail: decisionEmail(kind, String(a.title).replace(/[\r\n]+/g, " "), slot, d.note, d.revision_due_at, feedback) });
   }
 
   if (dryRun) {
     const byKind: Record<string, number> = {};
     const samples: Record<string, { subject: string; body: string }> = {};
     for (const it of items) { byKind[it.kind] = (byKind[it.kind] ?? 0) + 1; samples[it.kind] ??= it.mail; }
-    return json({ abstracts: items.length, recipients: items.reduce((n, it) => n + it.recipients.length, 0), byKind, samples });
+    return json({ abstracts: items.length, recipients: items.reduce((n, it) => n + it.recipients.length, 0), emails: items.reduce((n, it) => n + it.groups.length, 0), remaining: remainingBudget(await sentLast24h(admin), "bulk"), byKind, samples });
   }
 
-  let sent = 0, failed = 0;
+  let sent = 0, failed = 0, skipped = 0;
+  let budget = remainingBudget(await sentLast24h(admin), "bulk");
   for (const it of items) {
+    if (budget < it.groups.length) { skipped++; continue; }
+    budget -= it.groups.length;
     let ok = true;
-    for (const email of it.recipients) {
+    for (const to of it.groups as string[][]) {
       const r = await fetch(`${GATEWAY_URL}/emails`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${lovKey}`, "X-Connection-Api-Key": resendKey },
-        body: JSON.stringify({ from: FROM_ADDRESS, to: [email], subject: it.mail.subject, html: html(it.mail.body) }),
+        body: JSON.stringify({ from: FROM_ADDRESS, to, subject: it.mail.subject, html: html(it.mail.body) }),
       });
       let err: string | null = null;
       if (r.ok) sent++; else { ok = false; failed++; err = `[${r.status}] ${(await r.text()).slice(0, 300)}`; }
-      await admin.from("email_log").insert({ sent_by: uid, abstract_id: it.a.id, recipient_email: email, subject: it.mail.subject, kind: "decision", status: r.ok ? "sent" : "failed", error: err });
+      await admin.from("email_log").insert({ sent_by: uid, abstract_id: it.a.id, recipient_email: to.join("; "), subject: it.mail.subject, kind: "decision", status: r.ok ? "sent" : "failed", error: err });
       await new Promise((res) => setTimeout(res, 600));
     }
     if (ok && it.recipients.length) {
@@ -203,5 +202,5 @@ async function sendDecisions(admin: any, uid: string, b: any, lovKey: string, re
       await admin.from("abstracts").update({ status }).eq("id", it.a.id);
     }
   }
-  return json({ sent, failed, abstracts: items.length });
+  return json({ sent, failed, skipped, remaining: budget, abstracts: items.length });
 }

@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { remainingBudget, sentLast24h } from "../_shared/emailBudget.ts";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 const FROM_ADDRESS = "AIinRT2027 <abstracts@aiinrt.org>";
@@ -71,10 +72,14 @@ Deno.serve(async (req) => {
     if (mode === "single" && !targets.length) return json({ error: "No reviewer account with that email." }, 404);
     const failedCount = reviewers.filter((u) => !u.last_sign_in_at && last.get(u.email!.toLowerCase())?.status === "failed").length;
 
-    if (dryRun) return json({ count: targets.length, failedCount, subject: SUBJECT });
+    let budget = remainingBudget(await sentLast24h(admin), "bulk");
+    if (dryRun) return json({ count: targets.length, failedCount, subject: SUBJECT, remaining: budget });
 
     let sent = 0, failed = 0;
+    let skipped = 0;
     for (const u of targets) {
+      if (budget <= 0) { skipped++; continue; }
+      budget--;
       const email = u.email!.toLowerCase();
       let error: string | null = null;
       const { data: link, error: lErr } = await admin.auth.admin.generateLink({ type: "recovery", email, options: { redirectTo: "https://aiinrt.org/set-password" } });
@@ -92,7 +97,7 @@ Deno.serve(async (req) => {
       await admin.from("email_log").insert({ sent_by: uid, abstract_id: null, recipient_email: email, subject: SUBJECT, kind: "manual", status: error ? "failed" : "sent", error });
       await new Promise((res) => setTimeout(res, 600));
     }
-    return json({ sent, failed });
+    return json({ sent, failed, skipped, remaining: budget });
   } catch (e) {
     console.error(e);
     return json({ error: e instanceof Error ? e.message : "Unknown error" }, 500);
