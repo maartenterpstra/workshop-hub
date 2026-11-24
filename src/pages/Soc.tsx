@@ -1,3 +1,4 @@
+import SocSessionSummary from "@/components/SocSessionSummary";
 import { DEMO_ABSTRACT_ID } from "@/lib/demoAbstract";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -148,6 +149,8 @@ const Soc = () => {
           ))}
         </div>
       </div>
+
+      <SocSessionSummary abstracts={rows.map((a) => ({ topic: a.topic?.name ?? null, status: a.status }))} />
 
       {rows.length > 0 && (
         <SocDecisionsWorkflow abstracts={rows.map((a) => ({
