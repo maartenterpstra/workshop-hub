@@ -25,6 +25,7 @@ interface AbstractSummary {
   submitted_at: string;
   updated_at: string;
   figure_paths: string[] | null;
+  file_path: string | null;
   topic: { name: string } | null;
 }
 
@@ -69,7 +70,7 @@ const MyAbstracts = () => {
     let active = true;
     supabase
       .from("abstracts")
-      .select("id, abstract_number, title, status, submitted_at, updated_at, figure_paths, topic:topics(name)")
+      .select("id, abstract_number, title, status, submitted_at, updated_at, figure_paths, file_path, topic:topics(name)")
       .eq("submitted_by", user.id)
       .order("updated_at", { ascending: false })
       .then(({ data, error }) => {
@@ -133,6 +134,10 @@ const MyAbstracts = () => {
                 <CardTitle className="mt-1"><span className="mr-2 font-mono text-sm text-muted-foreground">{formatAbstractNumber(abstract.abstract_number)}</span>{abstract.title}</CardTitle>
               </div>
               <Badge variant="outline">{abstract.status.replace(/_/g, " ")}</Badge>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2 text-xs">
+              <Badge variant={abstract.file_path ? "secondary" : "destructive"}>{abstract.file_path ? "PDF ✓" : "No PDF"}</Badge>
+              <Badge variant={abstract.figure_paths?.length ? "secondary" : "destructive"}>{abstract.figure_paths?.length ? `${abstract.figure_paths.length} figure${abstract.figure_paths.length === 1 ? "" : "s"} ✓` : "No figures"}</Badge>
             </div>
           </CardHeader>
           {abstract.status === "submitted" && !(abstract.figure_paths?.length) && (

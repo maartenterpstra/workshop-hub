@@ -1,5 +1,7 @@
 import { stripPdfMetadata } from "@/lib/pdfAnonymize";
-import { formatAbstractNumber, pdfVersionFromPath, versionedPdfName } from "@/lib/abstractNumber";
+import { formatAbstractNumber, pdfVersionFromPath, versionedPdfName, fileNameFromPath } from "@/lib/abstractNumber";
+import PdfViewerDialog from "@/components/PdfViewerDialog";
+import AbstractFigures from "@/components/AbstractFigures";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { z } from "zod";
@@ -77,6 +79,7 @@ const Submit = () => {
   const [figures, setFigures] = useState<File[]>([]);
   const [existingFilePath, setExistingFilePath] = useState<string | null>(null);
   const [existingFigurePaths, setExistingFigurePaths] = useState<string[]>([]);
+  const [viewPdf, setViewPdf] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [anonConfirmed, setAnonConfirmed] = useState(false);
@@ -467,7 +470,17 @@ const Submit = () => {
               (no author names in the PDF). Max 20 MB.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            {editing && existingFilePath && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
+                <span className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <span><span className="font-semibold">Currently saved:</span> {fileNameFromPath(existingFilePath)}</span>
+                </span>
+                <Button type="button" variant="outline" size="sm" onClick={() => setViewPdf(true)}>View</Button>
+                <p className="w-full text-xs text-muted-foreground">Your PDF is saved. Upload a new PDF only if you want to replace it.</p>
+              </div>
+            )}
             <div
               onDrop={onDrop}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
@@ -531,9 +544,10 @@ const Submit = () => {
               </ul>
             )}
             {editing && figures.length === 0 && existingFigurePaths.length > 0 && (
-              <p className="text-sm text-muted-foreground">
-                {existingFigurePaths.length} existing image{existingFigurePaths.length === 1 ? "" : "s"} will be retained.
-              </p>
+              <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
+                <p className="mb-2 font-semibold">Currently saved ({existingFigurePaths.length}) — these stay unless you upload replacements:</p>
+                <AbstractFigures paths={existingFigurePaths} />
+              </div>
             )}
           </CardContent>
         </Card>
@@ -591,6 +605,7 @@ const Submit = () => {
           See our <Link to="/privacy" className="text-primary hover:underline">Privacy policy</Link> for how we handle submissions.
         </p>
       </form>
+      <PdfViewerDialog path={viewPdf ? existingFilePath : null} title={title} onClose={() => setViewPdf(false)} />
     </div>
   );
 };
