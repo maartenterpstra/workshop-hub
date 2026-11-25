@@ -16,8 +16,8 @@ import albertoDeLucaImg from "@/assets/speakers/alberto-de-luca.jpg";
 import stefanFransenImg from "@/assets/speakers/stefan-fransen.jpg";
 import sebastiaanBreedveldImg from "@/assets/speakers/sebastiaan-breedveld.jpg";
 import adrianThummererImg from "@/assets/speakers/adrian-thummerer.jpg";
-import anaMariaBarraganMonteroImg from "@/assets/speakers/ana-maria-barragan-montero.png";
-import nicoVanDenBergImg from "@/assets/speakers/nico-van-den-berg.png";
+import anaMariaBarraganMonteroImg from "@/assets/speakers/ana-maria-barragan-montero.jpg";
+import nicoVanDenBergImg from "@/assets/speakers/nico-van-den-berg.jpg";
 import pimBormanImg from "@/assets/speakers/pim-borman.jpg";
 
 export const speakers: Record<string, Speaker> = {

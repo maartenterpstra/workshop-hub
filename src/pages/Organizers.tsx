@@ -40,7 +40,7 @@ interface Person {
 const localOrganizers: Person[] = [
   { name: "Asst. Prof. Matteo Maspero", title: "Lead Organizer", affiliation: "UMC Utrecht", photoUrl: "/src/assets/organizers/matteo-maspero.jpg"  },
   { name: "Maarten Terpstra", affiliation: "UMC Utrecht", photoUrl: "/src/assets/organizers/maarten-terpstra.jpg"  },
-  { name: "Prof. Nico van den Berg", affiliation: "UMC Utrecht", photoUrl: "/src/assets/organizers/nico-van-den-berg.png"  },
+  { name: "Prof. Nico van den Berg", affiliation: "UMC Utrecht", photoUrl: "/src/assets/organizers/nico-van-den-berg.jpg"  },
   { name: "Prof. Marry van den Heuvel-Eibrink", affiliation: "Princess Máxima Center, Utrecht", photoUrl: "/src/assets/organizers/marry-van-den-heuvel-eibrink.jpg"  },
   { name: "Geert Janssens", affiliation: "UMC Utrecht / Princess Máxima Center, Utrecht", photoUrl: "/src/assets/organizers/geert-janssens.jpg"  },
 ];
