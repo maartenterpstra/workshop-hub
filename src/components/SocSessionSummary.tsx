@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table";
 import { sessionCounts } from "@/lib/sessionCounts";
 
-export default function SocSessionSummary({ abstracts }: { abstracts: { topic: string | null; status: string }[] }) {
+export default function SocSessionSummary({ abstracts }: { abstracts: { topic: string | null; status: string; secondTopic?: string | null }[] }) {
   const [topics, setTopics] = useState<string[]>([]);
   useEffect(() => {
     supabase.from("topics").select("name").order("display_order").then(({ data }) => setTopics((data ?? []).map((t) => t.name)));
@@ -21,6 +21,7 @@ export default function SocSessionSummary({ abstracts }: { abstracts: { topic: s
               <TableHead className="text-right">Active</TableHead>
               <TableHead className="text-right">Withdrawn</TableHead>
               <TableHead className="text-right">Total</TableHead>
+              <TableHead className="text-right">As 2nd choice</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -30,6 +31,7 @@ export default function SocSessionSummary({ abstracts }: { abstracts: { topic: s
                 <TableCell className="text-right">{r.active}</TableCell>
                 <TableCell className="text-right">{r.withdrawn}</TableCell>
                 <TableCell className="text-right">{r.total}</TableCell>
+                <TableCell className="text-right text-muted-foreground">{r.secondChoice}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -39,6 +41,7 @@ export default function SocSessionSummary({ abstracts }: { abstracts: { topic: s
               <TableCell className="text-right">{total.active}</TableCell>
               <TableCell className="text-right">{total.withdrawn}</TableCell>
               <TableCell className="text-right">{total.total}</TableCell>
+              <TableCell className="text-right">{total.secondChoice}</TableCell>
             </TableRow>
           </TableFooter>
         </Table>

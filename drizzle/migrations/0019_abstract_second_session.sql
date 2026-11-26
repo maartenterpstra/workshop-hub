@@ -1,0 +1,2 @@
+ALTER TABLE public.abstracts ADD COLUMN second_topic_id uuid NULL REFERENCES public.topics(id);
+ALTER TABLE public.abstracts ADD CONSTRAINT abstracts_second_topic_differs CHECK (second_topic_id IS DISTINCT FROM topic_id);

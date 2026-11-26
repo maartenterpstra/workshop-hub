@@ -168,6 +168,7 @@ export type Database = {
           results: string | null
           reviewers_confirmed_at: string | null
           reviewers_confirmed_by: string | null
+          second_topic_id: string | null
           status: Database["public"]["Enums"]["abstract_status"]
           submitted_at: string
           submitted_by: string
@@ -188,6 +189,7 @@ export type Database = {
           results?: string | null
           reviewers_confirmed_at?: string | null
           reviewers_confirmed_by?: string | null
+          second_topic_id?: string | null
           status?: Database["public"]["Enums"]["abstract_status"]
           submitted_at?: string
           submitted_by: string
@@ -208,6 +210,7 @@ export type Database = {
           results?: string | null
           reviewers_confirmed_at?: string | null
           reviewers_confirmed_by?: string | null
+          second_topic_id?: string | null
           status?: Database["public"]["Enums"]["abstract_status"]
           submitted_at?: string
           submitted_by?: string
@@ -217,6 +220,13 @@ export type Database = {
           word_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "abstracts_second_topic_id_fkey"
+            columns: ["second_topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "abstracts_topic_id_fkey"
             columns: ["topic_id"]

@@ -25,7 +25,7 @@ const AdminExports = () => {
     try {
       const [{ data: abstracts, error: aErr }, { data: profiles, error: pErr }] = await Promise.all([
         supabase.from("abstracts").select(
-          `id, abstract_number, title, status, topic:topics(name),
+          `id, abstract_number, title, status, topic:topics!abstracts_topic_id_fkey(name),
            assignments:review_assignments(id, reviewer_id, status,
              reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, feedback_value, feedback_improve, feedback_tips, comments_for_authors, comments_for_soc, submitted_at))`,
         ).neq("id", DEMO_ABSTRACT_ID),
@@ -123,7 +123,7 @@ const AdminExports = () => {
         supabase
           .from("abstracts")
           .select(
-            `id, abstract_number, title, status, submitted_by, submitted_at, topic:topics(name),
+            `id, abstract_number, title, status, submitted_by, submitted_at, topic:topics!abstracts_topic_id_fkey(name),
              authors:abstract_authors(name, affiliation, email, is_presenting, author_order)`,
           )
           .neq("id", DEMO_ABSTRACT_ID)

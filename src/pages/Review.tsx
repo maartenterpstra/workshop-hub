@@ -93,7 +93,7 @@ const Review = () => {
     (async () => {
       const { data: assigns } = await supabase
         .from("review_assignments")
-        .select(`id, status, abstract:abstracts(id, abstract_number, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics(name))`)
+        .select(`id, status, abstract:abstracts(id, abstract_number, title, background, methods, results, conclusion, file_path, figure_paths, topic:topics!abstracts_topic_id_fkey(name))`)
         .eq("reviewer_id", user.id);
 
       const rows = ((assigns ?? []) as any[]).filter((a) => a.status !== "declined_coi").filter((a) => !previewOnly || a.abstract?.id === DEMO_ABSTRACT_ID)

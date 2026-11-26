@@ -69,6 +69,7 @@ const Submit = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [title, setTitle] = useState("");
   const [topicId, setTopicId] = useState("");
+  const [secondTopicId, setSecondTopicId] = useState("none");
   const [background, setBackground] = useState("");
   const [methods, setMethods] = useState("");
   const [results, setResults] = useState("");
@@ -113,7 +114,7 @@ const Submit = () => {
         await Promise.all([
           supabase
             .from("abstracts")
-            .select("id, title, topic_id, background, methods, results, conclusion, file_path, figure_paths, status")
+            .select("id, title, topic_id, second_topic_id, background, methods, results, conclusion, file_path, figure_paths, status")
             .eq("id", abstractId)
             .eq("submitted_by", user.id)
             .maybeSingle(),
@@ -137,6 +138,7 @@ const Submit = () => {
 
       setTitle(abstract.title);
       setTopicId(abstract.topic_id ?? "");
+      setSecondTopicId(abstract.second_topic_id ?? "none");
       setBackground(abstract.background ?? "");
       setMethods(abstract.methods ?? "");
       setResults(abstract.results ?? "");
@@ -295,6 +297,7 @@ const Submit = () => {
           submitted_by: user.id,
           title: parsed.data.title,
           topic_id: parsed.data.topic_id,
+          second_topic_id: secondTopicId !== "none" && secondTopicId !== parsed.data.topic_id ? secondTopicId : null,
           background: parsed.data.background,
           methods: parsed.data.methods,
           results: parsed.data.results,
@@ -446,6 +449,17 @@ const Submit = () => {
                   {topics.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Second session (optional)</Label>
+              <Select value={secondTopicId === topicId ? "none" : secondTopicId} onValueChange={setSecondTopicId}>
+                <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {topics.filter((t) => t.id !== topicId).map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">If your work also fits another session, the committee may consider it when building the programme.</p>
             </div>
             {[
               { label: "Background", value: background, setter: setBackground },

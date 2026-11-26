@@ -70,7 +70,7 @@ const MyAbstracts = () => {
     let active = true;
     supabase
       .from("abstracts")
-      .select("id, abstract_number, title, status, submitted_at, updated_at, figure_paths, file_path, topic:topics(name)")
+      .select("id, abstract_number, title, status, submitted_at, updated_at, figure_paths, file_path, topic:topics!abstracts_topic_id_fkey(name)")
       .eq("submitted_by", user.id)
       .order("updated_at", { ascending: false })
       .then(({ data, error }) => {

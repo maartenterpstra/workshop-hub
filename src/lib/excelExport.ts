@@ -26,7 +26,7 @@ const styleHeader = (ws: ExcelJS.Worksheet) => {
 
 export async function exportAbstractsExcel() {
   const { data, error } = await supabase.from("abstracts").select(
-    `id, abstract_number, title, status, topic:topics(name),
+    `id, abstract_number, title, status, topic:topics!abstracts_topic_id_fkey(name), second_topic:topics!abstracts_second_topic_id_fkey(name),
      authors:abstract_authors(name, email, is_presenting, author_order),
      assignments:review_assignments(id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, feedback_value, feedback_improve, feedback_tips, comments_for_authors, comments_for_soc, submitted_at))`,
   ).neq("id", DEMO_ABSTRACT_ID);
@@ -57,15 +57,15 @@ export async function exportAbstractsExcel() {
     if (reviews.length) revRange[a.id] = [start, rr - 1];
   }
 
-  sum.addRow(["Session", "Title", "First author", "Presenting author", "Author emails", "Status", "Reviews", ...crit.map((c) => `Avg ${c[1]}`), "Total average"]);
-  const firstAvg = 8;
+  sum.addRow(["Session", "Second session", "Title", "First author", "Presenting author", "Author emails", "Status", "Reviews", ...crit.map((c) => `Avg ${c[1]}`), "Total average"]);
+  const firstAvg = 9;
   abstracts.forEach((a, i) => {
     const row = i + 2;
     const authors = [...(a.authors ?? [])].sort((x: any, y: any) => x.author_order - y.author_order);
     const presenting = authors.find((x: any) => x.is_presenting)?.name ?? "";
     const emails = authors.map((x: any) => x.email).filter(Boolean).join("; ");
     const rg = revRange[a.id];
-    sum.addRow([a.topic?.name ?? "", `${formatAbstractNumber(a.abstract_number)} · ${a.title}`, authors[0]?.name ?? "", presenting, emails, a.status.replace(/_/g, " "), rg ? rg[1] - rg[0] + 1 : 0]);
+    sum.addRow([a.topic?.name ?? "", a.second_topic?.name ?? "", `${formatAbstractNumber(a.abstract_number)} · ${a.title}`, authors[0]?.name ?? "", presenting, emails, a.status.replace(/_/g, " "), rg ? rg[1] - rg[0] + 1 : 0]);
     crit.forEach((_, j) => {
       const c = sum.getCell(row, firstAvg + j);
       if (rg) {

@@ -41,6 +41,7 @@ interface AbstractRow {
   results: string | null;
   conclusion: string | null;
   topic: { name: string } | null;
+  second_topic: { name: string } | null;
   authors: { name: string; affiliation: string | null; email: string | null; is_presenting: boolean; author_order: number }[];
   reviews: ReviewRow[];
   fileUrl?: string;
@@ -72,7 +73,8 @@ const Soc = () => {
         .from("abstracts")
         .select(`
           id, abstract_number, pdf_anon_checked_at, title, status, file_path, figure_paths, background, methods, results, conclusion,
-          topic:topics(name),
+          topic:topics!abstracts_topic_id_fkey(name),
+          second_topic:topics!abstracts_second_topic_id_fkey(name),
           authors:abstract_authors(name, affiliation, email, is_presenting, author_order),
           assignments:review_assignments(id, reviewer_id, reviews(id, score_technical, score_relevance, score_novelty, score_reproducibility, score_fit_session, recommendation, comments_for_authors, comments_for_soc))
         `).neq("id", DEMO_ABSTRACT_ID);
@@ -102,6 +104,7 @@ const Soc = () => {
             figure_paths: a.figure_paths,
             background: a.background, methods: a.methods, results: a.results, conclusion: a.conclusion,
             topic: a.topic,
+            second_topic: a.second_topic,
             authors: sortedAuthors,
             reviews,
             fileUrl,
@@ -150,7 +153,7 @@ const Soc = () => {
         </div>
       </div>
 
-      <SocSessionSummary abstracts={rows.map((a) => ({ topic: a.topic?.name ?? null, status: a.status }))} />
+      <SocSessionSummary abstracts={rows.map((a) => ({ topic: a.topic?.name ?? null, status: a.status, secondTopic: a.second_topic?.name ?? null }))} />
 
       {rows.length > 0 && (
         <SocDecisionsWorkflow abstracts={rows.map((a) => ({
@@ -171,6 +174,7 @@ const Soc = () => {
                 <div className="flex flex-wrap items-center gap-2">
                   <CardTitle><span className="mr-2 font-mono text-sm text-muted-foreground">{formatAbstractNumber(a.abstract_number)}</span>{a.title}</CardTitle>
                   <Badge variant="secondary">{a.topic?.name ?? "No session"}</Badge>
+                  {a.second_topic && <Badge variant="outline">2nd: {a.second_topic.name}</Badge>}
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   {a.authors.map((au) => `${au.name}${au.is_presenting ? "*" : ""}`).join(", ")}

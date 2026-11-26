@@ -59,7 +59,7 @@ const AdminAssignments = () => {
         supabase
           .from("abstracts")
           .select(
-            "id, title, topic_id, submitted_at, reviewers_confirmed_at, topic:topics(name), assignments:review_assignments(id, reviewer_id, status)",
+            "id, title, topic_id, submitted_at, reviewers_confirmed_at, topic:topics!abstracts_topic_id_fkey(name), assignments:review_assignments(id, reviewer_id, status)",
           )
           .neq("id", DEMO_ABSTRACT_ID)
           .order("submitted_at", { ascending: false }),
