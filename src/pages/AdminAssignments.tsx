@@ -18,6 +18,7 @@ import { reviewerImportRoster } from "@/data/reviewerImport";
 import AdminExports from "@/components/AdminExports";
 import AdminReviewerStatus from "@/components/AdminReviewerStatus";
 import AdminDeclinedReviews from "@/components/AdminDeclinedReviews";
+import AdminSubmissionErrors from "@/components/AdminSubmissionErrors";
 import AdminEmailAuthors from "@/components/AdminEmailAuthors";
 
 interface ReviewerInfo {
@@ -244,6 +245,7 @@ const AdminAssignments = () => {
 
       <AdminReviewerStatus />
       <AdminDeclinedReviews />
+      <AdminSubmissionErrors />
 
       <AdminExports />
 

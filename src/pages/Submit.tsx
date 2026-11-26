@@ -2,7 +2,8 @@ import { stripPdfMetadata } from "@/lib/pdfAnonymize";
 import { formatAbstractNumber, pdfVersionFromPath, versionedPdfName, fileNameFromPath } from "@/lib/abstractNumber";
 import PdfViewerDialog from "@/components/PdfViewerDialog";
 import AbstractFigures from "@/components/AbstractFigures";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { withRetry, unwrap, StepError } from "@/lib/withRetry";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -82,6 +83,11 @@ const Submit = () => {
   const [viewPdf, setViewPdf] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [progress, setProgress] = useState<string | null>(null);
+  const [failure, setFailure] = useState<string | null>(null);
+  // Stable across retries so already-uploaded files are reused instead of uploaded again.
+  const [draftId] = useState(() => abstractId ?? crypto.randomUUID());
+  const uploaded = useRef(new Map<File, string>());
   const [anonConfirmed, setAnonConfirmed] = useState(false);
   const [loadingAbstract, setLoadingAbstract] = useState(editing);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -238,17 +244,28 @@ const Submit = () => {
     if (!user) return;
 
     setSubmitting(true);
+    setFailure(null);
     try {
-      const submissionId = abstractId ?? crypto.randomUUID();
-      // Uploaded under a temporary name first; renamed to the abstract number once the row exists.
-      const filePath = `${user.id}/${submissionId}/upload-${Date.now()}.pdf`;
-      const cleanPdf = file ? await stripPdfMetadata(await file.arrayBuffer(), "Abstract") : null;
-      if (cleanPdf) {
-        const { error: upErr } = await supabase.storage.from("abstracts").upload(filePath, cleanPdf, {
-          contentType: "application/pdf",
-          upsert: true,
-        });
-        if (upErr) throw upErr;
+      const submissionId = draftId;
+      const netHint = " This is often caused by an institutional network or firewall — please try again, or from another network (e.g. home or mobile hotspot). If it keeps failing, email the organisers.";
+      let filePath = uploaded.current.get(file as File) ?? `${user.id}/${submissionId}/upload-${Date.now()}.pdf`;
+      let cleanPdf: Blob | null = null;
+      if (file) {
+        setProgress("Preparing PDF…");
+        try {
+          cleanPdf = await stripPdfMetadata(await file.arrayBuffer(), "Abstract");
+        } catch (e) {
+          throw new StepError("prepare_pdf", "Your PDF could not be read. Please export it again as a standard PDF and retry.", e);
+        }
+        if (!uploaded.current.has(file)) {
+          setProgress("Uploading PDF…");
+          try {
+            await withRetry(() => unwrap(supabase.storage.from("abstracts").upload(filePath, cleanPdf!, { contentType: "application/pdf", upsert: true })));
+          } catch (e) {
+            throw new StepError("upload_pdf", "The PDF could not be uploaded." + netHint, e);
+          }
+          uploaded.current.set(file, filePath);
+        }
       }
 
       let figurePaths = existingFigurePaths;
@@ -257,14 +274,20 @@ const Submit = () => {
         for (let i = 0; i < figures.length; i++) {
           const fig = figures[i];
           const ext = fig.type === "image/png" ? "png" : "jpg";
-          const figPath = `${user.id}/${submissionId}/figure-${i + 1}.${ext}`;
-          const { error: figErr } = await supabase.storage
-            .from("abstracts")
-            .upload(figPath, fig, { contentType: fig.type, upsert: editing });
-          if (figErr) throw figErr;
+          const figPath = uploaded.current.get(fig) ?? `${user.id}/${submissionId}/figure-${i + 1}-${Date.now()}.${ext}`;
+          if (!uploaded.current.has(fig)) {
+            setProgress(`Uploading figure ${i + 1} of ${figures.length}…`);
+            try {
+              await withRetry(() => unwrap(supabase.storage.from("abstracts").upload(figPath, fig, { contentType: fig.type, upsert: true })));
+            } catch (e) {
+              throw new StepError(`upload_figure_${i + 1}`, `Figure ${i + 1} ("${fig.name}", ${(fig.size / 1024 / 1024).toFixed(1)} MB) could not be uploaded. Try a smaller PNG/JPG (under 2 MB).` + netHint, e);
+            }
+            uploaded.current.set(fig, figPath);
+          }
           figurePaths.push(figPath);
         }
       }
+      setProgress("Saving abstract…");
 
       const wordCount = totalWords;
 
@@ -285,7 +308,7 @@ const Submit = () => {
         ? supabase.from("abstracts").update(abstractPayload).eq("id", abstractId).eq("submitted_by", user.id)
         : supabase.from("abstracts").insert(abstractPayload);
       const { data: abs, error: absErr } = await abstractMutation.select("id, abstract_number").single();
-      if (absErr) throw absErr;
+      if (absErr) throw new StepError("save_abstract", "Your files uploaded, but the abstract could not be saved: " + absErr.message, absErr);
 
       if (cleanPdf) {
         const numbered = `${user.id}/${abs.id}/${versionedPdfName(formatAbstractNumber(abs.abstract_number), pdfVersionFromPath(existingFilePath) + 1)}`;
@@ -327,6 +350,7 @@ const Submit = () => {
         updated_at: new Date().toISOString(),
       });
       if (discErr) throw discErr;
+      uploaded.current.clear();
 
       toast.success(editing ? "Abstract changes saved." : "Abstract successfully submitted!");
       const { data: emailData, error: emailError } = await supabase.functions.invoke("send-confirmation-email", {
@@ -341,9 +365,23 @@ const Submit = () => {
       navigate("/my-abstracts");
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message ?? "Submission failed.");
+      const step = err instanceof StepError ? err.step : "save_details";
+      const cause: any = err instanceof StepError ? err.cause : err;
+      const friendly = err instanceof StepError ? err.friendly : "Saving failed: " + (err?.message ?? "unknown error") + ". Please try again; files already uploaded will not be uploaded again.";
+      setFailure(friendly);
+      toast.error(friendly, { duration: 15000 });
+      const f = step.startsWith("upload_figure_") ? figures[Number(step.split("_")[2]) - 1] : file;
+      supabase.from("submission_errors").insert({
+        user_id: user.id,
+        step,
+        message: String(cause?.message ?? cause ?? "").slice(0, 1000),
+        file_size: f?.size ?? null,
+        file_type: f?.type ?? null,
+        user_agent: navigator.userAgent.slice(0, 500),
+      }).then(() => {});
     } finally {
       setSubmitting(false);
+      setProgress(null);
     }
   };
 
@@ -598,9 +636,14 @@ const Submit = () => {
 
         <Button type="submit" size="lg" className="w-full" disabled={submitting || overLimit || !anonConfirmed}>
           {submitting ? (
-            <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{editing ? "Saving…" : "Submitting…"}</>
+            <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{progress ?? (editing ? "Saving…" : "Submitting…")}</>
           ) : editing ? "Save changes" : "Submit abstract"}
         </Button>
+        {failure && !submitting && (
+          <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+            {failure}
+          </p>
+        )}
         <p className="text-xs text-muted-foreground text-center">
           See our <Link to="/privacy" className="text-primary hover:underline">Privacy policy</Link> for how we handle submissions.
         </p>

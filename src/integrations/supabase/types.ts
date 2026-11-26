@@ -583,6 +583,39 @@ export type Database = {
           },
         ]
       }
+      submission_errors: {
+        Row: {
+          created_at: string
+          file_size: number | null
+          file_type: string | null
+          id: string
+          message: string | null
+          step: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          message?: string | null
+          step: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          message?: string | null
+          step?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       topics: {
         Row: {
           created_at: string
