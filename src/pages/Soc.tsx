@@ -179,6 +179,10 @@ const Soc = () => {
                 <p className="text-sm text-muted-foreground mt-1">
                   {a.authors.map((au) => `${au.name}${au.is_presenting ? "*" : ""}`).join(", ")}
                 </p>
+                <p className="text-sm mt-1">
+                  <span className="font-semibold">Session:</span> {a.topic?.name ?? "No session"}
+                  {a.second_topic && <> · <span className="font-semibold">2nd choice:</span> {a.second_topic.name}</>}
+                </p>
               </div>
               <div className="text-right space-y-1">
                 <Badge variant={a.status === "withdrawn" ? "destructive" : "outline"}>{a.status.replace(/_/g, " ")}</Badge>
