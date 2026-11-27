@@ -282,7 +282,9 @@ const Submit = () => {
             try {
               await withRetry(() => unwrap(supabase.storage.from("abstracts").upload(figPath, fig, { contentType: fig.type, upsert: true })));
             } catch (e) {
-              throw new StepError(`upload_figure_${i + 1}`, `Figure ${i + 1} ("${fig.name}", ${(fig.size / 1024 / 1024).toFixed(1)} MB) could not be uploaded. Try a smaller PNG/JPG (under 2 MB).` + netHint, e);
+              console.error("figure upload failed", e);
+              toast.warning(`Figure ${i + 1} ("${fig.name}") could not be uploaded. Your abstract will still be saved — please edit it before the deadline to add the figure.`, { duration: 15000 });
+              continue;
             }
             uploaded.current.set(fig, figPath);
           }
