@@ -29,12 +29,33 @@ interface AbstractSummary {
   topic: { name: string } | null;
 }
 
+interface CoAuthored {
+  id: string;
+  title: string;
+  abstract_number: number | null;
+  status: string;
+  background: string | null;
+  methods: string | null;
+  results: string | null;
+  conclusion: string | null;
+  file_path: string | null;
+  topic: { name: string } | null;
+  authors: { name: string; author_order: number; is_presenting: boolean }[];
+}
+
+const openPdf = async (path: string) => {
+  const { data, error } = await supabase.storage.from("abstracts").createSignedUrl(path, 60);
+  if (error || !data) return toast.error("Could not open the PDF.");
+  window.open(data.signedUrl, "_blank", "noopener");
+};
+
 const MyAbstracts = () => {
   const { user } = useAuth();
   const { submissionOpen, closesAt, loading: configLoading } = useAppConfig();
   const [abstracts, setAbstracts] = useState<AbstractSummary[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [coAuthored, setCoAuthored] = useState<CoAuthored[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [decisions, setDecisions] = useState<Record<string, { decision: string; note: string | null; revision_due_at: string | null }>>({});
   useEffect(() => {
@@ -81,6 +102,20 @@ const MyAbstracts = () => {
         }
         setAbstracts((data ?? []) as AbstractSummary[]);
         setLoading(false);
+      });
+    supabase
+      .from("abstract_authors")
+      .select("abstract_id")
+      .ilike("email", user.email ?? "__none__")
+      .then(async ({ data: rows }) => {
+        const ids = [...new Set((rows ?? []).map((r) => r.abstract_id))];
+        if (!ids.length || !active) return;
+        const { data } = await supabase
+          .from("abstracts")
+          .select("id, abstract_number, title, status, background, methods, results, conclusion, file_path, topic:topics!abstracts_topic_id_fkey(name), authors:abstract_authors(name, author_order, is_presenting)")
+          .in("id", ids)
+          .neq("submitted_by", user.id);
+        if (active) setCoAuthored((data ?? []) as CoAuthored[]);
       });
     return () => {
       active = false;
@@ -200,6 +235,51 @@ const MyAbstracts = () => {
           </CardContent>
         </Card>
       ))}
+      {coAuthored.length > 0 && (
+        <section className="space-y-4 pt-4">
+          <div>
+            <h2 className="text-2xl font-semibold">Abstracts where you are co-author</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Read-only. Only the submitting author can edit or withdraw these abstracts.</p>
+          </div>
+          {coAuthored.map((a) => (
+            <Card key={a.id}>
+              <CardHeader className="pb-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-secondary">{a.topic?.name ?? "No topic"}</p>
+                    <CardTitle className="mt-1"><span className="mr-2 font-mono text-sm text-muted-foreground">{formatAbstractNumber(a.abstract_number)}</span>{a.title}</CardTitle>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {[...a.authors].sort((x, y) => x.author_order - y.author_order).map((au) => au.name + (au.is_presenting ? " (presenting)" : "")).join(", ")}
+                    </p>
+                  </div>
+                  <Badge variant="outline">{a.status.replace(/_/g, " ")}</Badge>
+                </div>
+              </CardHeader>
+              {decisions[a.id] && (
+                <div className="mx-6 mb-3 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
+                  <span className="font-semibold text-foreground">Committee decision: </span>
+                  {({ oral: "accepted for an oral presentation", revise: "minor revision requested", reject: "not accepted" } as Record<string, string>)[decisions[a.id].decision]}
+                  {decisions[a.id].note && <p className="mt-1 text-muted-foreground">{decisions[a.id].note}</p>}
+                </div>
+              )}
+              <CardContent className="space-y-3 text-sm">
+                <details>
+                  <summary className="cursor-pointer font-medium">Show abstract text</summary>
+                  {(["background", "methods", "results", "conclusion"] as const).map((k) => a[k] && (
+                    <div key={k} className="mt-2">
+                      <p className="font-semibold capitalize">{k}</p>
+                      <p className="whitespace-pre-wrap text-muted-foreground">{a[k]}</p>
+                    </div>
+                  ))}
+                </details>
+                {a.file_path && (
+                  <Button variant="outline" size="sm" onClick={() => openPdf(a.file_path!)}>Open PDF</Button>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+      )}
     </div>
   );
 };
