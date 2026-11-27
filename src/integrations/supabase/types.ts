@@ -164,6 +164,7 @@ export type Database = {
           file_path: string | null
           id: string
           methods: string | null
+          original_topic_id: string | null
           pdf_anon_checked_at: string | null
           results: string | null
           reviewers_confirmed_at: string | null
@@ -185,6 +186,7 @@ export type Database = {
           file_path?: string | null
           id?: string
           methods?: string | null
+          original_topic_id?: string | null
           pdf_anon_checked_at?: string | null
           results?: string | null
           reviewers_confirmed_at?: string | null
@@ -206,6 +208,7 @@ export type Database = {
           file_path?: string | null
           id?: string
           methods?: string | null
+          original_topic_id?: string | null
           pdf_anon_checked_at?: string | null
           results?: string | null
           reviewers_confirmed_at?: string | null
@@ -220,6 +223,13 @@ export type Database = {
           word_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "abstracts_original_topic_id_fkey"
+            columns: ["original_topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "abstracts_second_topic_id_fkey"
             columns: ["second_topic_id"]

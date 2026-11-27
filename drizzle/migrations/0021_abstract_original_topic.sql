@@ -1,0 +1,1 @@
+ALTER TABLE public.abstracts ADD COLUMN original_topic_id uuid REFERENCES public.topics(id);

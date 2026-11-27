@@ -42,6 +42,24 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
   const [due, setDue] = useState(DEFAULT_DUE);
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState<any>(null);
+  const [topics, setTopics] = useState<{ id: string; name: string }[]>([]);
+  const [topicOf, setTopicOf] = useState<Map<string, { topic_id: string | null; original_topic_id: string | null }>>(new Map());
+  const topicName = (id: string | null) => topics.find((t) => t.id === id)?.name ?? null;
+  const sessionOf = (a: WorkflowAbstract) => (topicOf.has(a.id) ? topicName(topicOf.get(a.id)!.topic_id) : a.topic);
+  useEffect(() => {
+    supabase.from("topics").select("id, name").order("display_order").then(({ data }) => setTopics(data ?? []));
+    supabase.from("abstracts").select("id, topic_id, original_topic_id").then(({ data }) =>
+      setTopicOf(new Map((data ?? []).map((r) => [r.id, { topic_id: r.topic_id, original_topic_id: r.original_topic_id }]))));
+  }, []);
+  const changeSession = async (id: string, topicId: string) => {
+    const cur = topicOf.get(id);
+    const original = cur?.original_topic_id ?? cur?.topic_id ?? null;
+    const next = { topic_id: topicId, original_topic_id: original === topicId ? null : original };
+    const { error } = await supabase.from("abstracts").update(next).eq("id", id);
+    if (error) return toast.error(error.message);
+    setTopicOf((m) => new Map(m).set(id, next));
+    toast.success("Session updated.");
+  };
 
   const load = useCallback(async () => {
     const [{ data: d }, { data: s }, { data: c }] = await Promise.all([
@@ -96,7 +114,7 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
     const cands = active.flatMap((a) => {
       const d = decisions.get(a.id);
       return d?.confirmed_at && d.decision === "oral"
-        ? [{ abstractId: a.id, topic: a.topic, score: a.avgScore, decision: "oral" as const }] : [];
+        ? [{ abstractId: a.id, topic: sessionOf(a), score: a.avgScore, decision: "oral" as const }] : [];
     });
     setSlots(proposeSchedule(cands));
     toast.info("Schedule proposed — review it, then save.");
@@ -159,7 +177,7 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="text-left text-muted-foreground">
-                  <tr><th className="py-2 pr-2">Abstract</th><th className="pr-2">Avg</th><th className="pr-2">Decision</th><th>Note to authors</th></tr>
+                  <tr><th className="py-2 pr-2">Abstract</th><th className="pr-2">Avg</th><th className="pr-2">Session</th><th className="pr-2">Decision</th><th>Note to authors</th></tr>
                 </thead>
                 <tbody>
                   {[...active].sort((a, b) => (b.avgScore ?? -1) - (a.avgScore ?? -1)).map((a) => {
@@ -169,7 +187,17 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
                       <tr key={a.id} className="border-t border-border align-top">
                         <td className="py-2 pr-2">
                           <div className="font-medium">{a.title}</div>
-                          <div className="text-xs text-muted-foreground">{a.firstAuthor} · {a.topic ?? "No session"} · {a.reviewCount} reviews</div>
+                          <div className="text-xs text-muted-foreground">{a.firstAuthor} · {a.reviewCount} reviews</div>
+                        </td>
+                        <td className="py-2 pr-2">
+                          <select className={`${selectCls} max-w-[14rem]`} disabled={locked} aria-label="Session"
+                            value={topicOf.get(a.id)?.topic_id ?? ""} onChange={(e) => changeSession(a.id, e.target.value)}>
+                            <option value="" disabled>No session</option>
+                            {topics.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+                          </select>
+                          {topicOf.get(a.id)?.original_topic_id && (
+                            <div className="mt-1 text-xs text-secondary">Moved from {topicName(topicOf.get(a.id)!.original_topic_id)}</div>
+                          )}
                         </td>
                         <td className="py-2 pr-2 font-semibold">{a.avgScore?.toFixed(2) ?? "—"}</td>
                         <td className="py-2 pr-2">
@@ -189,6 +217,12 @@ const SocDecisionsWorkflow = ({ abstracts }: { abstracts: WorkflowAbstract[] }) 
                   })}
                 </tbody>
               </table>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs">
+              {topics.map((t) => {
+                const n = active.filter((a) => topicOf.get(a.id)?.topic_id === t.id && decisions.get(a.id)?.decision === "oral").length;
+                return <Badge key={t.id} variant={n > PAPERS_PER_SESSION ? "destructive" : "outline"}>{t.name}: {n} accepted</Badge>;
+              })}
             </div>
             <div className="flex flex-wrap items-end gap-3">
               {!allConfirmed && (

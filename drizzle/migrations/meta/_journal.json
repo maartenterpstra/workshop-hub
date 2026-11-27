@@ -148,6 +148,13 @@
       "when": 1795777025185,
       "tag": "0020_coauthor_read_access",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795777492014,
+      "tag": "0021_abstract_original_topic",
+      "breakpoints": true
     }
   ]
 }
