@@ -758,6 +758,16 @@ export type Database = {
           title: string
         }[]
       }
+      mailbox_confirm: {
+        Args: { _email: string; _token_hash: string; _user_id: string }
+        Returns: boolean
+      }
+      mailbox_store_token: {
+        Args: { _email: string; _token_hash: string; _user_id: string }
+        Returns: boolean
+      }
+      my_coauthor_count: { Args: never; Returns: number }
+      my_mailbox_verified: { Args: never; Returns: boolean }
       reassign_review: {
         Args: { _assignment_id: string; _reviewer_id?: string }
         Returns: string

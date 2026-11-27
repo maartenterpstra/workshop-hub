@@ -56,6 +56,31 @@ const MyAbstracts = () => {
   const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [coAuthored, setCoAuthored] = useState<CoAuthored[]>([]);
+  const [mailboxVerified, setMailboxVerified] = useState(true);
+  const [pendingCoauthor, setPendingCoauthor] = useState(0);
+  const [sendingVerify, setSendingVerify] = useState(false);
+  useEffect(() => {
+    if (!user) return;
+    const token = new URLSearchParams(window.location.search).get("verify");
+    (async () => {
+      if (token) {
+        const { data, error } = await supabase.functions.invoke("verify-mailbox", { body: { action: "confirm", token } });
+        window.history.replaceState(null, "", window.location.pathname);
+        if (error || !data?.verified) toast.error("This confirmation link is invalid or expired. Request a new one below.");
+        else { toast.success("Email confirmed."); window.location.reload(); return; }
+      }
+      const [{ data: v }, { data: n }] = await Promise.all([supabase.rpc("my_mailbox_verified"), supabase.rpc("my_coauthor_count")]);
+      setMailboxVerified(Boolean(v));
+      setPendingCoauthor(n ?? 0);
+    })();
+  }, [user]);
+  const sendVerify = async () => {
+    setSendingVerify(true);
+    const { data, error } = await supabase.functions.invoke("verify-mailbox", { body: { action: "send" } });
+    setSendingVerify(false);
+    if (error || !data?.sent) toast.error("Could not send the link. Wait a few minutes and try again.");
+    else toast.success("Check your inbox for the confirmation link.");
+  };
   const [busyId, setBusyId] = useState<string | null>(null);
   const [decisions, setDecisions] = useState<Record<string, { decision: string; note: string | null; revision_due_at: string | null }>>({});
   useEffect(() => {
@@ -235,6 +260,14 @@ const MyAbstracts = () => {
           </CardContent>
         </Card>
       ))}
+      {!mailboxVerified && pendingCoauthor > 0 && (
+        <Card>
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 py-5 text-sm">
+            <span>You are listed as co-author on {pendingCoauthor} abstract{pendingCoauthor === 1 ? "" : "s"}. Confirm your email address to view {pendingCoauthor === 1 ? "it" : "them"} (read-only).</span>
+            <Button size="sm" onClick={sendVerify} disabled={sendingVerify}>Send confirmation link</Button>
+          </CardContent>
+        </Card>
+      )}
       {coAuthored.length > 0 && (
         <section className="space-y-4 pt-4">
           <div>

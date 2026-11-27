@@ -155,6 +155,20 @@
       "when": 1795777492014,
       "tag": "0021_abstract_original_topic",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1795777581820,
+      "tag": "0022_coauthor_mailbox_verification",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1795777612935,
+      "tag": "0023_mailbox_verification_rpcs",
+      "breakpoints": true
     }
   ]
 }
